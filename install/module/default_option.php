@@ -6,7 +6,7 @@
  * Time: 14:42
  */
 
-$priceva_bitrix_connector_default_option = [
+$priceva_connector_default_option = [
     "API_KEY"          => "",
     "ID_TYPE_PRICE"    => "0",
     "SYNC_FIELD"       => "articul",
