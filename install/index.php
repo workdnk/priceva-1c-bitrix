@@ -27,6 +27,15 @@ Class priceva_connector extends CModule
      */
     private $helpers;
 
+    /**
+     * @var bool
+     */
+    private $need_save_unroll = false;
+    /**
+     * @var array
+     */
+    private $unroll_methods = [];
+
     private $errors = [];
 
     function __construct()
@@ -74,19 +83,21 @@ Class priceva_connector extends CModule
                 $APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
             }
 
+            $this->need_save_unroll = true;
+
             $this->InstallFiles();
             $this->InstallTasks();
             $this->InstallEvents();
             $id_type_price = $this->InstallDB();
             $this->InstallAgents();
 
+            $this->need_save_unroll = false;
+
             if( $this->errors ){
 
-                $this->UnInstallAgents();
-                $this->UnInstallEvents();
-                $this->UnInstallTasks();
-                $this->UnInstallDB();
-                $this->UnInstallFiles();
+                foreach( $this->unroll_methods as $method ){
+                    $this->$method;
+                }
 
                 $APPLICATION->IncludeAdminFile(
                     Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
@@ -111,18 +122,21 @@ Class priceva_connector extends CModule
     {
         global $APPLICATION;
 
+        $this->need_save_unroll = true;
+
         $this->UnInstallAgents();
         $this->UnInstallEvents();
         $this->UnInstallTasks();
         $this->UnInstallDB();
         $this->UnInstallFiles();
 
+        $this->need_save_unroll = false;
+
         if( $this->errors ){
-            $this->InstallFiles();
-            $this->InstallTasks();
-            $this->InstallEvents();
-            $this->InstallDB();
-            $this->InstallAgents();
+
+            foreach( $this->unroll_methods as $method ){
+                $this->$method();
+            }
 
             $APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
@@ -145,25 +159,33 @@ Class priceva_connector extends CModule
     {
         parent::InstallDB();
 
-        return $this->add_price_type();
+        $r = $this->add_price_type();
+
+        $this->save_unroll($r, "UnInstallDB");
+
+        return $r;
     }
 
     function UnInstallDB()
     {
         parent::UnInstallDB();
 
-        $this->delete_price_type();
+        $r = $this->delete_price_type();
+
+        $this->save_unroll($r, "InstallDB");
     }
 
     function InstallFiles()
     {
         parent::InstallFiles();
 
-        CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID . "/lib", true, true);
-        CopyDirFiles(self::GetPatch() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID . "/admin", true, true);
-        CopyDirFiles(self::GetPatch() . "/include.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID . "/include.php", true, true);
-        CopyDirFiles(self::GetPatch() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
-        CopyDirFiles(self::GetPatch() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID, true, true);
+        $r1 = CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID . "/lib", true, true);
+        $r2 = CopyDirFiles(self::GetPatch() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID . "/admin", true, true);
+        $r3 = CopyDirFiles(self::GetPatch() . "/include.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID . "/include.php", true, true);
+        $r4 = CopyDirFiles(self::GetPatch() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
+        $r5 = CopyDirFiles(self::GetPatch() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID, true, true);
+
+        $this->save_unroll($r1 && $r2 && $r3 && $r4 && $r5, "UnInstallFiles");
     }
 
     function UnInstallFiles()
@@ -172,6 +194,8 @@ Class priceva_connector extends CModule
 
         Bitrix\Main\IO\Directory::deleteDirectory($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->helpers::MODULE_ID);
         Bitrix\Main\IO\Directory::deleteDirectory($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/priceva_bc.php");
+
+        $this->save_unroll(true, "InstallFiles");
     }
 
     function InstallEvents()
@@ -179,6 +203,22 @@ Class priceva_connector extends CModule
         parent::InstallEvents();
 
         EventManager::getInstance()->registerEventHandler('main', 'OnBuildGlobalMenu', $this->helpers::MODULE_ID, 'priceva_bitrix_connector', 'AddGlobalMenuItem');
+
+        $this->save_unroll(true, "UnInstallEvents");
+    }
+
+    function InstallTasks()
+    {
+        parent::InstallTasks();
+
+        $this->save_unroll(true, "UnInstallTasks");
+    }
+
+    function UnInstallTasks()
+    {
+        parent::UnInstallTasks();
+
+        $this->save_unroll(true, "InstallTasks");
     }
 
     function UnInstallEvents()
@@ -186,11 +226,13 @@ Class priceva_connector extends CModule
         parent::UnInstallEvents();
 
         EventManager::getInstance()->unRegisterEventHandler('main', 'OnBuildGlobalMenu', $this->helpers::MODULE_ID, 'priceva_bitrix_connector', 'AddGlobalMenuItem');
+
+        $this->save_unroll(true, "InstallEvents");
     }
 
     private function InstallAgents()
     {
-        CAgent::AddAgent(
+        $r = CAgent::AddAgent(
             "\Priceva\Connector\Bitrix\PricevaConnector::run();",
             "priceva.connector",
             "Y",
@@ -200,6 +242,8 @@ Class priceva_connector extends CModule
             "01.01.2019 00:00:00",
             30
         );
+
+        $this->save_unroll($r, "UnInstallAgents");
     }
 
     private function UnInstallAgents()
@@ -208,6 +252,8 @@ Class priceva_connector extends CModule
             "\Priceva\Connector\Bitrix\PricevaConnector::run();",
             "priceva.connector"
         );
+
+        $this->save_unroll(true, "InstallAgents");
     }
 
     public function AddGlobalMenuItem( &$aGlobalMenu, &$aModuleMenu )
@@ -269,14 +315,18 @@ Class priceva_connector extends CModule
 
             $APPLICATION->ResetException();
 
-            if( false === \CCatalogGroup::Delete($type_price_ID) ){
+            if( false === $ID = \CCatalogGroup::Delete($type_price_ID) ){
                 if( $APPLICATION->GetException() ){
-                    throw new Exception();
+                    throw new Exception("Произошла ошибка при попытке удаления типа цен");
                 }
+            }else{
+                return true;
             }
         }catch( \Throwable $e ){
             $this->add_error($e);
         }
+
+        return false;
     }
 
     /**
@@ -305,7 +355,7 @@ Class priceva_connector extends CModule
 
             $ID = \CCatalogGroup::Add($arFields);
             if( $ID <= 0 ){
-                throw new \Bitrix\Main\SystemException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_PRICE_TYPE") . self::NAME_PRICE_TYPE);
+                throw new \Bitrix\Main\SystemException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_PRICE_TYPE"));
             }else{
                 return $ID;
             }
@@ -314,6 +364,17 @@ Class priceva_connector extends CModule
         }
 
         return false;
+    }
+
+    /**
+     * @param bool   $condition
+     * @param string $func
+     */
+    private function save_unroll( $condition, $func )
+    {
+        if( ( $this->need_save_unroll ) && ( $condition !== false ) ){
+            $this->unroll_methods[] = $func;
+        }
     }
 
     public function get_errors()
