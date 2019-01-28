@@ -90,7 +90,7 @@ class CommonHelpers
      */
     public static function add_not_selected( $select_values )
     {
-        return array_reverse(array_merge($select_values, [ '0' => "Не выбрано" ]));
+        return [ '0' => "Не выбрано" ] + $select_values;
     }
 
     /**
