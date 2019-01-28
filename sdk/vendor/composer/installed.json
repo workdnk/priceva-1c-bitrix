@@ -1,0 +1,51 @@
+[
+    {
+        "name": "priceva/priceva-sdk-php",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/priceva/priceva-sdk-php.git",
+            "reference": "509f0f9dbf631281a4d76b56c426b48777342888"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/priceva/priceva-sdk-php/zipball/509f0f9dbf631281a4d76b56c426b48777342888",
+            "reference": "509f0f9dbf631281a4d76b56c426b48777342888",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "ext-json": "*",
+            "php": ">=5.4"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "time": "2018-10-25T15:49:29+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Priceva\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Stanislav Belichenko",
+                "email": "stanislav@priceva.com"
+            }
+        ],
+        "description": "later",
+        "homepage": "https://github.com/priceva/priceva-sdk-php",
+        "keywords": [
+            "api",
+            "php",
+            "priceva"
+        ]
+    }
+]

@@ -1,0 +1,16 @@
+{
+  "name": "",
+  "description": "",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Stanislav Belichenko",
+      "email": "stanislav@priceva.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "priceva/priceva-sdk-php": "*"
+  }
+}
