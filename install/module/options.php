@@ -37,33 +37,42 @@ if( $RIGHT >= "R" ){
             "ICON"    => "testmodule_settings",
             "TITLE"   => "Основные настройки модуля",
             "OPTIONS" => [
-                "API_KEY"        => [ "Api-ключ вашей кампании в аккаунте Priceva", [ "text", 32 ] ],
-                "ID_TYPE_PRICE"  => [ "Тип цен, с которым ведется работа", [ "select", $common_helpers->add_not_selected($types_of_price) ] ],
-                "SYNC_FIELD"     => [
+                "API_KEY"          => [ "Api-ключ вашей кампании в аккаунте Priceva", [ "text", 32 ] ],
+                "ID_TYPE_PRICE"    => [ "Тип цен, с которым ведется работа", [ "select", $common_helpers->add_not_selected($types_of_price) ] ],
+                "SYNC_FIELD"       => [
                     "Ключ-поле синхронизации цен", [
                         "select", $common_helpers->add_not_selected([
                             "client_code" => "Внутренний код клиента",
                             "articul"     => "Артикул",
                         ]),
-                        ],
                     ],
-                "SYNC_DOMINANCE" => [
+                ],
+                "SYNC_DOMINANCE"   => [
                     "Первоисточник данных", [
                         "select", $common_helpers->add_not_selected([
-                            "Bitrix"  => "Bitrix",
-                            "Priceva" => "Priceva",
+                            "bitrix"  => "Bitrix",
+                            "priceva" => "Priceva",
                         ]),
                     ],
                 ],
-                "PRICE_RECALC"   => [
+                "DOWNLOAD_AT_TIME" => [
+                    "Количество загрузок за раз", [
+                        "select", $common_helpers->add_not_selected([
+                            "10"   => "10",
+                            "100"  => "100",
+                            "1000" => "1000",
+                        ]),
+                    ],
+                ],
+                "PRICE_RECALC"     => [
                     "Пересчитывать цену при ее установке", [
                         "select", $common_helpers->add_not_selected([
                             "NO"  => "Да",
                             "YES" => "Нет",
                         ]),
-                        ],
                     ],
-                "CURRENCY"       => [ "Валюта", [ "select", $common_helpers->add_not_selected($currencies) ] ],
+                ],
+                "CURRENCY"         => [ "Валюта", [ "select", $common_helpers->add_not_selected($currencies) ] ],
             ],
         ],
         [
@@ -248,7 +257,56 @@ if( $RIGHT >= "R" ){
             }
         }
 
+        function PricevaNotReadyOptions() {
+            var form = BX('options');
+            var select_SYNC_DOMINANCE = BX.findChildren(form, {
+                tag: 'select',
+                attribute: {name: 'SYNC_DOMINANCE'}
+            }, true);
+            BX.bind(select_SYNC_DOMINANCE[0], 'bxchange', function () {
+                if (this.value !== "bitrix") {
+                    alert("Извините, но в данный момент реализован только один вариант данной опции (Bitrix). За дополнительной информацией вы можете обратиться в тех. поддержку компании Priceva.");
+                    select_SYNC_DOMINANCE[0].value = "bitrix";
+                }
+            })
+        }
+
+        function showDownloadsIfPriceva() {
+            var form = BX('options');
+            var select_SYNC_DOMINANCE = BX.findChildren(form, {
+                tag: 'select',
+                attribute: {name: 'SYNC_DOMINANCE'}
+            }, true);
+            BX.bind(select_SYNC_DOMINANCE[0], 'bxchange', check_showDownloadsIfPriceva)
+        }
+
+        function check_showDownloadsIfPriceva() {
+            var form = BX('options'),
+                select_SYNC_DOMINANCE = BX.findChildren(form, {
+                    tag: 'select',
+                    attribute: {name: 'SYNC_DOMINANCE'}
+                }, true),
+                select_DOWNLOAD_AT_TIME = BX.findChildren(form, {
+                    tag: 'select',
+                    attribute: {name: 'DOWNLOAD_AT_TIME'}
+                }, true);
+
+            var s = select_DOWNLOAD_AT_TIME[0],
+                d = select_SYNC_DOMINANCE[0];
+
+            if (d.value === "priceva") {
+                BX.adjust(s, {props: {disabled: false}});
+                s.value = 0;
+            } else {
+                BX.adjust(s, {props: {disabled: true}});
+                s.value = 0;
+            }
+        }
+
         BX.ready(doShowAndHide);
+        BX.ready(PricevaNotReadyOptions);
+        BX.ready(showDownloadsIfPriceva);
+        BX.ready(check_showDownloadsIfPriceva);
     </script>
 <? } ?>
 

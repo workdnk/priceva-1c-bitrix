@@ -40,7 +40,7 @@ class PricevaConnector
             }
 
             if( $dbProducts = \CCatalogProduct::GetList() ){
-                $api_key     = CommonHelpers::get_api_key();
+                $api_key = CommonHelpers::get_api_key();
 
                 $this->sync($api_key, $dbProducts);
             }else{
@@ -60,17 +60,66 @@ class PricevaConnector
      * @param string     $api_key
      * @param \CDBResult $dbProducts
      *
-     * @throws PricevaException
+     * @throws \Exception
      */
     private function sync( $api_key, $dbProducts )
     {
-        $reports = $this->get_reports($api_key);
-
         $id_type_of_price = CommonHelpers::get_type_price_ID();
         $price_recalc     = CommonHelpers::get_price_recalc();
         $currency         = CommonHelpers::get_currency();
 
         $sync_field = CommonHelpers::get_sync_field();
+
+        $sync_dominance = CommonHelpers::get_sync_dominance();
+
+        switch( $sync_dominance ){
+            case "priceva":
+                {
+                    $this->priceva_to_bitrix($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field);
+                    break;
+                }
+            case "bitrix":
+                {
+                    $this->bitrix_to_priceva($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field);
+                    break;
+                }
+            default:
+                throw new \Exception("Wrong sync dominance type in module " . CommonHelpers::MODULE_ID);
+        }
+
+        $this->add_event();
+    }
+
+    private function priceva_to_bitrix(
+        $api_key,
+        $dbProducts,
+        $id_type_of_price,
+        $price_recalc,
+        $currency,
+        $sync_field
+    ){
+
+    }
+
+    /**
+     * @param string     $api_key
+     * @param \CDBResult $dbProducts
+     * @param int        $id_type_of_price
+     * @param bool       $price_recalc
+     * @param string     $currency
+     * @param string     $sync_field
+     *
+     * @throws PricevaException
+     */
+    private function bitrix_to_priceva(
+        $api_key,
+        $dbProducts,
+        $id_type_of_price,
+        $price_recalc,
+        $currency,
+        $sync_field
+    ){
+        $reports = $this->get_reports($api_key);
 
         while( $product = $dbProducts->Fetch() ){
             if( $sync_field === "articul" ){
@@ -86,8 +135,6 @@ class PricevaConnector
                 $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
             }
         }
-
-        $this->add_event();
     }
 
     private function get_bitrix_articul( $id )
@@ -116,25 +163,52 @@ class PricevaConnector
 
     /**
      * @param string $api_key
+     * @param int    $page
+     * @param string $sync_dominance
      *
      * @return array
      * @throws PricevaException
+     * @throws \Exception
      */
-    private function get_reports( $api_key )
+    private function get_reports( $api_key, $page = 1, $sync_dominance = "bitrix" )
     {
-        $api = new PricevaAPI($api_key);
+        switch( $sync_dominance ){
+            case "bitrix":
+                {
+                    $api = new PricevaAPI($api_key);
 
-        $filters        = new \Priceva\Params\Filters();
-        $product_fields = new \Priceva\Params\ProductFields();
+                    $filters        = new \Priceva\Params\Filters();
+                    $product_fields = new \Priceva\Params\ProductFields();
 
-        $filters[ 'limit' ] = 1000;
+                    $filters[ 'limit' ] = 1000;
+                    $filters[ 'page' ]  = $page;
 
-        $product_fields[] = 'client_code';
-        $product_fields[] = 'articul';
+                    $product_fields[] = 'client_code';
+                    $product_fields[] = 'articul';
 
-        $reports = $api->report_list($filters, $product_fields);
+                    $reports = $api->report_list($filters, $product_fields);
 
-        return $reports->get_result()->objects;
+                    $pages_cnt = (int)$reports->get_result()->pagination->pages_cnt;
+
+                    $objects = $reports->get_result()->objects;
+
+                    while( $pages_cnt > 1 ){
+                        $filters[ 'page' ] = $pages_cnt--;
+
+                        $reports = $api->report_list($filters, $product_fields);
+
+                        $objects = array_merge($objects, $reports->get_result()->objects);
+                    }
+
+                    return $objects;
+
+                    break;
+                }
+            default:
+                {
+                    throw new \Exception("Wrong dominance type");
+                }
+        }
     }
 
     /**
