@@ -40,23 +40,9 @@ class PricevaConnector
             }
 
             if( $dbProducts = \CCatalogProduct::GetList() ){
-                $sync_method = CommonHelpers::get_sync_method();
                 $api_key     = CommonHelpers::get_api_key();
 
-                switch( $sync_method ){
-                    case "all_to_all":
-                        {
-                            $this->sync_all_to_all($api_key, $dbProducts);
-                            break;
-                        }
-                    case "one_to_one":
-                        {
-                            $this->sync_one_to_one($api_key, $dbProducts);
-                            break;
-                        }
-                    default:
-                        throw new \Exception("Wrong sync dominance type in module " . CommonHelpers::MODULE_ID);
-                }
+                $this->sync($api_key, $dbProducts);
             }else{
                 throw new \Exception("Cannot get list of products");
             }
@@ -73,19 +59,10 @@ class PricevaConnector
     /**
      * @param string     $api_key
      * @param \CDBResult $dbProducts
-     */
-    private function sync_one_to_one( $api_key, $dbProducts )
-    {
-
-    }
-
-    /**
-     * @param string     $api_key
-     * @param \CDBResult $dbProducts
      *
      * @throws PricevaException
      */
-    private function sync_all_to_all( $api_key, $dbProducts )
+    private function sync( $api_key, $dbProducts )
     {
         $reports = $this->get_reports($api_key);
 

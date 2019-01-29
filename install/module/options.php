@@ -55,14 +55,6 @@ if( $RIGHT >= "R" ){
                         ]),
                     ],
                 ],
-                "SYNC_METHOD"    => [
-                    "Метод синхронизации", [
-                        "select", $common_helpers->add_not_selected([
-                            "all_to_all" => "Сразу всю кампанию",
-                            "one_to_one" => "Товар за товаром",
-                        ]),
-                    ],
-                ],
                 "PRICE_RECALC"   => [
                     "Пересчитывать цену при ее установке", [
                         "select", $common_helpers->add_not_selected([

@@ -138,14 +138,6 @@ class CommonHelpers
     /**
      * @return bool|string|null
      */
-    public static function get_sync_method()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'SYNC_METHOD');
-    }
-
-    /**
-     * @return bool|string|null
-     */
     public static function get_sync_field()
     {
         return \COption::GetOptionString(self::MODULE_ID, 'SYNC_FIELD');
