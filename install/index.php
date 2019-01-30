@@ -14,7 +14,7 @@ Loc::loadMessages(__FILE__);
 
 Class priceva_connector extends CModule
 {
-    var $MODULE_ID = '';
+    var $MODULE_ID = 'priceva.connector';
 
     var $MODULE_VERSION      = '';
     var $MODULE_VERSION_DATE = '';
@@ -40,8 +40,6 @@ Class priceva_connector extends CModule
     function __construct()
     {
         $this->common_helpers = self::autoload_helpers();
-
-        $this->MODULE_ID = $this->common_helpers::MODULE_ID;
 
         $arModuleVersion = [];
 
