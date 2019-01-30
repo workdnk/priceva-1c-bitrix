@@ -75,8 +75,8 @@ if( $RIGHT >= "R" ){
                 "PRICE_RECALC"     => [
                     "Пересчитывать цену при ее установке", [
                         "select", $common_helpers->add_not_selected([
-                            "NO"  => "Да",
-                            "YES" => "Нет",
+                            "NO"  => "Нет",
+                            "YES" => "Да",
                         ]),
                     ],
                 ],
