@@ -75,4 +75,12 @@ class OptionsHelpers
     {
         return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'PRICE_RECALC'));
     }
+
+    /**
+     * @return bool
+     */
+    public static function get_sync_only_active()
+    {
+        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_ONLY_ACTIVE'));
+    }
 }

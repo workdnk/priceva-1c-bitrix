@@ -39,10 +39,22 @@ class PricevaConnector
                 throw new LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
             }
 
-            if( $dbProducts = \CCatalogProduct::GetList() ){
-                $api_key = OptionsHelpers::get_api_key();
+            $api_key          = OptionsHelpers::get_api_key();
+            $sync_only_active = OptionsHelpers::get_sync_only_active();
 
-                $this->sync($api_key, $dbProducts);
+            $arFilter = [
+                'IBLOCK_ID' => 2,
+            ];
+
+            if( $sync_only_active ){
+                $arFilter = array_merge($arFilter, [
+                    'ACTIVE'      => 'Y',
+                    'ACTIVE_DATE' => 'Y',
+                ]);
+            }
+
+            if( $dbProducts = \CIBlockElement::GetList($arFilter) ){
+                $this->sync($api_key, $dbProducts, $sync_only_active);
             }else{
                 throw new \Exception("Cannot get list of products");
             }
@@ -61,29 +73,28 @@ class PricevaConnector
      *
      * @param string     $api_key
      * @param \CDBResult $dbProducts
+     * @param bool       $sync_only_active
      *
-     * @throws \Exception
      * @throws PricevaException
+     * @throws \Exception
      */
-    private function sync( $api_key, $dbProducts )
+    private function sync( $api_key, $dbProducts, $sync_only_active )
     {
         $id_type_of_price = CommonHelpers::get_type_price_ID();
         $price_recalc     = OptionsHelpers::get_price_recalc();
         $currency         = OptionsHelpers::get_currency();
-
-        $sync_field = OptionsHelpers::get_sync_field();
-
-        $sync_dominance = OptionsHelpers::get_sync_dominance();
+        $sync_field       = OptionsHelpers::get_sync_field();
+        $sync_dominance   = OptionsHelpers::get_sync_dominance();
 
         switch( $sync_dominance ){
             case "priceva":
                 {
-                    $this->priceva_to_bitrix($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field);
+                    $this->priceva_to_bitrix($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
                     break;
                 }
             case "bitrix":
                 {
-                    $this->bitrix_to_priceva($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field);
+                    $this->bitrix_to_priceva($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
                     break;
                 }
             default:
@@ -99,7 +110,8 @@ class PricevaConnector
         $id_type_of_price,
         $price_recalc,
         $currency,
-        $sync_field
+        $sync_field,
+        $sync_only_active
     ){
 
     }
@@ -113,6 +125,7 @@ class PricevaConnector
      * @param bool       $price_recalc
      * @param string     $currency
      * @param string     $sync_field
+     * @param bool       $sync_only_active
      *
      * @throws PricevaException
      */
@@ -122,9 +135,10 @@ class PricevaConnector
         $id_type_of_price,
         $price_recalc,
         $currency,
-        $sync_field
+        $sync_field,
+        $sync_only_active
     ){
-        $reports = $this->get_reports($api_key);
+        $reports = $this->get_all_reports($api_key, $sync_only_active);
 
         while( $product = $dbProducts->Fetch() ){
             if( $sync_field === "articul" ){
@@ -173,52 +187,43 @@ class PricevaConnector
 
     /**
      * @param string $api_key
-     * @param int    $page
-     * @param string $sync_dominance
+     * @param bool   $sync_only_active
      *
      * @return array
      * @throws PricevaException
-     * @throws \Exception
      */
-    private function get_reports( $api_key, $page = 1, $sync_dominance = "bitrix" )
+    private function get_all_reports( $api_key, $sync_only_active )
     {
-        switch( $sync_dominance ){
-            case "bitrix":
-                {
-                    $api = new PricevaAPI($api_key);
+        $api = new PricevaAPI($api_key);
 
-                    $filters        = new \Priceva\Params\Filters();
-                    $product_fields = new \Priceva\Params\ProductFields();
+        $filters        = new \Priceva\Params\Filters();
+        $product_fields = new \Priceva\Params\ProductFields();
 
-                    $filters[ 'limit' ] = 1000;
-                    $filters[ 'page' ]  = $page;
+        $filters[ 'limit' ] = 1000;
+        $filters[ 'page' ]  = 1;
 
-                    $product_fields[] = 'client_code';
-                    $product_fields[] = 'articul';
-
-                    $reports = $api->report_list($filters, $product_fields);
-
-                    $pages_cnt = (int)$reports->get_result()->pagination->pages_cnt;
-
-                    $objects = $reports->get_result()->objects;
-
-                    while( $pages_cnt > 1 ){
-                        $filters[ 'page' ] = $pages_cnt--;
-
-                        $reports = $api->report_list($filters, $product_fields);
-
-                        $objects = array_merge($objects, $reports->get_result()->objects);
-                    }
-
-                    return $objects;
-
-                    break;
-                }
-            default:
-                {
-                    throw new \Exception("Wrong dominance type");
-                }
+        if( $sync_only_active ){
+            $filters[ 'active' ] = 1;
         }
+
+        $product_fields[] = 'client_code';
+        $product_fields[] = 'articul';
+
+        $reports = $api->report_list($filters, $product_fields);
+
+        $pages_cnt = (int)$reports->get_result()->pagination->pages_cnt;
+
+        $objects = $reports->get_result()->objects;
+
+        while( $pages_cnt > 1 ){
+            $filters[ 'page' ] = $pages_cnt--;
+
+            $reports = $api->report_list($filters, $product_fields);
+
+            $objects = array_merge($objects, $reports->get_result()->objects);
+        }
+
+        return $objects;
     }
 
     /**

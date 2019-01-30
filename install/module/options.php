@@ -47,6 +47,14 @@ if( $RIGHT >= "R" ){
                         ]),
                     ],
                 ],
+                "SYNC_ONLY_ACTIVE" => [
+                    "В синхронизации участвуют только активные товары", [
+                        "select", $common_helpers->add_not_selected([
+                            "NO"  => "Нет",
+                            "YES" => "Да",
+                        ]),
+                    ],
+                ],
                 "SYNC_DOMINANCE"   => [
                     "Первоисточник данных", [
                         "select", $common_helpers->add_not_selected([
