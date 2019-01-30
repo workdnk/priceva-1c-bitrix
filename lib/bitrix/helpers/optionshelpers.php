@@ -83,4 +83,12 @@ class OptionsHelpers
     {
         return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_ONLY_ACTIVE'));
     }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_download_at_time()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'DOWNLOAD_AT_TIME');
+    }
 }
