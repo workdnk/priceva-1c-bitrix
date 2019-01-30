@@ -151,7 +151,12 @@ class PricevaConnector
 
     public function get_last_info_msg()
     {
-        return "Не найдено товаров в Priceva: {$this->info[product_not_found_priceva]}, не найдено товаров по артикулам в Bitrix: {$this->info[product_not_found_bitrix_articul]}, нулевых цен в Priceva: {$this->info[price_is_null_priceva]}, успешно обновленных товаров: {$this->info[product_synced]}, ошибок при обновлении товаров: {$this->info[product_not_synced]}";
+        return
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT1") . ": {$this->info['product_not_found_priceva']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT2") . ": {$this->info['product_not_found_bitrix_articul']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT3") . ": {$this->info['price_is_null_priceva']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}";
     }
 
     private function add_event()
