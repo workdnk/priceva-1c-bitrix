@@ -27,4 +27,52 @@ class OptionsHelpers
 
         return isset($RestoreDefaults);
     }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_agent_id()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'AGENT_ID');
+    }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_api_key()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'API_KEY');
+    }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_sync_dominance()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_DOMINANCE');
+    }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_sync_field()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_FIELD');
+    }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_currency()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'CURRENCY');
+    }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_price_recalc()
+    {
+        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'PRICE_RECALC'));
+    }
 }

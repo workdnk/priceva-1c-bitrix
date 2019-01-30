@@ -40,7 +40,7 @@ class CommonHelpers
      *
      * @return bool
      */
-    private static function convert_to_bool( $val )
+    public static function convert_to_bool( $val )
     {
         return $val === "YES";
     }
@@ -120,46 +120,6 @@ class CommonHelpers
     }
 
     /**
-     * @return bool|string|null
-     */
-    public static function get_api_key()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'API_KEY');
-    }
-
-    /**
-     * @return bool|string|null
-     */
-    public static function get_sync_dominance()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'SYNC_DOMINANCE');
-    }
-
-    /**
-     * @return bool|string|null
-     */
-    public static function get_sync_field()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'SYNC_FIELD');
-    }
-
-    /**
-     * @return bool|string|null
-     */
-    public static function get_price_recalc()
-    {
-        return self::convert_to_bool(\COption::GetOptionString(self::MODULE_ID, 'PRICE_RECALC'));
-    }
-
-    /**
-     * @return bool|string|null
-     */
-    public static function get_currency()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'CURRENCY');
-    }
-
-    /**
      * @return array
      * @throws LoaderException
      */
@@ -198,13 +158,5 @@ class CommonHelpers
         }
 
         return $arr;
-    }
-
-    /**
-     * @return bool|string|null
-     */
-    public static function get_agent_id()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'AGENT_ID');
     }
 }

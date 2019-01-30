@@ -13,7 +13,7 @@ require_once __DIR__ . "/../../sdk/vendor/autoload.php";
 
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
-use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 use Priceva\PricevaAPI;
 use Priceva\PricevaException;
 
@@ -40,7 +40,7 @@ class PricevaConnector
             }
 
             if( $dbProducts = \CCatalogProduct::GetList() ){
-                $api_key = CommonHelpers::get_api_key();
+                $api_key = OptionsHelpers::get_api_key();
 
                 $this->sync($api_key, $dbProducts);
             }else{
@@ -61,16 +61,17 @@ class PricevaConnector
      * @param \CDBResult $dbProducts
      *
      * @throws \Exception
+     * @throws PricevaException
      */
     private function sync( $api_key, $dbProducts )
     {
         $id_type_of_price = CommonHelpers::get_type_price_ID();
-        $price_recalc     = CommonHelpers::get_price_recalc();
-        $currency         = CommonHelpers::get_currency();
+        $price_recalc     = OptionsHelpers::get_price_recalc();
+        $currency         = OptionsHelpers::get_currency();
 
-        $sync_field = CommonHelpers::get_sync_field();
+        $sync_field = OptionsHelpers::get_sync_field();
 
-        $sync_dominance = CommonHelpers::get_sync_dominance();
+        $sync_dominance = OptionsHelpers::get_sync_dominance();
 
         switch( $sync_dominance ){
             case "priceva":
@@ -219,7 +220,7 @@ class PricevaConnector
      */
     private function get_price( $objects, $id )
     {
-        $sync_field = CommonHelpers::get_sync_field();
+        $sync_field = OptionsHelpers::get_sync_field();
 
         $key = array_search($id, array_column($objects, $sync_field));
 

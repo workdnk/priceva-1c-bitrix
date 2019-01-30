@@ -27,7 +27,7 @@ if( $RIGHT >= "R" ){
 
     $types_of_price = $common_helpers::get_types_of_price();
     $currencies     = $common_helpers::get_currencies();
-    $agent_id       = $common_helpers::get_agent_id();
+    $agent_id       = OptionsHelpers::get_agent_id();
 
     // массив вкладок, свойств
     $aTabs      = [
