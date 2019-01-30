@@ -47,6 +47,14 @@ if( $RIGHT >= "R" ){
                         ]),
                     ],
                 ],
+                "CLIENT_CODE"      => [
+                    "Что использовать в качестве аналога поля client_code", [
+                        "select", $common_helpers->add_not_selected([
+                            "ID"   => "ID товара",
+                            "CODE" => "Симольный код товара",
+                        ]),
+                    ],
+                ],
                 "SYNC_ONLY_ACTIVE" => [
                     "В синхронизации участвуют только активные товары", [
                         "select", $common_helpers->add_not_selected([
@@ -265,20 +273,6 @@ if( $RIGHT >= "R" ){
             }
         }
 
-        function PricevaNotReadyOptions() {
-            var form = BX('options');
-            var select_SYNC_DOMINANCE = BX.findChildren(form, {
-                tag: 'select',
-                attribute: {name: 'SYNC_DOMINANCE'}
-            }, true);
-            BX.bind(select_SYNC_DOMINANCE[0], 'bxchange', function () {
-                if (this.value !== "bitrix") {
-                    alert("Извините, но в данный момент реализован только один вариант данной опции (Bitrix). За дополнительной информацией вы можете обратиться в тех. поддержку компании Priceva.");
-                    select_SYNC_DOMINANCE[0].value = "bitrix";
-                }
-            })
-        }
-
         function showDownloadsIfPriceva() {
             var form = BX('options');
             var select_SYNC_DOMINANCE = BX.findChildren(form, {
@@ -304,7 +298,37 @@ if( $RIGHT >= "R" ){
 
             if (d.value === "priceva") {
                 BX.adjust(s, {props: {disabled: false}});
+            } else {
+                BX.adjust(s, {props: {disabled: true}});
                 s.value = 0;
+            }
+        }
+
+        function showClientCodeIfClientCode() {
+            var form = BX('options');
+            var select_SYNC_FIELD = BX.findChildren(form, {
+                tag: 'select',
+                attribute: {name: 'SYNC_FIELD'}
+            }, true);
+            BX.bind(select_SYNC_FIELD[0], 'bxchange', check_showClientCodeIfClientCode)
+        }
+
+        function check_showClientCodeIfClientCode() {
+            var form = BX('options'),
+                select_SYNC_FIELD = BX.findChildren(form, {
+                    tag: 'select',
+                    attribute: {name: 'SYNC_FIELD'}
+                }, true),
+                select_CLIENT_CODE = BX.findChildren(form, {
+                    tag: 'select',
+                    attribute: {name: 'CLIENT_CODE'}
+                }, true);
+
+            var s = select_CLIENT_CODE[0],
+                d = select_SYNC_FIELD[0];
+
+            if (d.value === "client_code") {
+                BX.adjust(s, {props: {disabled: false}});
             } else {
                 BX.adjust(s, {props: {disabled: true}});
                 s.value = 0;
@@ -312,9 +336,10 @@ if( $RIGHT >= "R" ){
         }
 
         BX.ready(doShowAndHide);
-        BX.ready(PricevaNotReadyOptions);
         BX.ready(showDownloadsIfPriceva);
         BX.ready(check_showDownloadsIfPriceva);
+        BX.ready(showClientCodeIfClientCode);
+        BX.ready(check_showClientCodeIfClientCode);
     </script>
 <? } ?>
 

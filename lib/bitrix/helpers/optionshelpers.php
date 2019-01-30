@@ -95,8 +95,8 @@ class OptionsHelpers
     /**
      * @return bool|string|null
      */
-    public static function get_download_at_time()
+    public static function get_client_code()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'DOWNLOAD_AT_TIME');
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'CLIENT_CODE');
     }
 }
