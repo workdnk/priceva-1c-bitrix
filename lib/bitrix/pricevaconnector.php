@@ -57,6 +57,8 @@ class PricevaConnector
     }
 
     /**
+     * @noinspection PhpUndefinedClassInspection
+     *
      * @param string     $api_key
      * @param \CDBResult $dbProducts
      *
@@ -103,6 +105,8 @@ class PricevaConnector
     }
 
     /**
+     * @noinspection PhpUndefinedClassInspection
+     *
      * @param string     $api_key
      * @param \CDBResult $dbProducts
      * @param int        $id_type_of_price
