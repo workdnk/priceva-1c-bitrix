@@ -261,25 +261,4 @@ class PricevaConnector
             ++$this->info[ 'product_synced' ];
         }
     }
-
-    /**
-     * @return array
-     * @throws LoaderException
-     */
-    public function get_currencies()
-    {
-        $arr = [];
-
-        if( !\Bitrix\Main\Loader::includeModule('catalog') ){
-            throw new LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
-        }
-        $by           = "currency";
-        $order        = "asc";
-        $dbCurrencies = \CCurrency::GetList($by, $order);
-        while( $dbCurrency = $dbCurrencies->Fetch() ){
-            $arr[ $dbCurrency[ 'CURRENCY' ] ] = $dbCurrency[ 'FULL_NAME' ];
-        }
-
-        return $arr;
-    }
 }
