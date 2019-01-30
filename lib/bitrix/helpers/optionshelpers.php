@@ -69,7 +69,7 @@ class OptionsHelpers
     }
 
     /**
-     * @return bool|string|null
+     * @return bool
      */
     public static function get_price_recalc()
     {
