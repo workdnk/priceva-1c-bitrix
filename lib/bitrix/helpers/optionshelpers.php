@@ -91,4 +91,12 @@ class OptionsHelpers
     {
         return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'DOWNLOAD_AT_TIME');
     }
+
+    /**
+     * @return bool|string|null
+     */
+    public static function get_download_at_time()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'DOWNLOAD_AT_TIME');
+    }
 }

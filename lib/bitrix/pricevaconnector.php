@@ -20,11 +20,13 @@ use Priceva\PricevaException;
 class PricevaConnector
 {
     private $info = [
-        "product_not_found_priceva"        => 0,
-        "product_not_found_bitrix_articul" => 0,
-        "price_is_null_priceva"            => 0,
-        "product_synced"                   => 0,
-        "product_not_synced"               => 0,
+        "product_not_found_priceva" => 0,
+        "product_not_found_bitrix"  => 0,
+        "articul_priceva_is_empty"  => 0,
+        "articul_bitrix_is_empty"   => 0,
+        "price_is_null_priceva"     => 0,
+        "product_synced"            => 0,
+        "product_not_synced"        => 0,
     ];
 
     public function __construct()
@@ -42,22 +44,7 @@ class PricevaConnector
             $api_key          = OptionsHelpers::get_api_key();
             $sync_only_active = OptionsHelpers::get_sync_only_active();
 
-            $arFilter = [
-                'IBLOCK_ID' => 2,
-            ];
-
-            if( $sync_only_active ){
-                $arFilter = array_merge($arFilter, [
-                    'ACTIVE'      => 'Y',
-                    'ACTIVE_DATE' => 'Y',
-                ]);
-            }
-
-            if( $dbProducts = \CIBlockElement::GetList($arFilter) ){
-                $this->sync($api_key, $dbProducts, $sync_only_active);
-            }else{
-                throw new \Exception("Cannot get list of products");
-            }
+            $this->sync($api_key, $sync_only_active);
 
         }catch( LoaderException $e ){
             \AddMessage2Log($e->getMessage());
@@ -69,16 +56,13 @@ class PricevaConnector
     }
 
     /**
-     * @noinspection PhpUndefinedClassInspection
-     *
-     * @param string     $api_key
-     * @param \CDBResult $dbProducts
-     * @param bool       $sync_only_active
+     * @param string $api_key
+     * @param bool   $sync_only_active
      *
      * @throws PricevaException
      * @throws \Exception
      */
-    private function sync( $api_key, $dbProducts, $sync_only_active )
+    private function sync( $api_key, $sync_only_active )
     {
         $id_type_of_price = CommonHelpers::get_type_price_ID();
         $price_recalc     = OptionsHelpers::get_price_recalc();
@@ -89,12 +73,12 @@ class PricevaConnector
         switch( $sync_dominance ){
             case "priceva":
                 {
-                    $this->priceva_to_bitrix($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
+                    $this->priceva_to_bitrix($api_key, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
                     break;
                 }
             case "bitrix":
                 {
-                    $this->bitrix_to_priceva($api_key, $dbProducts, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
+                    $this->bitrix_to_priceva($api_key, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
                     break;
                 }
             default:
@@ -104,34 +88,135 @@ class PricevaConnector
         $this->add_event();
     }
 
+    /**
+     * @noinspection PhpUndefinedClassInspection
+     *
+     * @param string $api_key
+     * @param int    $id_type_of_price
+     * @param bool   $price_recalc
+     * @param string $currency
+     * @param string $sync_field
+     * @param bool   $sync_only_active
+     *
+     * @throws PricevaException
+     */
     private function priceva_to_bitrix(
         $api_key,
-        $dbProducts,
         $id_type_of_price,
         $price_recalc,
         $currency,
         $sync_field,
         $sync_only_active
     ){
+        $api = new PricevaAPI($api_key);
 
+        $filters        = new \Priceva\Params\Filters();
+        $product_fields = new \Priceva\Params\ProductFields();
+
+        $filters[ 'limit' ] = OptionsHelpers::get_download_at_time();
+        $filters[ 'page' ]  = 1;
+
+        if( $sync_only_active ){
+            $filters[ 'active' ] = 1;
+        }
+
+        $product_fields[] = 'client_code';
+        $product_fields[] = 'articul';
+
+        $reports = $api->report_list($filters, $product_fields);
+
+        $pages_cnt = (int)$reports->get_result()->pagination->pages_cnt;
+
+        $priceva_products = $reports->get_result()->objects;
+
+        $this->process_priceva_products($sync_field, $sync_only_active, $priceva_products, $currency, $id_type_of_price, $price_recalc);
+
+        while( $pages_cnt > 1 ){
+            $filters[ 'page' ] = $pages_cnt--;
+
+            $reports = $api->report_list($filters, $product_fields);
+
+            $priceva_products = $reports->get_result()->objects;
+
+            $this->process_priceva_products($sync_field, $sync_only_active, $priceva_products, $currency, $id_type_of_price, $price_recalc);
+        }
+    }
+
+    /**
+     * @param string $sync_field
+     * @param bool   $sync_only_active
+     * @param array  $priceva_products
+     * @param string $currency
+     * @param int    $id_type_of_price
+     * @param bool   $price_recalc
+     */
+    private function process_priceva_products(
+        $sync_field,
+        $sync_only_active,
+        $priceva_products,
+        $currency,
+        $id_type_of_price,
+        $price_recalc
+    ){
+        foreach( $priceva_products as $priceva_product ){
+            if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
+                $this->process_bitrix_product($sync_field, $product, [ $priceva_product ], $currency, $id_type_of_price, $price_recalc);
+            }else{
+                ++$this->info[ 'product_not_found_bitrix' ];
+            }
+        }
     }
 
     /**
      * @noinspection PhpUndefinedClassInspection
      *
-     * @param string     $api_key
-     * @param \CDBResult $dbProducts
-     * @param int        $id_type_of_price
-     * @param bool       $price_recalc
-     * @param string     $currency
-     * @param string     $sync_field
-     * @param bool       $sync_only_active
+     * @param string    $sync_field
+     * @param bool      $sync_only_active
+     * @param \stdClass $priceva_product
+     *
+     * @return array|null
+     */
+    private function get_bitrix_product( $sync_field, $sync_only_active, $priceva_product )
+    {
+        $arFilter = $this->prepare_filter_product($sync_only_active);
+
+        if( $sync_field === "articul" ){
+            $articul = $priceva_product->articul;
+
+            if( !$articul ){
+                ++$this->info[ 'articul_priceva_is_empty' ];
+
+                return [];
+            }
+
+            $arFilter = array_merge($arFilter, [
+                '=PROPERTY_ARTNUMBER' => $articul,
+            ]);
+        }else{
+            $client_code = $priceva_product->client_code;
+
+            $arFilter = array_merge($arFilter, [
+                'ID' => $client_code,
+            ]);
+        }
+
+        $products = \CIBlockElement::GetList([], $arFilter);
+
+        return $products->getNext();
+    }
+
+    /**
+     * @param string $api_key
+     * @param int    $id_type_of_price
+     * @param bool   $price_recalc
+     * @param string $currency
+     * @param string $sync_field
+     * @param bool   $sync_only_active
      *
      * @throws PricevaException
      */
     private function bitrix_to_priceva(
         $api_key,
-        $dbProducts,
         $id_type_of_price,
         $price_recalc,
         $currency,
@@ -140,20 +225,71 @@ class PricevaConnector
     ){
         $reports = $this->get_all_reports($api_key, $sync_only_active);
 
+        $arFilter = $this->prepare_filter_product($sync_only_active);
+
+        $dbProducts = \CIBlockElement::GetList([], $arFilter);
+
         while( $product = $dbProducts->Fetch() ){
-            if( $sync_field === "articul" ){
-                $val = $this->get_bitrix_articul($product[ 'ID' ]);
-                if( !$val ){
-                    ++$this->info[ 'product_not_found_bitrix_articul' ];
-                    continue;
-                }
-            }else{
-                $val = $product[ 'ID' ];
-            }
-            if( 0 < $price = $this->get_price($reports, $val) ){
-                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
-            }
+            $this->process_bitrix_product($sync_field, $product, $reports, $currency, $id_type_of_price, $price_recalc);
         }
+    }
+
+    /**
+     * @param bool $sync_only_active
+     *
+     * @return array
+     */
+    private function prepare_filter_product( $sync_only_active )
+    {
+        $arFilter = [
+            'IBLOCK_ID' => 2,
+        ];
+
+        if( $sync_only_active ){
+            $arFilter = array_merge($arFilter, [
+                'ACTIVE'      => 'Y',
+                'ACTIVE_DATE' => 'Y',
+            ]);
+        }
+
+        return $arFilter;
+    }
+
+    /**
+     * @param string $sync_field
+     * @param array  $product
+     * @param array  $reports
+     * @param string $currency
+     * @param int    $id_type_of_price
+     * @param bool   $price_recalc
+     *
+     * @return bool
+     */
+    private function process_bitrix_product(
+        $sync_field,
+        $product,
+        $reports,
+        $currency,
+        $id_type_of_price,
+        $price_recalc
+    ){
+        if( $sync_field === "articul" ){
+            $bitrix_code = $this->get_bitrix_articul($product[ 'ID' ]);
+            if( !$bitrix_code ){
+                ++$this->info[ 'articul_bitrix_is_empty' ];
+
+                return false;
+            }
+        }else{
+            $bitrix_code = $product[ 'ID' ];
+        }
+        if( 0 < $price = $this->get_price($reports, $bitrix_code, $sync_field) ){
+            $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
+
+            return true;
+        }
+
+        return false;
     }
 
     private function get_bitrix_articul( $id )
@@ -167,10 +303,12 @@ class PricevaConnector
     {
         return
             Loc::getMessage("PRICEVA_BC_INFO_TEXT1") . ": {$this->info['product_not_found_priceva']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT2") . ": {$this->info['product_not_found_bitrix_articul']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT2") . ": {$this->info['product_not_found_bitrix']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT3") . ": {$this->info['price_is_null_priceva']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}";
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}.";
     }
 
     private function add_event()
@@ -227,15 +365,14 @@ class PricevaConnector
     }
 
     /**
-     * @param array $objects
-     * @param int   $id
+     * @param array  $objects
+     * @param int    $id
+     * @param string $sync_field
      *
      * @return int
      */
-    private function get_price( $objects, $id )
+    private function get_price( $objects, $id, $sync_field )
     {
-        $sync_field = OptionsHelpers::get_sync_field();
-
         $key = array_search($id, array_column($objects, $sync_field));
 
         if( $key === false ){
