@@ -193,10 +193,11 @@ class PricevaConnector
                 '=PROPERTY_ARTNUMBER' => $articul,
             ]);
         }else{
-            $client_code = $priceva_product->client_code;
+            $client_code             = $priceva_product->client_code;
+            $what_use_as_client_code = OptionsHelpers::get_client_code();
 
             $arFilter = array_merge($arFilter, [
-                'ID' => $client_code,
+                $what_use_as_client_code => $client_code,
             ]);
         }
 
@@ -281,7 +282,9 @@ class PricevaConnector
                 return false;
             }
         }else{
-            $bitrix_code = $product[ 'ID' ];
+            $what_use_as_client_code = OptionsHelpers::get_client_code();
+
+            $bitrix_code = $product[ $what_use_as_client_code ];
         }
         if( 0 < $price = $this->get_price($reports, $bitrix_code, $sync_field) ){
             $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
