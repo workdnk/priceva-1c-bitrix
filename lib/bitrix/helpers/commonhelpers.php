@@ -112,14 +112,6 @@ class CommonHelpers
     }
 
     /**
-     * @return bool|string|null
-     */
-    public static function get_type_price_ID()
-    {
-        return \COption::GetOptionString(self::MODULE_ID, 'ID_TYPE_PRICE');
-    }
-
-    /**
      * @return array
      * @throws LoaderException
      */

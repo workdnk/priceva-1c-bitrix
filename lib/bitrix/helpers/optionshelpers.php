@@ -47,6 +47,14 @@ class OptionsHelpers
     /**
      * @return bool|string|null
      */
+    public static function get_type_price_ID()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'ID_TYPE_PRICE');
+    }
+
+    /**
+     * @return bool|string|null
+     */
     public static function get_sync_dominance()
     {
         return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_DOMINANCE');
