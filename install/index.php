@@ -273,7 +273,7 @@ Class priceva_connector extends CModule
                 "index_icon"   => "services_page_icon",
                 "text"         => "Priceva",
                 "title"        => "Priceva",
-                "sort"         => 400,
+                "sort"         => 150,
                 "items_id"     => "global_menu_priceva",
                 "help_section" => "custom",
                 "items"        => [],
