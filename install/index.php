@@ -229,7 +229,7 @@ Class priceva_connector extends CModule
 
     private function InstallAgents()
     {
-        $r = CAgent::AddAgent(
+        $id = CAgent::AddAgent(
             "\Priceva\Connector\Bitrix\PricevaConnector::run();",
             "priceva.connector",
             "Y",
@@ -240,7 +240,12 @@ Class priceva_connector extends CModule
             30
         );
 
-        $this->save_unroll($r, "UnInstallAgents");
+        $this->common_helpers->APPLICATION->ResetException();
+
+        if( $id === false ){
+            $this->errors[] = Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_AGENT") . ": " . $this->common_helpers->APPLICATION->GetException();
+            $this->save_unroll(true, "UnInstallAgents");
+        }
     }
 
     private function UnInstallAgents()
@@ -302,7 +307,6 @@ Class priceva_connector extends CModule
 
     private function delete_price_type()
     {
-        global $APPLICATION;
         try{
             if( !\Bitrix\Main\Loader::includeModule('catalog') ){
                 throw new \Bitrix\Main\LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
@@ -310,11 +314,11 @@ Class priceva_connector extends CModule
 
             $type_price_ID = $this->common_helpers::get_type_price_ID();
 
-            $APPLICATION->ResetException();
+            $this->common_helpers->APPLICATION->ResetException();
 
             if( false === $ID = \CCatalogGroup::Delete($type_price_ID) ){
-                if( $APPLICATION->GetException() ){
-                    throw new Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE"));
+                if( $error = $this->common_helpers->APPLICATION->GetException() ){
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
                 }
             }else{
                 return true;
