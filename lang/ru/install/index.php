@@ -17,3 +17,4 @@ $MESS[ "PRICEVA_BC_INSTALL_INSTALL" ]                            = "Устано
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_DELETE_PRICE_TYPE" ]            = "Ошибка удаления типа цены: ";
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED" ] = "Модуль catalog не установлен. Работа модуля PRICEVA невозможна";
 $MESS[ "PRICEVA_BC_UNINSTALL_TITLE_1" ]                          = "Удаление модуля «Priceva: Connector»";
+$MESS[ "PRICEVA_BC_ERROR_DELETE_PRICE_TYPE" ] = "Произошла ошибка при попытке удаления типа цен. Попробуйте удалить тип цен, выбранный в настройках модуля, самостоятельно.";

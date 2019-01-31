@@ -314,7 +314,7 @@ Class priceva_connector extends CModule
 
             if( false === $ID = \CCatalogGroup::Delete($type_price_ID) ){
                 if( $APPLICATION->GetException() ){
-                    throw new Exception("Произошла ошибка при попытке удаления типа цен");
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE"));
                 }
             }else{
                 return true;
