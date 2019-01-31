@@ -13,14 +13,24 @@ if( !check_bitrix_sessid() ) return;
 Loc::loadMessages(__FILE__);
 
 /**
- * @var $Module \priceva_bitrix_connector
+ * @var $Module \priceva_connector
  */
 $errors = $Module->get_errors();
+
+$errors_str = '';
+
+foreach( $errors as $error ){
+    $errors_str .= "<li>" . $error . "</li>";
+}
+
+if( $errors_str ){
+    $errors_str = "<p>Список ошибок:</p><ul>" . $errors_str . "</ul>";
+}
 
 CAdminMessage::ShowOldStyleError(Loc::getMessage("PRICEVA_BC_INSTALL_ERRORS_TITLE")); ?>
 
 <form action="<? echo $APPLICATION->GetCurPage(); ?>">
     <input type="hidden" name="lang" value="<? echo LANG ?>">
-    <?="<pre>" . print_r($errors, true) . "</pre>";?><br/>
+    <?=$errors_str?>
     <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
 </form>
