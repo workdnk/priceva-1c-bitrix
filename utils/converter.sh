@@ -9,7 +9,7 @@ find ./ -name "*.php" -o -name "*.html" -o -name "*.css" -o -name "*.js" -o -nam
 while read file
 do
   echo " $file"
-  mv $file $file.icv
-  iconv -f UTF-8 -t WINDOWS-1251 $file.icv > $file
-  rm -f $file.icv
+  mv "$file" "$file".icv
+  iconv -f UTF-8 -t WINDOWS-1251 "$file".icv > "$file"
+  rm -f "$file".icv
 done
