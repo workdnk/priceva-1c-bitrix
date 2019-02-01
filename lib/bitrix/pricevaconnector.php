@@ -64,7 +64,7 @@ class PricevaConnector
      */
     private function sync( $api_key, $sync_only_active )
     {
-        $id_type_of_price = CommonHelpers::get_type_price_ID();
+        $id_type_of_price = OptionsHelpers::get_type_price_ID();
         $price_recalc     = OptionsHelpers::get_price_recalc();
         $currency         = OptionsHelpers::get_currency();
         $sync_field       = OptionsHelpers::get_sync_field();
