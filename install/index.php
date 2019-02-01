@@ -139,8 +139,7 @@ Class priceva_connector extends CModule
                 self::GetPatch() . "/install/errors.php"
             );
         }else{
-            ModuleManager::unRegisterModule($this->common_helpers::MODULE_ID);
-
+            $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
             $APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                 self::GetPatch() . "/install/unstep1.php"

@@ -7,6 +7,7 @@
  */
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ModuleManager;
 
 if( !check_bitrix_sessid() ) return;
 
@@ -29,3 +30,6 @@ echo ( new CAdminMessage([
         <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
     </div>
 </form>
+
+<?php
+ModuleManager::unRegisterModule($Module->get_info('module_id'));
