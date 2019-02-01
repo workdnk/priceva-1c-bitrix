@@ -23,9 +23,11 @@ Class priceva_connector extends CModule
 
     /**
      * @var $common_helpers  Priceva\Connector\Bitrix\Helpers\CommonHelpers
-     * @var $options_helpers Priceva\Connector\Bitrix\Helpers\OptionsHelpers
      */
     private $common_helpers;
+    /**
+     * @var $options_helpers Priceva\Connector\Bitrix\Helpers\OptionsHelpers
+     */
     private $options_helpers;
 
     private $need_save_unroll = false;
