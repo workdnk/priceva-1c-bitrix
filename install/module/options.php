@@ -12,11 +12,12 @@ use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 try{
     global $APPLICATION, $Update, $Apply;
 
+    $MODULE_ID = "priceva.connector";
+    $res       = CModule::IncludeModule($MODULE_ID);
+
     Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
     Loc::loadMessages(__FILE__);
     $common_helpers = CommonHelpers::getInstance();
-    $MODULE_ID      = "priceva.connector";
-    $res            = CModule::IncludeModule($MODULE_ID);
 
     $RIGHT = $APPLICATION->GetGroupRight($MODULE_ID);
 
