@@ -1,0 +1,2 @@
+<?
+$MESS[ "PRICEVA_BC_COMMON_HELPERS_NOT_SELECTED" ] = "Не выбрано";

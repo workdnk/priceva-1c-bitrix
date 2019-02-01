@@ -90,7 +90,7 @@ class CommonHelpers
      */
     public static function add_not_selected( $select_values )
     {
-        return [ '0' => "Не выбрано" ] + $select_values;
+        return [ '0' => Loc::getMessage("PRICEVA_BC_COMMON_HELPERS_NOT_SELECTED") ] + $select_values;
     }
 
     /**
