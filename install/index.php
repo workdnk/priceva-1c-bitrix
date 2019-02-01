@@ -28,13 +28,8 @@ Class priceva_connector extends CModule
     private $common_helpers;
     private $options_helpers;
 
-    /**
-     * @var bool
-     */
     private $need_save_unroll = false;
-    /**
-     * @var array
-     */
+
     private $unroll_methods = [];
     private $errors         = [];
     private $info           = [];
