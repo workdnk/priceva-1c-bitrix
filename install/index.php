@@ -327,7 +327,7 @@ Class priceva_connector extends CModule
                 }
             }
 
-            if( false === \CCatalogGroup::Delete($type_price_ID) ){
+            if( false === ( new \CCatalogGroup )->Delete($type_price_ID) ){
                 if( $error = $this->common_helpers->APPLICATION->GetException() ){
                     throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
                 }
@@ -365,7 +365,7 @@ Class priceva_connector extends CModule
                 ],
             ];
 
-            $ID = \CCatalogGroup::Add($arFields);
+            $ID = ( new \CCatalogGroup )->Add($arFields);
             if( $ID <= 0 ){
                 throw new \Bitrix\Main\SystemException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_PRICE_TYPE"));
             }else{
