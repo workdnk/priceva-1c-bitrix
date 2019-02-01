@@ -268,8 +268,8 @@ Class priceva_connector extends CModule
             "icon"        => "default_menu_icon",
             "page_icon"   => "default_page_icon",
             "sort"        => 100,
-            "text"        => "Ручное управление",
-            "title"       => "Ручное управление",
+            "text"        => Loc::getMessage("PRICEVA_BC_INSTALL_MANUAL"),
+            "title"       => Loc::getMessage("PRICEVA_BC_INSTALL_MANUAL"),
             "url"         => "/bitrix/admin/priceva_bc.php?lang=" . LANGUAGE_ID,
             "more_url"    => [],
         ];

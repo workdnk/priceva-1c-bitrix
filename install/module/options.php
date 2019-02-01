@@ -33,38 +33,38 @@ if( $RIGHT >= "R" ){
     $aTabs      = [
         [
             "DIV"     => "index",
-            "TAB"     => "Основные",
+            "TAB"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_MAIN"),
             "ICON"    => "testmodule_settings",
-            "TITLE"   => "Основные настройки модуля",
+            "TITLE"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_MEIN_TITLE"),
             "OPTIONS" => [
-                "API_KEY"          => [ "Api-ключ вашей кампании в аккаунте Priceva", [ "text", 32 ] ],
-                "ID_TYPE_PRICE"    => [ "Тип цен, с которым ведется работа", [ "select", $common_helpers->add_not_selected($types_of_price) ] ],
+                "API_KEY"          => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_APIKEY"), [ "text", 32 ] ],
+                "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_TYPE"), [ "select", $common_helpers->add_not_selected($types_of_price) ] ],
                 "SYNC_FIELD"       => [
-                    "Ключ-поле синхронизации цен", [
+                    Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
                         "select", $common_helpers->add_not_selected([
-                            "client_code" => "Внутренний код клиента",
-                            "articul"     => "Артикул",
+                            "client_code" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE"),
+                            "articul"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ARTICUL"),
                         ]),
                     ],
                 ],
                 "CLIENT_CODE"      => [
-                    "Что использовать в качестве аналога поля client_code", [
+                    Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE_ANALOG"), [
                         "select", $common_helpers->add_not_selected([
-                            "ID"   => "ID товара",
-                            "CODE" => "Симольный код товара",
+                            "ID"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRODUCT_ID"),
+                            "CODE" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRODUCT_CODE"),
                         ]),
                     ],
                 ],
                 "SYNC_ONLY_ACTIVE" => [
-                    "В синхронизации участвуют только активные товары", [
+                    Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ACTIVE_PRODUCT"), [
                         "select", $common_helpers->add_not_selected([
-                            "NO"  => "Нет",
-                            "YES" => "Да",
+                            "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
+                            "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
                         ]),
                     ],
                 ],
                 "SYNC_DOMINANCE"   => [
-                    "Первоисточник данных", [
+                    Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_DOMINANCE"), [
                         "select", $common_helpers->add_not_selected([
                             "bitrix"  => "Bitrix",
                             "priceva" => "Priceva",
@@ -72,7 +72,7 @@ if( $RIGHT >= "R" ){
                     ],
                 ],
                 "DOWNLOAD_AT_TIME" => [
-                    "Количество загрузок за раз", [
+                    Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DOWNLOAD_AT_TIME"), [
                         "select", $common_helpers->add_not_selected([
                             "10"   => "10",
                             "100"  => "100",
@@ -81,21 +81,21 @@ if( $RIGHT >= "R" ){
                     ],
                 ],
                 "PRICE_RECALC"     => [
-                    "Пересчитывать цену при ее установке", [
+                    Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
                         "select", $common_helpers->add_not_selected([
-                            "NO"  => "Нет",
-                            "YES" => "Да",
+                            "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
+                            "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
                         ]),
                     ],
                 ],
-                "CURRENCY"         => [ "Валюта", [ "select", $common_helpers->add_not_selected($currencies) ] ],
+                "CURRENCY"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", $common_helpers->add_not_selected($currencies) ] ],
             ],
         ],
         [
             "DIV"     => "rights",
-            "TAB"     => "Права",
+            "TAB"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_RIGHTS"),
             "ICON"    => "",
-            "TITLE"   => "Настройки прав на модуль",
+            "TITLE"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_OPTIONS_RIGHTS"),
             "OPTIONS" => [],
         ],
     ];
@@ -166,6 +166,7 @@ if( $RIGHT >= "R" ){
                             <?
                             if( $type[ 0 ] == "checkbox" ){
                                 ?>
+                                <!--suppress HtmlFormInputWithoutLabel -->
                                 <input type="checkbox" name="<?
                                 echo htmlspecialcharsbx($name) ?>" id="<?
                                 echo htmlspecialcharsbx($name) ?>" value="Y"<?
@@ -175,6 +176,7 @@ if( $RIGHT >= "R" ){
                                 <?
                             }elseif( $type[ 0 ] == "text" ){
                                 ?>
+                                <!--suppress HtmlFormInputWithoutLabel -->
                                 <input type="text" size="<?
                                 echo $type[ 1 ] ?>" maxlength="255" value="<?
                                 echo htmlspecialcharsbx($val) ?>" name="<?
@@ -182,6 +184,7 @@ if( $RIGHT >= "R" ){
                                 <?
                             }elseif( $type[ 0 ] == "textarea" ){
                                 ?>
+                                <!--suppress HtmlFormInputWithoutLabel -->
                                 <textarea rows="<?
                                 echo $type[ 1 ] ?>" name="<?
                                 echo htmlspecialcharsbx($name) ?>" style=
@@ -193,6 +196,7 @@ if( $RIGHT >= "R" ){
                                 <?
                                 if( count($type[ 1 ]) ){
                                     ?>
+                                    <!--suppress HtmlFormInputWithoutLabel -->
                                     <select name="<?
                                     echo htmlspecialcharsbx($name) ?>" onchange="doShowAndHide()">
                                         <?

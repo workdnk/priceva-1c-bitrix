@@ -24,10 +24,10 @@ foreach( $errors as $error ){
 }
 
 if( $errors_str ){
-    $errors_str = "<p>Список ошибок:</p><ul>" . $errors_str . "</ul>";
+    $errors_str = Loc::getMessage("PRICEVA_BC_ERRORS_TEMPLATE_LIST_ERRORS") . $errors_str . "</ul>";
 }
 
-CAdminMessage::ShowOldStyleError(Loc::getMessage("PRICEVA_BC_INSTALL_ERRORS_TITLE")); ?>
+( new CAdminMessage(Loc::getMessage("PRICEVA_BC_INSTALL_ERRORS_TITLE")) )->Show(); ?>
 
 <form action="<? echo $APPLICATION->GetCurPage(); ?>">
     <input type="hidden" name="lang" value="<? echo LANG ?>">
