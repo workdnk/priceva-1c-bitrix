@@ -180,13 +180,13 @@ Class priceva_connector extends CModule
     {
         parent::InstallFiles();
 
-        $r1 = CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lib", true, true);
-        $r2 = CopyDirFiles(self::GetPatch() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin", true, true);
-        $r3 = CopyDirFiles(self::GetPatch() . "/include.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/include.php", true, true);
-        $r4 = CopyDirFiles(self::GetPatch() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
-        $r5 = CopyDirFiles(self::GetPatch() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
+        $r1 = CopyDirFiles(self::GetPatch() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
+        $r2 = CopyDirFiles(self::GetPatch() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
 
-        $this->save_unroll($r1 && $r2 && $r3 && $r4 && $r5, "UnInstallFiles");
+        $r3 = CopyDirFiles(self::GetPatch() . "/lang/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lang/", true, true);
+        $r4 = CopyDirFiles(self::GetPatch() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin/", true, true);
+
+        $this->save_unroll($r1 && $r2 && $r3 && $r4, "UnInstallFiles");
     }
 
     function UnInstallFiles()
@@ -394,13 +394,12 @@ Class priceva_connector extends CModule
 
     private function autoload_helpers()
     {
-        if( !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') && !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ){
-            if( file_exists($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/priceva.connector/include.php") ){
-                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/include.php" );
-            }else{
-                CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/priceva.connector/lib", true, true);
-                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/local/modules/$this->MODULE_ID/include.php" );
-            }
+        if(
+            !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ||
+            !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers')
+        ){
+            CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib", true, true);
+            require_once( self::GetPatch() . "/include.php" );
         }
 
         $this->common_helpers  = \Priceva\Connector\Bitrix\Helpers\CommonHelpers::getInstance();
