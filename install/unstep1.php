@@ -12,12 +12,19 @@ if( !check_bitrix_sessid() ) return;
 
 Loc::loadMessages(__FILE__);
 
-CAdminMessage::ShowNote(Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE")); ?>
+echo ( new CAdminMessage([
+    "MESSAGE" => Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE"),
+    "TYPE"    => "OK",
+]) )->Show(); ?>
 
 <form action="<? echo $APPLICATION->GetCurPage(); ?>">
     <input type="hidden" name="lang" value="<? echo LANG ?>">
-    <?php /** @var priceva_connector $Module */
-    CAdminMessage::ShowMessage(Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE_1") . $Module->get_info('deleted_price') . "") ?>
+    <?php
+    /**
+     * @noinspection PhpUndefinedClassInspection
+     * @var priceva_connector $Module
+     */
+    echo ( new CAdminMessage($Module->get_info('deleted_price')) )->Show() ?>
     <div>
         <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
     </div>
