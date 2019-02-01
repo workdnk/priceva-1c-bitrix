@@ -290,19 +290,23 @@ Class priceva_connector extends CModule
 
             $this->common_helpers->APPLICATION->ResetException();
 
-            if( false === $type_price_name = \CCatalogGroup::GetByID($type_price_ID)[ 'NAME' ] ){
+            if( false == $type_price_name = \CCatalogGroup::GetByID($type_price_ID)[ 'NAME' ] ){
                 if( $error = $this->common_helpers->APPLICATION->GetException() ){
                     throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
+                }else{
+                    return Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_DELETED_EARLIER");
                 }
             }
 
             if( false === ( new \CCatalogGroup )->Delete($type_price_ID) ){
                 if( $error = $this->common_helpers->APPLICATION->GetException() ){
                     throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
+                }else{
+                    throw new \Exception(Loc::getMessage("PRICEVA_BC_INSTALL_UNEXPECTED_SITUATION"));
                 }
             }
 
-            return $type_price_name . "(id=" . $type_price_ID . ")";
+            return Loc::getMessage("PRICEVA_BC_INSTALL_SUCCESS_DELETE_PRICE_TYPE") . $type_price_name . "(id=" . $type_price_ID . ")";
         }catch( \Throwable $e ){
             $this->add_error($e);
         }
