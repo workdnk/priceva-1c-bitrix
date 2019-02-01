@@ -14,7 +14,7 @@ class OptionsHelpers
     private static $instance;
 
     /**
-     * @return \Priceva\Connector\Bitrix\Helpers\CommonHelpers
+     * @return \Priceva\Connector\Bitrix\Helpers\OptionsHelpers
      */
     public static function getInstance()
     {
