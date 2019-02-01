@@ -6,6 +6,8 @@
  * Time: 14:55
  */
 
+use Bitrix\Main\Localization\Loc;
+
 $MODULE_ID = "priceva.connector";
 
 require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/include/prolog_admin.php" );
@@ -13,6 +15,7 @@ require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $MODULE_ID . "/
 
 CModule::IncludeModule($MODULE_ID);
 
+Loc::loadMessages(__FILE__);
 
 $common_helpers = \Priceva\Connector\Bitrix\Helpers\CommonHelpers::getInstance();
 
@@ -34,7 +37,8 @@ if( "POST" === $common_helpers->request_method() ){
 
     <form method="post" action="<? echo $common_helpers->APPLICATION->GetCurPage() ?>?lang=<?=LANGUAGE_ID?>"
           id="priceva_bc">
-    <input type="submit" name="run" value="Запустить синхронизацию" title="Запустить синхронизацию ">
+        <input type="submit" name="run" value="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>"
+               title="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>">
 </form>
 
 <?php
