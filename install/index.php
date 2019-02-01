@@ -38,8 +38,6 @@ Class priceva_connector extends CModule
 
     function __construct()
     {
-        $this->autoload_helpers();
-
         $arModuleVersion = [];
 
         include( __DIR__ . "/version.php" );
@@ -72,6 +70,8 @@ Class priceva_connector extends CModule
     function DoInstall()
     {
         global $APPLICATION;
+
+        $this->autoload_helpers();
 
         if( self::isVersionD7() ){
 
@@ -116,6 +116,8 @@ Class priceva_connector extends CModule
 
     function DoUninstall()
     {
+        $this->autoload_helpers();
+
         global $APPLICATION;
 
         $this->need_save_unroll = true;
@@ -398,7 +400,7 @@ Class priceva_connector extends CModule
             !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ||
             !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers')
         ){
-            CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib", true, true);
+            CopyDirFiles(self::GetPatch() . "/lib/bitrix/helpers/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/helpers/", true, true);
             require_once( self::GetPatch() . "/include.php" );
         }
 
