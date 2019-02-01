@@ -11,6 +11,20 @@ namespace Priceva\Connector\Bitrix\Helpers;
 
 class OptionsHelpers
 {
+    private static $instance;
+
+    /**
+     * @return \Priceva\Connector\Bitrix\Helpers\CommonHelpers
+     */
+    public static function getInstance()
+    {
+        if( null === static::$instance ){
+            static::$instance = new static();
+        }
+
+        return static::$instance;
+    }
+
     /**
      * @return bool
      */
