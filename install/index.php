@@ -195,7 +195,6 @@ Class priceva_connector extends CModule
     {
         parent::UnInstallFiles();
 
-        Bitrix\Main\IO\Directory::deleteDirectory($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID);
         Bitrix\Main\IO\Directory::deleteDirectory($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/priceva_bc.php");
 
         $this->save_unroll(true, "InstallFiles");
