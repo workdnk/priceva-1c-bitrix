@@ -1,4 +1,4 @@
-<?php
+`   <?php
 /**
  * Created by PhpStorm.
  * User: S.Belichenko, email: stanislav@priceva.com
@@ -11,7 +11,7 @@ try{
         "\\Priceva\\Connector\\Bitrix\\Helpers\\CommonHelpers" => "lib/bitrix/helpers/commonhelpers.php",
     ]);
     \Bitrix\Main\Loader::registerAutoLoadClasses('priceva.connector', [
-        "\\Priceva\\Connector\\Bitrix\\Helpers\\OptionsHelpers" => "lib/bitrix/helpers/oprionshelpers.php",
+        "\\Priceva\\Connector\\Bitrix\\Helpers\\OptionsHelpers" => "lib/bitrix/helpers/optionshelpers.php",
     ]);
 }catch( \Bitrix\Main\LoaderException $e ){
     error_log($e);
