@@ -291,12 +291,12 @@ Class priceva_connector extends CModule
         return $arRes;
     }
 
-    private function check_price_type()
+    private function price_type_exist()
     {
         try{
             $dbPriceType = \CCatalogGroup::GetList([], [ "NAME" => $this->common_helpers::NAME_PRICE_TYPE ]);
             while( $arPriceType = $dbPriceType->Fetch() ){
-                return true;
+                return $arPriceType[ 'ID' ];
             }
 
             return false;
@@ -347,8 +347,8 @@ Class priceva_connector extends CModule
         try{
             \Bitrix\Main\Loader::includeModule('catalog');
 
-            if( self::check_price_type() ){
-                throw new \Bitrix\Main\SystemException("Тип цен " . $this->common_helpers::NAME_PRICE_TYPE . " уже создан.");
+            if( false !== $id = self::price_type_exist() ){
+                throw new \Exception(Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST") . $this->common_helpers::NAME_PRICE_TYPE . " (id=" . $id . ")");
             }
             $arFields = [
                 "NAME"           => $this->common_helpers::NAME_PRICE_TYPE,
