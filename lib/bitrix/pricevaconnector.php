@@ -34,6 +34,36 @@ class PricevaConnector
         //
     }
 
+    public function AddGlobalMenuItem( &$aGlobalMenu, &$aModuleMenu )
+    {
+        $aModuleMenu[] = [
+            "parent_menu" => "global_menu_custom",
+            "icon"        => "default_menu_icon",
+            "page_icon"   => "default_page_icon",
+            "sort"        => 100,
+            "text"        => Loc::getMessage("PRICEVA_BC_MANUAL"),
+            "title"       => Loc::getMessage("PRICEVA_BC_MANUAL"),
+            "url"         => "/bitrix/admin/priceva_bc.php?lang=" . LANGUAGE_ID,
+            "more_url"    => [],
+        ];
+
+        $arRes = [
+            "global_menu_custom" => [
+                "menu_id"      => "priceva",
+                "page_icon"    => "services_title_icon",
+                "index_icon"   => "services_page_icon",
+                "text"         => "Priceva",
+                "title"        => "Priceva",
+                "sort"         => 150,
+                "items_id"     => "global_menu_priceva",
+                "help_section" => "custom",
+                "items"        => [],
+            ],
+        ];
+
+        return $arRes;
+    }
+
     public function run()
     {
         try{

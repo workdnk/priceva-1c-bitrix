@@ -19,5 +19,4 @@ $MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED" ] = "Модуль
 $MESS[ "PRICEVA_BC_UNINSTALL_TITLE_1" ]                          = "Удаление модуля «Priceva: Connector»";
 $MESS[ "PRICEVA_BC_ERROR_DELETE_PRICE_TYPE" ] = "Произошла ошибка при попытке удаления типа цен. Попробуйте удалить тип цен, выбранный в настройках модуля, самостоятельно.";
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_ADD_AGENT" ] = "Не удалось создать агента для синхронизации по расписанию";
-$MESS[ "PRICEVA_BC_INSTALL_MANUAL" ] = "Ручное управление";
 $MESS[ "PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST" ] = "Тип цен уже создан: ";

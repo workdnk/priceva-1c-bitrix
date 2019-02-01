@@ -204,7 +204,7 @@ Class priceva_connector extends CModule
     {
         parent::InstallEvents();
 
-        EventManager::getInstance()->registerEventHandler('main', 'OnBuildGlobalMenu', $this->common_helpers::MODULE_ID, 'priceva_connector', 'AddGlobalMenuItem');
+        EventManager::getInstance()->registerEventHandler('main', 'OnBuildGlobalMenu', $this->common_helpers::MODULE_ID, 'Priceva\Connector\Bitrix\PricevaConnector', 'AddGlobalMenuItem');
 
         $this->save_unroll(true, "UnInstallEvents");
     }
@@ -227,7 +227,7 @@ Class priceva_connector extends CModule
     {
         parent::UnInstallEvents();
 
-        EventManager::getInstance()->unRegisterEventHandler('main', 'OnBuildGlobalMenu', $this->common_helpers::MODULE_ID, 'priceva_bitrix_connector', 'AddGlobalMenuItem');
+        EventManager::getInstance()->unRegisterEventHandler('main', 'OnBuildGlobalMenu', $this->common_helpers::MODULE_ID, 'Priceva\Connector\Bitrix\PricevaConnector', 'AddGlobalMenuItem');
 
         $this->save_unroll(true, "InstallEvents");
     }
@@ -261,36 +261,6 @@ Class priceva_connector extends CModule
         );
 
         $this->save_unroll(true, "InstallAgents");
-    }
-
-    public function AddGlobalMenuItem( &$aGlobalMenu, &$aModuleMenu )
-    {
-        $aModuleMenu[] = [
-            "parent_menu" => "global_menu_custom",
-            "icon"        => "default_menu_icon",
-            "page_icon"   => "default_page_icon",
-            "sort"        => 100,
-            "text"        => Loc::getMessage("PRICEVA_BC_INSTALL_MANUAL"),
-            "title"       => Loc::getMessage("PRICEVA_BC_INSTALL_MANUAL"),
-            "url"         => "/bitrix/admin/priceva_bc.php?lang=" . LANGUAGE_ID,
-            "more_url"    => [],
-        ];
-
-        $arRes = [
-            "global_menu_custom" => [
-                "menu_id"      => "priceva",
-                "page_icon"    => "services_title_icon",
-                "index_icon"   => "services_page_icon",
-                "text"         => "Priceva",
-                "title"        => "Priceva",
-                "sort"         => 150,
-                "items_id"     => "global_menu_priceva",
-                "help_section" => "custom",
-                "items"        => [],
-            ],
-        ];
-
-        return $arRes;
     }
 
     private function price_type_exist()

@@ -6,3 +6,4 @@ $MESS[ "PRICEVA_BC_INFO_TEXT4" ] = "успешно обновленных тов
 $MESS[ "PRICEVA_BC_INFO_TEXT5" ] = "ошибок при обновлении товаров";
 $MESS[ "PRICEVA_BC_INFO_TEXT6" ] = "пустой артикул в товаре из Priceva";
 $MESS[ "PRICEVA_BC_INFO_TEXT7" ] = "пустой артикул в товаре из Bitrix";
+$MESS[ "PRICEVA_BC_MANUAL" ]     = "Ручное управление";
