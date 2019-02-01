@@ -22,9 +22,11 @@ Class priceva_connector extends CModule
     var $MODULE_DESCRIPTION  = '';
 
     /**
-     * @var $common_helpers \Priceva\Connector\Bitrix\Helpers\CommonHelpers
+     * @var $common_helpers  Priceva\Connector\Bitrix\Helpers\CommonHelpers
+     * @var $options_helpers Priceva\Connector\Bitrix\Helpers\OptionsHelpers
      */
     private $common_helpers;
+    private $options_helpers;
 
     /**
      * @var bool
@@ -39,7 +41,7 @@ Class priceva_connector extends CModule
 
     function __construct()
     {
-        $this->common_helpers = self::autoload_helpers();
+        $this->autoload_helpers();
 
         $arModuleVersion = [];
 
@@ -420,19 +422,18 @@ Class priceva_connector extends CModule
         $this->errors[] = $error->getMessage();
     }
 
-    private static function autoload_helpers()
+    private function autoload_helpers()
     {
-        $module_id = "priceva.connector";
-
-        if( !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ){
+        if( !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') && !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ){
             if( file_exists($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/priceva.connector/include.php") ){
-                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$module_id/include.php" );
+                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/include.php" );
             }else{
                 CopyDirFiles(self::GetPatch() . "/lib/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/priceva.connector/lib", true, true);
-                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/local/modules/$module_id/include.php" );
+                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/local/modules/$this->MODULE_ID/include.php" );
             }
         }
 
-        return \Priceva\Connector\Bitrix\Helpers\CommonHelpers::class;
+        $this->common_helpers  = \Priceva\Connector\Bitrix\Helpers\CommonHelpers::getInstance();
+        $this->options_helpers = \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::getInstance();
     }
 }
