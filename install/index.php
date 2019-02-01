@@ -232,6 +232,8 @@ Class priceva_connector extends CModule
 
     private function InstallAgents()
     {
+        $this->common_helpers->APPLICATION->ResetException();
+
         $id = CAgent::AddAgent(
             "\Priceva\Connector\Bitrix\PricevaConnector::run();",
             "priceva.connector",
@@ -242,8 +244,6 @@ Class priceva_connector extends CModule
             "01.01.2019 00:00:00",
             30
         );
-
-        $this->common_helpers->APPLICATION->ResetException();
 
         if( $id === false ){
             $this->errors[] = Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_AGENT") . ": " . $this->common_helpers->APPLICATION->GetException();
