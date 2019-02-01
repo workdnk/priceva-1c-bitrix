@@ -16,7 +16,8 @@ CAdminMessage::ShowNote(Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE")); ?>
 
 <form action="<? echo $APPLICATION->GetCurPage(); ?>">
     <input type="hidden" name="lang" value="<? echo LANG ?>">
-    <?php CAdminMessage::ShowMessage(Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE_1")) ?>
+    <?php /** @var priceva_connector $Module */
+    CAdminMessage::ShowMessage(Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE_1") . $Module->get_info('deleted_price') . "") ?>
     <div>
         <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
     </div>

@@ -34,8 +34,8 @@ Class priceva_connector extends CModule
      * @var array
      */
     private $unroll_methods = [];
-
-    private $errors = [];
+    private $errors         = [];
+    private $info           = [];
 
     function __construct()
     {
@@ -163,13 +163,19 @@ Class priceva_connector extends CModule
         return $r;
     }
 
+    /**
+     * @return string
+     */
     function UnInstallDB()
     {
         parent::UnInstallDB();
 
-        $r = $this->delete_price_type();
+        $type_price = $this->delete_price_type();
 
-        $this->save_unroll($r, "InstallDB");
+        $this->save_unroll($type_price, "InstallDB");
+        $this->info[ 'deleted_price' ] = $type_price;
+
+        return $type_price;
     }
 
     function InstallFiles()
@@ -312,17 +318,23 @@ Class priceva_connector extends CModule
                 throw new \Bitrix\Main\LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
             }
 
-            $type_price_ID = $this->common_helpers::get_type_price_ID();
+            $type_price_ID = $this->options_helpers::get_type_price_ID();
 
             $this->common_helpers->APPLICATION->ResetException();
 
-            if( false === $ID = \CCatalogGroup::Delete($type_price_ID) ){
+            if( false === $type_price_name = \CCatalogGroup::GetByID($type_price_ID)[ 'NAME' ] ){
                 if( $error = $this->common_helpers->APPLICATION->GetException() ){
-                    throw new Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
+                    throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
                 }
-            }else{
-                return true;
             }
+
+            if( false === \CCatalogGroup::Delete($type_price_ID) ){
+                if( $error = $this->common_helpers->APPLICATION->GetException() ){
+                    throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
+                }
+            }
+
+            return $type_price_name . "(id=" . $type_price_ID . ")";
         }catch( \Throwable $e ){
             $this->add_error($e);
         }
@@ -378,11 +390,27 @@ Class priceva_connector extends CModule
         }
     }
 
+    /**
+     * @return array
+     */
     public function get_errors()
     {
         return $this->errors;
     }
 
+    /**
+     * @param string $param
+     *
+     * @return array|string
+     */
+    public function get_info( $param = '' )
+    {
+        if( $param ){
+            return $this->info[ $param ];
+        }else{
+            return $this->info;
+        }
+    }
 
     /**
      * @param Throwable $error
