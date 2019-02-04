@@ -249,6 +249,7 @@ Class priceva_connector extends CModule
 
         if( $id === false ){
             $this->errors[] = Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_AGENT") . ": " . $this->common_helpers->APPLICATION->GetException();
+        }else{
             $this->save_unroll(true, "UnInstallAgents");
         }
     }
