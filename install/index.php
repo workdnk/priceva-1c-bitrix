@@ -69,14 +69,12 @@ Class priceva_connector extends CModule
 
     function DoInstall()
     {
-        global $APPLICATION;
-
         $this->autoload_helpers();
 
         if( self::isVersionD7() ){
 
             if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
-                $APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+                $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
             }
 
             $this->need_save_unroll = true;
@@ -95,7 +93,7 @@ Class priceva_connector extends CModule
                     $this->$method;
                 }
 
-                $APPLICATION->IncludeAdminFile(
+                $this->common_helpers->APPLICATION->IncludeAdminFile(
                     Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                     self::GetPatch() . "/install/errors.php"
                 );
@@ -104,21 +102,19 @@ Class priceva_connector extends CModule
 
                 COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
 
-                $APPLICATION->IncludeAdminFile(
+                $this->common_helpers->APPLICATION->IncludeAdminFile(
                     Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                     self::GetPatch() . "/install/step1.php"
                 );
             }
         }else{
-            $APPLICATION->ThrowException(Loc::getMessage("ACADEMY_OOP_INSTALL_ERROR_VERSION"));
+            $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("ACADEMY_OOP_INSTALL_ERROR_VERSION"));
         }
     }
 
     function DoUninstall()
     {
         $this->autoload_helpers();
-
-        global $APPLICATION;
 
         $this->need_save_unroll = true;
 
@@ -136,13 +132,13 @@ Class priceva_connector extends CModule
                 $this->$method();
             }
 
-            $APPLICATION->IncludeAdminFile(
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
                 self::GetPatch() . "/install/errors.php"
             );
         }else{
             $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
-            $APPLICATION->IncludeAdminFile(
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                 self::GetPatch() . "/install/unstep1.php"
             );
