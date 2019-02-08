@@ -11,7 +11,6 @@ namespace Priceva\Connector\Bitrix;
 require_once __DIR__ . "/../../sdk/vendor/autoload.php";
 
 
-use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
@@ -77,16 +76,16 @@ class PricevaConnector
             $sync_only_active = OptionsHelpers::get_sync_only_active();
 
             $this->sync($api_key, $sync_only_active);
-
+            throw new \Exception("blah");
         }catch( LoaderException $e ){
             ++$this->info[ 'module_errors' ];
-            Debug::dumpToFile($e->getMessage());
+            CommonHelpers::write_to_log($e);
         }catch( PricevaException $e ){
             ++$this->info[ 'module_errors' ];
-            Debug::dumpToFile($e->getMessage());
+            CommonHelpers::write_to_log($e);
         }catch( \Throwable $e ){
             ++$this->info[ 'module_errors' ];
-            Debug::dumpToFile($e->getMessage());
+            CommonHelpers::write_to_log($e);
         }
     }
 
