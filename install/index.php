@@ -67,82 +67,107 @@ Class priceva_connector extends CModule
             return dirname(__DIR__);
     }
 
+    /**
+     * @return bool
+     */
     function DoInstall()
     {
-        $this->autoload_helpers();
+        try{
+            $this->autoload_helpers();
 
-        if( self::isVersionD7() ){
+            if( self::isVersionD7() ){
 
-            if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
-                $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+                if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
+                    $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+                }
+
+                $this->need_save_unroll = true;
+
+                $this->InstallFiles();
+                $this->InstallTasks();
+                $this->InstallEvents();
+                $id_type_price = $this->InstallDB();
+                $this->InstallAgents();
+
+                $this->need_save_unroll = false;
+
+                if( $this->errors ){
+
+                    foreach( $this->unroll_methods as $method ){
+                        $this->$method;
+                    }
+
+                    $this->common_helpers->APPLICATION->IncludeAdminFile(
+                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                        self::GetPatch() . "/install/errors.php"
+                    );
+                }else{
+                    ModuleManager::registerModule($this->common_helpers::MODULE_ID);
+
+                    COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
+
+                    $this->common_helpers->APPLICATION->IncludeAdminFile(
+                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                        self::GetPatch() . "/install/step1.php"
+                    );
+                }
+            }else{
+                throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
             }
+        }catch( Exception $e ){
+            $this->common_helpers::write_to_log($e);
+            $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    function DoUninstall()
+    {
+
+        try{
+            $this->autoload_helpers();
 
             $this->need_save_unroll = true;
 
-            $this->InstallFiles();
-            $this->InstallTasks();
-            $this->InstallEvents();
-            $id_type_price = $this->InstallDB();
-            $this->InstallAgents();
+            $this->UnInstallAgents();
+            $this->UnInstallEvents();
+            $this->UnInstallTasks();
+            $this->UnInstallDB();
+            $this->UnInstallFiles();
 
             $this->need_save_unroll = false;
 
             if( $this->errors ){
 
                 foreach( $this->unroll_methods as $method ){
-                    $this->$method;
+                    $this->$method();
                 }
 
                 $this->common_helpers->APPLICATION->IncludeAdminFile(
-                    Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                    Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
                     self::GetPatch() . "/install/errors.php"
                 );
             }else{
-                ModuleManager::registerModule($this->common_helpers::MODULE_ID);
-
-                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
-
+                $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
                 $this->common_helpers->APPLICATION->IncludeAdminFile(
                     Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                    self::GetPatch() . "/install/step1.php"
+                    self::GetPatch() . "/install/unstep1.php"
                 );
             }
-        }else{
-            $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("ACADEMY_OOP_INSTALL_ERROR_VERSION"));
+        }catch( Exception $e ){
+            $this->common_helpers::write_to_log($e);
+            $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
+
+            return false;
         }
-    }
 
-    function DoUninstall()
-    {
-        $this->autoload_helpers();
-
-        $this->need_save_unroll = true;
-
-        $this->UnInstallAgents();
-        $this->UnInstallEvents();
-        $this->UnInstallTasks();
-        $this->UnInstallDB();
-        $this->UnInstallFiles();
-
-        $this->need_save_unroll = false;
-
-        if( $this->errors ){
-
-            foreach( $this->unroll_methods as $method ){
-                $this->$method();
-            }
-
-            $this->common_helpers->APPLICATION->IncludeAdminFile(
-                Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
-                self::GetPatch() . "/install/errors.php"
-            );
-        }else{
-            $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
-            $this->common_helpers->APPLICATION->IncludeAdminFile(
-                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/unstep1.php"
-            );
-        }
+        return true;
     }
 
     /**
