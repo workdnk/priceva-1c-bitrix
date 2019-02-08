@@ -237,7 +237,7 @@ Class priceva_connector extends CModule
         $this->common_helpers->APPLICATION->ResetException();
 
         $id = CAgent::AddAgent(
-            "\Priceva\Connector\Bitrix\PricevaConnector::run();",
+            "(new \Priceva\Connector\Bitrix\PricevaConnector())->run();",
             "priceva.connector",
             "Y",
             86400,
