@@ -11,6 +11,7 @@ namespace Priceva\Connector\Bitrix;
 require_once __DIR__ . "/../../sdk/vendor/autoload.php";
 
 
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
@@ -27,6 +28,7 @@ class PricevaConnector
         "price_is_null_priceva"     => 0,
         "product_synced"            => 0,
         "product_not_synced"        => 0,
+        "module_errors"             => 0,
     ];
 
     public function __construct()
@@ -77,11 +79,14 @@ class PricevaConnector
             $this->sync($api_key, $sync_only_active);
 
         }catch( LoaderException $e ){
-            \AddMessage2Log($e->getMessage());
+            ++$this->info[ 'module_errors' ];
+            Debug::dumpToFile($e->getMessage());
         }catch( PricevaException $e ){
-            \AddMessage2Log($e->getMessage());
+            ++$this->info[ 'module_errors' ];
+            Debug::dumpToFile($e->getMessage());
         }catch( \Throwable $e ){
-            \AddMessage2Log($e->getMessage());
+            ++$this->info[ 'module_errors' ];
+            Debug::dumpToFile($e->getMessage());
         }
     }
 
@@ -341,7 +346,8 @@ class PricevaConnector
             Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}.";
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}.";
     }
 
     private function add_event()
