@@ -17,6 +17,7 @@ try{
 
     Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
     Loc::loadMessages(__FILE__);
+
     $common_helpers = CommonHelpers::getInstance();
 
     $RIGHT = $APPLICATION->GetGroupRight($MODULE_ID);
@@ -346,5 +347,6 @@ try{
         </script>
     <? }
 }catch( Exception $e ){
-    error_log($e);
+    CommonHelpers::write_to_log($e);
+    CommonHelpers::getInstance()->APPLICATION->ThrowException($e->getMessage());
 }
