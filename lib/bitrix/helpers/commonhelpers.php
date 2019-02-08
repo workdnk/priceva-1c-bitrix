@@ -9,6 +9,7 @@
 namespace Priceva\Connector\Bitrix\Helpers;
 
 
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 
@@ -150,5 +151,10 @@ class CommonHelpers
         }
 
         return $arr;
+    }
+
+    public static function write_to_log( $message )
+    {
+        Debug::writeToFile($message, "", "priceva");
     }
 }
