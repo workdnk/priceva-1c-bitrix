@@ -155,6 +155,6 @@ class CommonHelpers
 
     public static function write_to_log( $message )
     {
-        Debug::writeToFile($message, "", "priceva");
+        Debug::writeToFile($message, "", "priceva.log");
     }
 }
