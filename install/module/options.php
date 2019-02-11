@@ -89,6 +89,14 @@ try{
                         ],
                     ],
                     "CURRENCY"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", $common_helpers->add_not_selected($currencies) ] ],
+                    "DEBUG"            => [
+                        Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
+                            "select", $common_helpers->add_not_selected([
+                                "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ON"),
+                                "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_OFF"),
+                            ]),
+                        ],
+                    ],
                 ],
             ],
             [

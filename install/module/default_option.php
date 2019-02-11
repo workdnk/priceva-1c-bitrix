@@ -18,4 +18,5 @@ $priceva_connector_default_option = [
     "CURRENCY"         => "RUB",
     "AGENT_ID"         => "",
     "ID_ARICUL_IBLOCK" => "",
+    "DEBUG"            => "NO",
 ];

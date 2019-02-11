@@ -121,4 +121,12 @@ class OptionsHelpers
     {
         return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'CLIENT_CODE');
     }
+
+    /**
+     * @return bool
+     */
+    public static function get_debug()
+    {
+        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'DEBUG'));
+    }
 }

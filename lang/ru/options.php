@@ -18,5 +18,6 @@ $MESS[ "PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC" ]       = "Пересчитыва�
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_CURRENCY" ]           = "Валюта";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_RIGHTS" ]             = "Права";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_OPTIONS_RIGHTS" ]     = "Настройки прав на модуль";
-
-
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_DEBUG" ] = "Режим отладки модуля";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_ON" ] = "Включен";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_OFF" ] = "Отключен";
