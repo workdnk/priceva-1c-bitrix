@@ -87,6 +87,7 @@ Class priceva_connector extends CModule
                 $this->InstallTasks();
                 $this->InstallEvents();
                 $id_type_price = $this->InstallDB();
+                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
                 $this->InstallAgents();
 
                 $this->need_save_unroll = false;
@@ -103,8 +104,6 @@ Class priceva_connector extends CModule
                     );
                 }else{
                     ModuleManager::registerModule($this->common_helpers::MODULE_ID);
-
-                    COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
 
                     $this->common_helpers->APPLICATION->IncludeAdminFile(
                         Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
