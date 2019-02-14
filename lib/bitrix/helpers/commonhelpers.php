@@ -103,6 +103,14 @@ class CommonHelpers
     }
 
     /**
+     * @return string|null
+     */
+    public function is_post()
+    {
+        return "POST" === $this->app->getContext()->getRequest()->getRequestMethod();
+    }
+
+    /**
      * @param string $name
      *
      * @return string|null
