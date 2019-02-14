@@ -9,3 +9,4 @@ $MESS[ "PRICEVA_BC_INFO_TEXT7" ] = "пустой артикул в товаре 
 $MESS[ "PRICEVA_BC_INFO_TEXT8" ] = "ошибок в работе модуля";
 $MESS[ "PRICEVA_BC_MANUAL" ]     = "Ручное управление";
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED" ] = "Модуль catalog не установлен. Работа модуля PRICEVA невозможна";
+$MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT" ] = "Для корректной работы модуля необходимо два активных php-расшерения: json и curl. Если вы не знаете, как их активировать самостоятельно, обратитесь к вашему хостеру или в службу поддержки данного модуля.";
