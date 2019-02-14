@@ -6,17 +6,4 @@
  * Time: 14:42
  */
 
-$priceva_connector_default_option = [
-    "API_KEY"          => "",
-    "ID_TYPE_PRICE"    => "0",
-    "SYNC_FIELD"       => "articul",
-    "CLIENT_CODE"      => "ID",
-    "SYNC_DOMINANCE"   => "Bitrix",
-    "SYNC_ONLY_ACTIVE" => "YES",
-    "DOWNLOAD_AT_TIME" => "10",
-    "PRICE_RECALC"     => "NO",
-    "CURRENCY"         => "RUB",
-    "AGENT_ID"         => "",
-    "ID_ARICUL_IBLOCK" => "",
-    "DEBUG"            => "NO",
-];
+$priceva_connector_default_option = ( new \Priceva\Connector\Bitrix\PricevaOptions() )->get_default_options();
