@@ -110,7 +110,7 @@ Class priceva_connector extends CModule
                 if( $this->errors ){
 
                     foreach( $this->unroll_methods as $method ){
-                        $this->$method;
+                        $this->$method();
                     }
 
                     $this->common_helpers->APPLICATION->IncludeAdminFile(
