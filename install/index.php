@@ -276,16 +276,16 @@ Class priceva_connector extends CModule
     {
         $this->common_helpers->APPLICATION->ResetException();
 
-        $date = date("d.m.y H:i:s", strtotime("+1 day"));
+        $date = \Bitrix\Main\Type\DateTime::createFromTimestamp(strtotime('+1 day'));
 
         $id = CAgent::AddAgent(
             "\Priceva\Connector\Bitrix\PricevaConnector::agent();",
             "priceva.connector",
             "N",
             86400,
-            $date,
+            '',
             "Y",
-            $date,
+            $date->toString(),
             30
         );
 
