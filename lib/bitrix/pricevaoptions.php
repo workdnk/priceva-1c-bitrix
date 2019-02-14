@@ -365,7 +365,7 @@ class PricevaOptions
         $script = '';
 
         foreach( $needed as $func_name => $function ){
-            $script .= $function . " BX.ready($func_name);";
+            $script .= $function . " BX.ready($func_name);\n";
         }
 
         return $script;
