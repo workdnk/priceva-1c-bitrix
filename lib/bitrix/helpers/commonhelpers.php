@@ -168,9 +168,28 @@ class CommonHelpers
         return $arr;
     }
 
+    /**
+     * @return bool
+     */
+    public static function bitrix_d7()
+    {
+        return CheckVersion(SM_VERSION, '14.00.00');
+    }
+
+    /**
+     * @return bool
+     */
     public static function check_php_ext()
     {
         return extension_loaded('json') && extension_loaded('curl');
+    }
+
+    /**
+     * @return bool
+     */
+    public static function check_php_ver()
+    {
+        return version_compare(phpversion(), '7.1', '>');
     }
 
     /**

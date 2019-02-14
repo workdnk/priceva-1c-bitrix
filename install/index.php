@@ -51,20 +51,34 @@ Class priceva_connector extends CModule
         $this->MODULE_DESCRIPTION  = Loc::getMessage("PRICEVA_BC_MODULE_DESC");
     }
 
-    /**
-     * @return bool
-     */
-    static public function isVersionD7()
-    {
-        return CheckVersion(SM_VERSION, '14.00.00');
-    }
-
     static public function GetPatch( $notDocumentRoot = false )
     {
         if( $notDocumentRoot )
             return str_ireplace($_SERVER[ "DOCUMENT_ROOT" ], '', dirname(__DIR__));
         else
             return dirname(__DIR__);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function check_system()
+    {
+        if( !$this->common_helpers::check_php_ver() ){
+            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_VER"));
+        }
+
+        if( !$this->common_helpers::check_php_ext() ){
+            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
+        }
+
+        if( !$this->common_helpers::bitrix_d7() ){
+            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
+        }
+
+        if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
+            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+        }
     }
 
     /**
@@ -76,60 +90,49 @@ Class priceva_connector extends CModule
 
         try{
             $this->autoload_helpers();
+            $this->check_system();
 
-            if( self::isVersionD7() ){
+            $step = IntVal($step);
 
-                if( !$this->common_helpers::check_php_ext() ){
-                    throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
-                }
+            if( $step < 2 ){
+                $this->common_helpers->APPLICATION->IncludeAdminFile(
+                    Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                    self::GetPatch() . "/install/step1.php"
+                );
 
-                if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
-                    throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
-                }
+            }elseif( $step == 2 ){
+                $this->need_save_unroll = true;
 
-                $step = IntVal($step);
+                $this->InstallFiles();
+                $this->InstallTasks();
+                $this->InstallEvents();
+                $id_type_price = $this->InstallDB();
+                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
+                $id_agent = $this->InstallAgents();
+                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
 
-                if( $step < 2 ){
+                $this->need_save_unroll = false;
+
+                if( $this->errors ){
+
+                    foreach( $this->unroll_methods as $method ){
+                        $this->$method();
+                    }
+
                     $this->common_helpers->APPLICATION->IncludeAdminFile(
                         Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/step1.php"
+                        self::GetPatch() . "/install/errors.php"
                     );
+                }else{
+                    ModuleManager::registerModule($this->common_helpers::MODULE_ID);
 
-                }elseif( $step == 2 ){
-                    $this->need_save_unroll = true;
-
-                    $this->InstallFiles();
-                    $this->InstallTasks();
-                    $this->InstallEvents();
-                    $id_type_price = $this->InstallDB();
-                    COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
-                    $id_agent = $this->InstallAgents();
-                    COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
-
-                    $this->need_save_unroll = false;
-
-                    if( $this->errors ){
-
-                        foreach( $this->unroll_methods as $method ){
-                            $this->$method();
-                        }
-
-                        $this->common_helpers->APPLICATION->IncludeAdminFile(
-                            Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                            self::GetPatch() . "/install/errors.php"
-                        );
-                    }else{
-                        ModuleManager::registerModule($this->common_helpers::MODULE_ID);
-
-                        $this->common_helpers->APPLICATION->IncludeAdminFile(
-                            Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                            self::GetPatch() . "/install/step2.php"
-                        );
-                    }
+                    $this->common_helpers->APPLICATION->IncludeAdminFile(
+                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                        self::GetPatch() . "/install/step2.php"
+                    );
                 }
-            }else{
-                throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
             }
+
         }catch( Exception $e ){
             $this->common_helpers::write_to_log($e);
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
