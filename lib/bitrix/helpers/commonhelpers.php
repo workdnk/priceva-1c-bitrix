@@ -167,19 +167,33 @@ class CommonHelpers
     }
 
     /**
-     * @param string $message
-     * @param string $type
+     * @param string|\Exception $message
+     * @param string            $type
      */
     public static function write_to_log( $message, $type = 'PRICEVA_ERROR' )
     {
-        \CEventLog::Add([
-            "SEVERITY"      => "",
-            "AUDIT_TYPE_ID" => $type,
-            "MODULE_ID"     => "priceva.connector",
-            "ITEM_ID"       => "priceva.connector",
+        if( is_object($message) ){
+            \CEventLog::Add([
+                "SEVERITY"      => "",
+                "AUDIT_TYPE_ID" => $type,
+                "MODULE_ID"     => "priceva.connector",
+                "ITEM_ID"       => "priceva.connector",
 
-            "DESCRIPTION" => $message,
-        ]);
+                "DESCRIPTION" =>
+                    "Error: " . $message->getMessage() . "; " .
+                    "file: " . $message->getFile() . "; " .
+                    "line: " . $message->getLine(),
+            ]);
+        }else{
+            \CEventLog::Add([
+                "SEVERITY"      => "",
+                "AUDIT_TYPE_ID" => $type,
+                "MODULE_ID"     => "priceva.connector",
+                "ITEM_ID"       => "priceva.connector",
+
+                "DESCRIPTION" => $message,
+            ]);
+        }
 
         if( OptionsHelpers::get_debug() ){
             $message = date("d.m.y H:i:s") . ": " . $message;
