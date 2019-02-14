@@ -77,6 +77,10 @@ Class priceva_connector extends CModule
 
             if( self::isVersionD7() ){
 
+                if( !$this->common_helpers::check_php_ext() ){
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
+                }
+
                 if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
                     $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
                 }
