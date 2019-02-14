@@ -96,35 +96,36 @@ Class priceva_connector extends CModule
                     );
 
                 }elseif( $step == 2 ){
-                $this->need_save_unroll = true;
+                    $this->need_save_unroll = true;
 
-                $this->InstallFiles();
-                $this->InstallTasks();
-                $this->InstallEvents();
-                $id_type_price = $this->InstallDB();
-                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
-                $this->InstallAgents();
+                    $this->InstallFiles();
+                    $this->InstallTasks();
+                    $this->InstallEvents();
+                    $id_type_price = $this->InstallDB();
+                    COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
+                    $id_agent = $this->InstallAgents();
+                    COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
 
-                $this->need_save_unroll = false;
+                    $this->need_save_unroll = false;
 
-                if( $this->errors ){
+                    if( $this->errors ){
 
-                    foreach( $this->unroll_methods as $method ){
-                        $this->$method();
-                    }
+                        foreach( $this->unroll_methods as $method ){
+                            $this->$method();
+                        }
 
-                    $this->common_helpers->APPLICATION->IncludeAdminFile(
-                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/errors.php"
-                    );
-                }else{
-                    ModuleManager::registerModule($this->common_helpers::MODULE_ID);
+                        $this->common_helpers->APPLICATION->IncludeAdminFile(
+                            Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                            self::GetPatch() . "/install/errors.php"
+                        );
+                    }else{
+                        ModuleManager::registerModule($this->common_helpers::MODULE_ID);
 
-                    $this->common_helpers->APPLICATION->IncludeAdminFile(
-                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                        $this->common_helpers->APPLICATION->IncludeAdminFile(
+                            Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                             self::GetPatch() . "/install/step2.php"
-                    );
-                }
+                        );
+                    }
                 }
             }else{
                 throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
@@ -287,6 +288,8 @@ Class priceva_connector extends CModule
             $this->errors[] = Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_AGENT") . ": " . $this->common_helpers->APPLICATION->GetException();
         }else{
             $this->save_unroll(true, "UnInstallAgents");
+
+            return $id;
         }
     }
 

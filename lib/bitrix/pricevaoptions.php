@@ -383,7 +383,7 @@ class PricevaOptions
             "DOWNLOAD_AT_TIME" => "10",
             "PRICE_RECALC"     => "NO",
             "CURRENCY"         => "RUB",
-            "AGENT_ID"         => "",
+            "ID_AGENT"         => "",
             "ID_ARICUL_IBLOCK" => "",
             "DEBUG"            => "NO",
         ];
