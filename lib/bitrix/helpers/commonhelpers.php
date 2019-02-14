@@ -169,7 +169,7 @@ class CommonHelpers
     public static function write_to_log( $message )
     {
         if( OptionsHelpers::get_debug() ){
-            Debug::writeToFile($message, "", "priceva.log");
+            Debug::writeToFile(date("d.m.y H:i:s") . ": " . $message, "", "priceva.log");
         }
     }
 }
