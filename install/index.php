@@ -269,6 +269,9 @@ Class priceva_connector extends CModule
         $this->save_unroll(true, "InstallEvents");
     }
 
+    /**
+     * @return int|bool
+     */
     private function InstallAgents()
     {
         $this->common_helpers->APPLICATION->ResetException();
@@ -286,6 +289,8 @@ Class priceva_connector extends CModule
 
         if( $id === false ){
             $this->errors[] = Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_AGENT") . ": " . $this->common_helpers->APPLICATION->GetException();
+
+            return false;
         }else{
             $this->save_unroll(true, "UnInstallAgents");
 
