@@ -64,6 +64,13 @@ class PricevaConnector
         return $arRes;
     }
 
+    public static function agent()
+    {
+        ( new static() )->run();
+
+        return "\Priceva\Connector\Bitrix\PricevaConnector::agent();";
+    }
+
     public function run()
     {
         try{
