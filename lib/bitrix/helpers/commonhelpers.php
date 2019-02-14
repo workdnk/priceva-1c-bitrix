@@ -161,6 +161,11 @@ class CommonHelpers
         return $arr;
     }
 
+    public static function check_php_ext()
+    {
+        return extension_loaded('json') && extension_loaded('curl');
+    }
+
     public static function write_to_log( $message )
     {
         if( OptionsHelpers::get_debug() ){
