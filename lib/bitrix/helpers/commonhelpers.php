@@ -166,8 +166,21 @@ class CommonHelpers
         return extension_loaded('json') && extension_loaded('curl');
     }
 
-    public static function write_to_log( $message )
+    /**
+     * @param string $message
+     * @param string $type
+     */
+    public static function write_to_log( $message, $type = 'PRICEVA_ERROR' )
     {
+        \CEventLog::Add([
+            "SEVERITY"      => "",
+            "AUDIT_TYPE_ID" => "PRICEVA_SYNC",
+            "MODULE_ID"     => "priceva.connector",
+            "ITEM_ID"       => "priceva.connector",
+
+            "DESCRIPTION" => $message,
+        ]);
+
         if( OptionsHelpers::get_debug() ){
             $message = date("d.m.y H:i:s") . ": " . $message;
             Debug::writeToFile($message, "", "priceva.log");
