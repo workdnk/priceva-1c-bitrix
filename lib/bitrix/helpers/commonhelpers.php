@@ -174,7 +174,7 @@ class CommonHelpers
     {
         \CEventLog::Add([
             "SEVERITY"      => "",
-            "AUDIT_TYPE_ID" => "PRICEVA_SYNC",
+            "AUDIT_TYPE_ID" => $type,
             "MODULE_ID"     => "priceva.connector",
             "ITEM_ID"       => "priceva.connector",
 
