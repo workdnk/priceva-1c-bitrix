@@ -125,7 +125,7 @@ class PricevaConnector
                 throw new \Exception("Wrong sync dominance type in module " . CommonHelpers::MODULE_ID);
         }
 
-        $this->add_event();
+        CommonHelpers::write_to_log($this->get_last_info_msg(), 'PRICEVA_SYNC');
     }
 
     /**
@@ -357,14 +357,7 @@ class PricevaConnector
 
     private function add_event()
     {
-        \CEventLog::Add([
-            "SEVERITY"      => "",
-            "AUDIT_TYPE_ID" => "PRICEVA_SYNC",
-            "MODULE_ID"     => "priceva.connector",
-            "ITEM_ID"       => "priceva.connector",
 
-            "DESCRIPTION" => $this->get_last_info_msg(),
-        ]);
     }
 
     /**
