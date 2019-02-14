@@ -82,7 +82,7 @@ Class priceva_connector extends CModule
                 }
 
                 if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
-                    $this->common_helpers->APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
                 }
 
                 $this->need_save_unroll = true;
