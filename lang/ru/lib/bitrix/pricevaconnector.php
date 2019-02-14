@@ -8,3 +8,4 @@ $MESS[ "PRICEVA_BC_INFO_TEXT6" ] = "пустой артикул в товаре 
 $MESS[ "PRICEVA_BC_INFO_TEXT7" ] = "пустой артикул в товаре из Bitrix";
 $MESS[ "PRICEVA_BC_INFO_TEXT8" ] = "ошибок в работе модуля";
 $MESS[ "PRICEVA_BC_MANUAL" ]     = "Ручное управление";
+$MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED" ] = "Модуль catalog не установлен. Работа модуля PRICEVA невозможна";

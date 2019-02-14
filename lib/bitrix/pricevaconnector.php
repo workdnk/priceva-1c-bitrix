@@ -11,7 +11,6 @@ namespace Priceva\Connector\Bitrix;
 require_once __DIR__ . "/../../sdk/vendor/autoload.php";
 
 
-use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 use Priceva\PricevaAPI;
@@ -69,16 +68,17 @@ class PricevaConnector
     {
         try{
             if( !\Bitrix\Main\Loader::includeModule('catalog') ){
-                throw new LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
+                throw new PricevaException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
+            }
+
+            if( !CommonHelpers::check_php_ext() ){
+                throw new PricevaException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
             }
 
             $api_key          = OptionsHelpers::get_api_key();
             $sync_only_active = OptionsHelpers::get_sync_only_active();
 
             $this->sync($api_key, $sync_only_active);
-        }catch( LoaderException $e ){
-            ++$this->info[ 'module_errors' ];
-            CommonHelpers::write_to_log($e);
         }catch( PricevaException $e ){
             ++$this->info[ 'module_errors' ];
             CommonHelpers::write_to_log($e);
