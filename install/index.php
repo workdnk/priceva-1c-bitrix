@@ -72,6 +72,8 @@ Class priceva_connector extends CModule
      */
     function DoInstall()
     {
+        global $step;
+
         try{
             $this->autoload_helpers();
 
@@ -85,6 +87,15 @@ Class priceva_connector extends CModule
                     throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
                 }
 
+                $step = IntVal($step);
+
+                if( $step < 2 ){
+                    $this->common_helpers->APPLICATION->IncludeAdminFile(
+                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                        self::GetPatch() . "/install/step1.php"
+                    );
+
+                }elseif( $step == 2 ){
                 $this->need_save_unroll = true;
 
                 $this->InstallFiles();
@@ -111,8 +122,9 @@ Class priceva_connector extends CModule
 
                     $this->common_helpers->APPLICATION->IncludeAdminFile(
                         Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/step1.php"
+                            self::GetPatch() . "/install/step2.php"
                     );
+                }
                 }
             }else{
                 throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
