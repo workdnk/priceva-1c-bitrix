@@ -8,7 +8,6 @@
 
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
-use Priceva\Connector\Bitrix\PricevaOptions;
 
 try{
     global $APPLICATION, $Update, $Apply;
@@ -17,27 +16,27 @@ try{
 
     CModule::IncludeModule($MODULE_ID);
 
-    $priceva_options = new PricevaOptions();
-
     Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
     Loc::loadMessages(__FILE__);
 
-    $RIGHT = $priceva_options->common_helpers->APPLICATION->GetGroupRight($MODULE_ID);
+    $common_helpers = CommonHelpers::getInstance();
+
+    $RIGHT = $common_helpers->APPLICATION->GetGroupRight($MODULE_ID);
 
     if( $RIGHT >= "R" ){
         $bVarsFromForm = false; // пришли ли данные с формы
 
         // массив вкладок, свойств
-        $aTabs = $priceva_options->generate_options_tabs();
+        $aTabs = OptionsHelpers::generate_options_tabs();
 
         $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
         if(
-            $priceva_options->common_helpers->is_post() &&
+            $common_helpers->is_post() &&
             OptionsHelpers::is_save_method() &&
             check_bitrix_sessid()
         ){
-            $priceva_options->process_save_form($bVarsFromForm, $aTabs);
+            OptionsHelpers::process_save_form($bVarsFromForm, $aTabs);
 
             ob_start();
             $Update = $Update . $Apply;
@@ -46,7 +45,7 @@ try{
         }
 
         $tabControl->Begin();
-        $form_action = $priceva_options->common_helpers->APPLICATION->GetCurPage() . "?mid=" . urlencode($mid) . "&lang=" . LANGUAGE_ID;
+        $form_action = $common_helpers->APPLICATION->GetCurPage() . "?mid=" . urlencode($mid) . "&lang=" . LANGUAGE_ID;
         ?>
         <form method="post" action="<?=$form_action?>" id="options">
             <?
@@ -54,18 +53,18 @@ try{
                 $tabControl->BeginNextTab();
 
                 if( $aTab[ "DIV" ] != "rights" ){
-                    $priceva_options->generate_table($aTab, $bVarsFromForm);
+                    OptionsHelpers::generate_table($aTab, $bVarsFromForm);
                 }elseif( $aTab[ "DIV" ] == "rights" ){
                     require( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
                 }
             }
             $tabControl->Buttons();
-            $priceva_options->generate_buttons();
+            OptionsHelpers::generate_buttons();
             echo bitrix_sessid_post();
             $tabControl->End(); ?>
         </form>
         <script>
-            <?= $priceva_options->generate_js_script()?>
+            <?= OptionsHelpers::generate_js_script()?>
         </script>
     <? }
 }catch( Exception $e ){
