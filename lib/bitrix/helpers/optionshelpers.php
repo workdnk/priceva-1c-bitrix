@@ -376,7 +376,8 @@ class OptionsHelpers
                         if( $disabled )
                             continue;
 
-                        $val = $_POST[ $name ];
+                        $request = CommonHelpers::getInstance()->app->getContext()->getRequest();
+                        $val     = $request->get($name);
                         if( $arOption[ 1 ][ 0 ] == "checkbox" && $val != "Y" ){
                             $val = "N";
                         }
