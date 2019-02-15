@@ -355,11 +355,6 @@ class PricevaConnector
             Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}.";
     }
 
-    private function add_event()
-    {
-
-    }
-
     /**
      * @param string $api_key
      * @param bool   $sync_only_active
