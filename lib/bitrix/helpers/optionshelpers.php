@@ -488,7 +488,7 @@ class OptionsHelpers
             "CLIENT_CODE"      => "ID",
             "SYNC_DOMINANCE"   => "priceva",
             "SYNC_ONLY_ACTIVE" => "YES",
-            "DOWNLOAD_AT_TIME" => "10",
+            "DOWNLOAD_AT_TIME" => "1000",
             "PRICE_RECALC"     => "NO",
             "CURRENCY"         => "RUB",
             "ID_AGENT"         => "",
