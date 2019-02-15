@@ -16,8 +16,8 @@ Class priceva_connector extends CModule
 {
     var $MODULE_ID = 'priceva.connector';
 
-    var $PARTNER_NAME = 'Priceva';
-    var $PARTNER_URI  = 'https://priceva.ru/';
+    var $PARTNER_NAME = '';
+    var $PARTNER_URI  = '';
 
     var $MODULE_VERSION      = '';
     var $MODULE_VERSION_DATE = '';
@@ -49,6 +49,9 @@ Class priceva_connector extends CModule
         $this->MODULE_VERSION_DATE = $arModuleVersion[ "VERSION_DATE" ];
         $this->MODULE_NAME         = Loc::getMessage("PRICEVA_BC_MODULE_NAME");
         $this->MODULE_DESCRIPTION  = Loc::getMessage("PRICEVA_BC_MODULE_DESC");
+
+        $this->PARTNER_NAME = "Priceva";
+        $this->PARTNER_URI  = "https://priceva.ru";
     }
 
     static public function GetPatch( $notDocumentRoot = false )
