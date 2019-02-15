@@ -86,19 +86,12 @@ class CommonHelpers
 
     /**
      * @param array $select_values
-     * @param bool  $later
      *
      * @return array
      */
-    public static function add_not_selected( $select_values, $later = false )
+    public static function add_not_selected( $select_values )
     {
-        if( !$later ){
-            $text = Loc::getMessage("PRICEVA_BC_COMMON_HELPERS_NOT_SELECTED");
-        }else{
-            $text = Loc::getMessage("PRICEVA_BC_COMMON_HELPERS_NOT_SELECT_LATER");
-        }
-
-        return [ '0' => $text ] + $select_values;
+        return [ '0' => Loc::getMessage("PRICEVA_BC_COMMON_HELPERS_NOT_SELECTED") ] + $select_values;
     }
 
     /**
