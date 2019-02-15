@@ -27,6 +27,7 @@ class PricevaConnector
         "product_synced"            => 0,
         "product_not_synced"        => 0,
         "module_errors"             => 0,
+        "priceva_errors"            => 0,
     ];
 
     public function __construct()
@@ -75,19 +76,22 @@ class PricevaConnector
     {
         try{
             if( !\Bitrix\Main\Loader::includeModule('catalog') ){
-                throw new PricevaException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
+                throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
             }
 
             if( !CommonHelpers::check_php_ext() ){
-                throw new PricevaException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
+                throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
             }
 
             $api_key          = OptionsHelpers::get_api_key();
             $sync_only_active = OptionsHelpers::get_sync_only_active();
 
             $this->sync($api_key, $sync_only_active);
-        }catch( PricevaException $e ){
+        }catch( PricevaModuleException $e ){
             ++$this->info[ 'module_errors' ];
+            CommonHelpers::write_to_log($e);
+        }catch( PricevaException $e ){
+            ++$this->info[ 'priceva_errors' ];
             CommonHelpers::write_to_log($e);
         }catch( \Throwable $e ){
             ++$this->info[ 'module_errors' ];
@@ -352,6 +356,7 @@ class PricevaConnector
             Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}.";
     }
 
