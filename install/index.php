@@ -126,6 +126,9 @@ Class priceva_connector extends CModule
                 }else{
                     ModuleManager::registerModule($this->common_helpers::MODULE_ID);
 
+                    $aTabs = \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::get_main_options([ 'DEBUG' ]);
+                    \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
+
                     $this->common_helpers->APPLICATION->IncludeAdminFile(
                         Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                         self::GetPatch() . "/install/step2.php"

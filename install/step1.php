@@ -7,20 +7,36 @@
  */
 
 use Bitrix\Main\Localization\Loc;
+use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 
 if( !check_bitrix_sessid() ) return;
 
-?>
+Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
+Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . CommonHelpers::MODULE_ID . "/options.php");
 
-<form action="<? echo $APPLICATION->GetCurPage(); ?>" name="step1">
-    <?=bitrix_sessid_post()?>
-    <input type="hidden" name="id" value="priceva.connector">
-    <input type="hidden" name="install" value="Y">
-    <input type="hidden" name="step" value="2">
-    <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP1_TEXT_1")?></p>
-    <p>Тут в дальнейшем будут настраиваемые при установке опции</p>
-    <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP1_TEXT_2")?></p>
-    <div>
-        <input type="submit" name="inst" value="<? echo Loc::getMessage("MOD_INSTALL"); ?>">
-    </div>
-</form>
+$filter = [ 'DEBUG' ];
+
+try{
+    $aTab = OptionsHelpers::get_main_options($filter);
+    ?>
+    <form action="<? echo $APPLICATION->GetCurPage(); ?>" id="options">
+        <?=bitrix_sessid_post()?>
+        <input type="hidden" name="id" value="priceva.connector">
+        <input type="hidden" name="install" value="Y">
+        <input type="hidden" name="step" value="2">
+        <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP1_TEXT_1")?></p>
+        <table>
+            <?php OptionsHelpers::generate_table([ 'OPTIONS' => $aTab ], $bVarsFromForm); ?>
+        </table>
+        <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP1_TEXT_2")?></p>
+        <div>
+            <input type="submit" name="inst" value="<? echo Loc::getMessage("MOD_INSTALL"); ?>">
+        </div>
+    </form>
+    <script>
+        <?php echo OptionsHelpers::generate_js_script($filter); ?>
+    </script>
+    <?
+}catch( \Throwable $e ){
+    \Priceva\Connector\Bitrix\Helpers\CommonHelpers::write_to_log($e);
+} ?>
