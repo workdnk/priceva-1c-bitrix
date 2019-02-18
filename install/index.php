@@ -39,6 +39,8 @@ Class priceva_connector extends CModule
     private $errors         = [];
     private $info           = [];
 
+    private $need_delete_options = false, $need_delete_price_type = false;
+
     function __construct()
     {
         $arModuleVersion = [];
@@ -98,6 +100,8 @@ Class priceva_connector extends CModule
             $step = IntVal($step);
 
             if( $step < 2 ){
+                $this->InstallFiles();
+
                 $this->common_helpers->APPLICATION->IncludeAdminFile(
                     Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                     self::GetPatch() . "/install/step1.php"
@@ -154,36 +158,54 @@ Class priceva_connector extends CModule
      */
     function DoUninstall()
     {
+        global $step;
 
         try{
             $this->autoload_helpers();
 
-            $this->need_save_unroll = true;
+            $step = IntVal($step);
 
-            $this->UnInstallAgents();
-            $this->UnInstallEvents();
-            $this->UnInstallTasks();
-            $this->UnInstallDB();
-            $this->UnInstallFiles();
-
-            $this->need_save_unroll = false;
-
-            if( $this->errors ){
-
-                foreach( $this->unroll_methods as $method ){
-                    $this->$method();
-                }
-
-                $this->common_helpers->APPLICATION->IncludeAdminFile(
-                    Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
-                    self::GetPatch() . "/install/errors.php"
-                );
-            }else{
-                $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
+            if( $step < 2 ){
                 $this->common_helpers->APPLICATION->IncludeAdminFile(
                     Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                     self::GetPatch() . "/install/unstep1.php"
                 );
+
+            }elseif( $step == 2 ){
+
+                $request = $this->common_helpers::getInstance()->app->getContext()->getRequest();
+
+                $this->need_delete_options    = $this->common_helpers::convert_to_bool($request->get('options'));
+                $this->need_delete_price_type = $this->common_helpers::convert_to_bool($request->get('type_price'));
+
+
+                $this->need_save_unroll = true;
+
+                $this->UnInstallAgents();
+                $this->UnInstallEvents();
+                $this->UnInstallTasks();
+                $this->UnInstallDB();
+                $this->UnInstallFiles();
+
+                $this->need_save_unroll = false;
+
+                if( $this->errors ){
+
+                    foreach( $this->unroll_methods as $method ){
+                        $this->$method();
+                    }
+
+                    $this->common_helpers->APPLICATION->IncludeAdminFile(
+                        Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
+                        self::GetPatch() . "/install/errors.php"
+                    );
+                }else{
+                    $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
+                    $this->common_helpers->APPLICATION->IncludeAdminFile(
+                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                        self::GetPatch() . "/install/unstep2.php"
+                    );
+                }
             }
         }catch( Exception $e ){
             $this->common_helpers::write_to_log($e);
@@ -209,19 +231,23 @@ Class priceva_connector extends CModule
         return $r;
     }
 
-    /**
-     * @return string
-     */
     function UnInstallDB()
     {
         parent::UnInstallDB();
 
-        $type_price = $this->delete_price_type();
+        $save_unroll = true;
 
-        $this->save_unroll($type_price, "InstallDB");
-        $this->info[ 'deleted_price' ] = $type_price;
+        if( $this->need_delete_price_type ){
+            $type_price                    = $this->delete_price_type();
+            $this->info[ 'deleted_price' ] = $type_price;
+            $save_unroll                   = $type_price;
+        }
 
-        return $type_price;
+        if( $this->need_delete_options ){
+            \COption::RemoveOption($this->common_helpers::MODULE_ID);
+        }
+
+        $this->save_unroll($save_unroll, "InstallDB");
     }
 
     function InstallFiles()

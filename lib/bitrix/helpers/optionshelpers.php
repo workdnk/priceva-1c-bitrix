@@ -141,6 +141,20 @@ class OptionsHelpers
     }
 
     /**
+     * @return bool
+     */
+    public static function type_price_is_base()
+    {
+        $type_price = \CCatalogGroup::GetByID(static::get_type_price_ID());
+
+        if( false === $type_price ){
+            return false;
+        }else{
+            return $type_price[ 'BASE' ] === 'Y';
+        }
+    }
+
+    /**
      * @return array
      * @throws \Bitrix\Main\LoaderException
      */
