@@ -427,6 +427,8 @@ class PricevaConnector
 
     private function set_price( $product_id, $price, $currency, $id_type_of_price, $price_recalc )
     {
+        $trade_offers = OptionsHelpers::get_trade_offers();
+
         $arFields = [
             "PRODUCT_ID"       => $product_id,
             "CATALOG_GROUP_ID" => $id_type_of_price,
@@ -438,6 +440,10 @@ class PricevaConnector
             ++$this->info[ 'product_not_synced' ];
         }else{
             ++$this->info[ 'product_synced' ];
+        }
+
+        if( $trade_offers ){
+            // TODO
         }
     }
 }

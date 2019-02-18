@@ -16,6 +16,7 @@ $MESS[ "PRICEVA_BC_OPTIONS_TEXT_SYNC_DOMINANCE" ]     = "Первоисточн�
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_DOWNLOAD_AT_TIME" ]   = "Количество загрузок за раз";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC" ]       = "Пересчитывать цену при ее установке";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_CURRENCY" ]           = "Валюта";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS" ] = "Обрабатывать торговые предложения";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_RIGHTS" ]             = "Права";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_OPTIONS_RIGHTS" ]     = "Настройки прав на модуль";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_DEBUG" ] = "Режим отладки модуля";

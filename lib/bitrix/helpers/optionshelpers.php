@@ -127,6 +127,14 @@ class OptionsHelpers
     /**
      * @return bool
      */
+    public static function get_trade_offers()
+    {
+        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'TRADE_OFFERS'));
+    }
+
+    /**
+     * @return bool
+     */
     public static function get_debug()
     {
         return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'DEBUG'));
@@ -213,7 +221,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "PRICE_RECALC"     => [
+            "PRICE_RECALC" => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
                     "select", CommonHelpers::add_not_selected([
                         "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
@@ -221,8 +229,16 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "CURRENCY"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", CommonHelpers::add_not_selected($currencies) ] ],
-            "DEBUG"            => [
+            "CURRENCY"     => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", CommonHelpers::add_not_selected($currencies) ] ],
+            "TRADE_OFFERS" => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS"), [
+                    "select", CommonHelpers::add_not_selected([
+                        "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
+                        "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
+                    ]),
+                ],
+            ],
+            "DEBUG"        => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
                     "select", CommonHelpers::add_not_selected([
                         "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ON"),
@@ -493,6 +509,7 @@ class OptionsHelpers
             "CURRENCY"         => "RUB",
             "ID_AGENT"         => "",
             "ID_ARICUL_IBLOCK" => "",
+            "TRADE_OFFERS"     => "NO",
             "DEBUG"            => "NO",
         ];
     }
