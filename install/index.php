@@ -9,6 +9,7 @@
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
+use Priceva\Connector\Bitrix\PricevaModuleException;
 
 Loc::loadMessages(__FILE__);
 
@@ -94,7 +95,7 @@ Class priceva_connector extends CModule
         global $step;
 
         try{
-            $this->autoload_helpers();
+            $this->autoloader();
             $this->check_system();
 
             $step = IntVal($step);
@@ -161,7 +162,7 @@ Class priceva_connector extends CModule
         global $step;
 
         try{
-            $this->autoload_helpers();
+            $this->autoloader();
 
             $step = IntVal($step);
 
@@ -475,11 +476,12 @@ Class priceva_connector extends CModule
         $this->errors[] = $error->getMessage();
     }
 
-    private function autoload_helpers()
+    private function autoloader()
     {
         if(
             !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ||
-            !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers')
+            !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ||
+            !class_exists('\Priceva\Connector\Bitrix\PricevaModuleException')
         ){
             CopyDirFiles(self::GetPatch() . "/lib/bitrix/helpers/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/helpers/", true, true);
             require_once( self::GetPatch() . "/include.php" );
