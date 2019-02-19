@@ -192,7 +192,7 @@ class OptionsHelpers
         // $agent_id       = OptionsHelpers::get_agent_id();
 
         $options = [
-            "HEADING0"         => [ "Основные параметры", "heading" ],
+            "HEADING0"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
             "API_KEY"          => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_APIKEY"), [ "text", 32 ] ],
             "DEBUG"            => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
@@ -202,7 +202,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING1"         => [ "Синхронизация", "heading" ],
+            "HEADING1"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
             "SYNC_FIELD"       => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
                     "select", CommonHelpers::add_not_selected([
@@ -244,7 +244,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING2"         => [ "Работа с ценами", "heading" ],
+            "HEADING2"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE"), "heading" ],
             "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_TYPE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
             "PRICE_RECALC"     => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
