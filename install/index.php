@@ -66,24 +66,32 @@ Class priceva_connector extends CModule
     }
 
     /**
-     * @throws Exception
+     * @param bool $uninstall
+     *
+     * @throws PricevaModuleException
+     * @throws \Bitrix\Main\LoaderException
      */
-    private function check_system()
+    private function check_system( $uninstall = false )
     {
-        if( !$this->common_helpers::check_php_ver() ){
-            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_VER"));
-        }
+        if( !$uninstall ){
+            if( !$this->common_helpers::check_php_ext() ){
+                throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
+            }
 
-        if( !$this->common_helpers::check_php_ext() ){
-            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
+            if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
+                throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+            }
+        }
+        if( !$this->common_helpers::check_php_ver() ){
+            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_VER"));
         }
 
         if( !$this->common_helpers::bitrix_d7() ){
-            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
+            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
         }
 
-        if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
-            throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
+        if( !\Bitrix\Main\Loader::includeModule('catalog') ){
+            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
         }
     }
 
@@ -144,7 +152,7 @@ Class priceva_connector extends CModule
                 }
             }
 
-        }catch( Exception $e ){
+        }catch( Throwable $e ){
             $this->common_helpers::write_to_log($e);
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
 
@@ -163,6 +171,7 @@ Class priceva_connector extends CModule
 
         try{
             $this->autoloader();
+            $this->check_system(true);
 
             $step = IntVal($step);
 
@@ -208,7 +217,7 @@ Class priceva_connector extends CModule
                     );
                 }
             }
-        }catch( Exception $e ){
+        }catch( Throwable $e ){
             $this->common_helpers::write_to_log($e);
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
 
@@ -366,10 +375,6 @@ Class priceva_connector extends CModule
     private function delete_price_type()
     {
         try{
-            if( !\Bitrix\Main\Loader::includeModule('catalog') ){
-                throw new \Bitrix\Main\LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
-            }
-
             $type_price_ID = $this->options_helpers::get_type_price_ID();
 
             $this->common_helpers->APPLICATION->ResetException();
