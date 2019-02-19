@@ -22,3 +22,6 @@ $MESS[ "PRICEVA_BC_OPTIONS_TEXT_OPTIONS_RIGHTS" ]     = "Настройки пр
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_DEBUG" ] = "Режим отладки модуля";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_ON" ] = "Включен";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_OFF" ] = "Отключен";
+$MESS[ "PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS" ] = "Основные параметры";
+$MESS[ "PRICEVA_BC_OPTIONS_HEADING_SYNC" ] = "Синхронизация";
+$MESS[ "PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE" ] = "Работа с ценами";

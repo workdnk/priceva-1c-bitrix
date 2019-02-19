@@ -192,8 +192,17 @@ class OptionsHelpers
         // $agent_id       = OptionsHelpers::get_agent_id();
 
         $options = [
+            "HEADING0"         => [ "Основные параметры", "heading" ],
             "API_KEY"          => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_APIKEY"), [ "text", 32 ] ],
-            "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_TYPE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
+            "DEBUG"            => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
+                    "select", CommonHelpers::add_not_selected([
+                        "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ON"),
+                        "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_OFF"),
+                    ]),
+                ],
+            ],
+            "HEADING1"         => [ "Синхронизация", "heading" ],
             "SYNC_FIELD"       => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
                     "select", CommonHelpers::add_not_selected([
@@ -235,7 +244,9 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "PRICE_RECALC" => [
+            "HEADING2"         => [ "Работа с ценами", "heading" ],
+            "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_TYPE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
+            "PRICE_RECALC"     => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
                     "select", CommonHelpers::add_not_selected([
                         "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
@@ -243,20 +254,12 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "CURRENCY"     => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", CommonHelpers::add_not_selected($currencies) ] ],
-            "TRADE_OFFERS" => [
+            "CURRENCY"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", CommonHelpers::add_not_selected($currencies) ] ],
+            "TRADE_OFFERS"     => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS"), [
                     "select", CommonHelpers::add_not_selected([
                         "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
                         "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
-                    ]),
-                ],
-            ],
-            "DEBUG"        => [
-                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
-                    "select", CommonHelpers::add_not_selected([
-                        "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ON"),
-                        "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_OFF"),
                     ]),
                 ],
             ],
@@ -285,6 +288,101 @@ class OptionsHelpers
         <?
     }
 
+    private static function generate_tr_heading( $name )
+    {
+        ?>
+        <tr class="heading">
+            <td colspan="2"><b><?=$name?></b></td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * @param $element
+     * @param $element_text
+     * @param $option_name
+     * @param $option_val
+     */
+    private static function generate_tr( $element, $element_text, $option_name, $option_val )
+    {
+        ?>
+        <tr>
+            <td class="adm-detail-content-cell-l"
+                width="40%" <? if( $element[ 0 ] == "textarea" ) echo 'class="adm-detail-valign-top"' ?>>
+                <label for="<?=htmlspecialcharsbx($option_name)?>"><?=$element_text?>:</label>
+            </td>
+            <td class="adm-detail-content-cell-r" width="60%">
+                <?php
+                switch( $element[ 0 ] ){
+                    case 'textarea':
+                        {
+                            ?>
+                            <!--suppress HtmlFormInputWithoutLabel -->
+                            <textarea rows="<?
+                            echo $element[ 1 ] ?>" name="<?
+                            echo htmlspecialcharsbx($option_name) ?>" style="width:100%"><?
+                                echo htmlspecialcharsbx($option_val) ?></textarea>
+                            <?
+                            break;
+                        }
+                    case 'checkbox':
+                        {
+                            ?>
+                            <!--suppress HtmlFormInputWithoutLabel -->
+                            <input type="checkbox"
+                                   name="<?=htmlspecialcharsbx($option_name)?>"
+                                   id="<?=htmlspecialcharsbx($option_name)?>"
+                                   value="Y"
+                                <? if( $option_val == "Y" ) echo " checked"; ?>
+                            >
+                            <?
+                            break;
+                        }
+                    case 'text':
+                        {
+                            ?>
+                            <!--suppress HtmlFormInputWithoutLabel -->
+                            <input type="text"
+                                   size="<?=$element[ 1 ]?>"
+                                   maxlength="255" value="<?=htmlspecialcharsbx($option_val)?>"
+                                   name="<?=htmlspecialcharsbx($option_name)?>"
+                            >
+                            <?
+                            break;
+                        }
+                    case 'select':
+                        {
+                            if( count($element[ 1 ]) ){
+                                ?>
+                                <!--suppress HtmlFormInputWithoutLabel -->
+                                <select name="<?=htmlspecialcharsbx($option_name)?>">
+                                    <?
+                                    foreach( $element[ 1 ] as $key => $value ){
+                                        ?>
+                                        <option
+                                                value="<?=htmlspecialcharsbx($key)?>"
+                                            <? if( $option_val == $key ) echo 'selected="selected"' ?>
+                                        >
+                                            <?=htmlspecialcharsEx($value)?>
+                                        </option>
+                                        <?
+                                    } ?>
+                                </select>
+                                <?
+                            }
+                            break;
+                        }
+                    case 'note':
+                        {
+                            echo BeginNote(), $element[ 1 ], EndNote();
+                            break;
+                        }
+                } ?>
+            </td>
+        </tr>
+        <?php
+    }
+
     /**
      * @param $aTab
      * @param $bVarsFromForm
@@ -294,95 +392,20 @@ class OptionsHelpers
      */
     public static function generate_table( $aTab, $bVarsFromForm )
     {
-        foreach( $aTab[ "OPTIONS" ] as $name => $arOption ){
+        foreach( $aTab[ "OPTIONS" ] as $option_name => $option ){
             if( $bVarsFromForm ){
-                $val = $_POST[ $name ];
+                $option_val = $_POST[ $option_name ];
             }else{
-                $val = \Bitrix\Main\Config\Option::get(CommonHelpers::MODULE_ID, $name);
+                $option_val = \Bitrix\Main\Config\Option::get(CommonHelpers::MODULE_ID, $option_name);
             }
-            $type     = $arOption[ 1 ];
-            $disabled = array_key_exists("disabled", $arOption) ? $arOption[ "disabled" ] : "";
-            ?>
-            <tr <?
-            if( isset($arOption[ 2 ]) && strlen($arOption[ 2 ]) ) echo 'style="display:none" class="show-for-' . htmlspecialcharsbx($arOption[ 2 ]) . '"' ?>>
-                <td width="40%" <?
-                if( $type[ 0 ] == "textarea" ) echo 'class="adm-detail-valign-top"' ?>>
-                    <label for="<?
-                    echo htmlspecialcharsbx($name) ?>"><?
-                        echo $arOption[ 0 ] ?>:</label>
-                <td width="30%">
-                    <?
-                    if( $type[ 0 ] == "checkbox" ){
-                        ?>
-                        <!--suppress HtmlFormInputWithoutLabel -->
-                        <input type="checkbox" name="<?
-                        echo htmlspecialcharsbx($name) ?>" id="<?
-                        echo htmlspecialcharsbx($name) ?>" value="Y"<?
-                        if( $val == "Y" ) echo " checked"; ?><?
-                        if( $disabled ) echo ' disabled="disabled"'; ?>><?
-                        if( $disabled ) echo '<br>' . $disabled; ?>
-                        <?
-                    }elseif( $type[ 0 ] == "text" ){
-                        ?>
-                        <!--suppress HtmlFormInputWithoutLabel -->
-                        <input type="text" size="<?
-                        echo $type[ 1 ] ?>" maxlength="255" value="<?
-                        echo htmlspecialcharsbx($val) ?>" name="<?
-                        echo htmlspecialcharsbx($name) ?>">
-                        <?
-                    }elseif( $type[ 0 ] == "textarea" ){
-                        ?>
-                        <!--suppress HtmlFormInputWithoutLabel -->
-                        <textarea rows="<?
-                        echo $type[ 1 ] ?>" name="<?
-                        echo htmlspecialcharsbx($name) ?>" style=
-                                  "width:100%"><?
-                            echo htmlspecialcharsbx($val) ?></textarea>
-                        <?
-                    }elseif( $type[ 0 ] == "select" ){
-                        ?>
-                        <?
-                        if( count($type[ 1 ]) ){
-                            ?>
-                            <!--suppress HtmlFormInputWithoutLabel -->
-                            <select name="<?
-                            echo htmlspecialcharsbx($name) ?>" onchange="doShowAndHide()">
-                                <?
-                                foreach( $type[ 1 ] as $key => $value ){
-                                    ?>
-                                    <option value="<?
-                                    echo htmlspecialcharsbx($key) ?>" <?
-                                    if( $val == $key ) echo 'selected="selected"' ?>><?
-                                        echo htmlspecialcharsEx($value) ?></option>
-                                    <?
-                                } ?>
-                            </select>
-                            <?
-                        }else{
-                            ?>
-                            <?
-                            echo GetMessage("ZERO_ELEMENT_ERROR"); ?>
-                            <?
-                        } ?>
-                        <?
-                    }elseif( $type[ 0 ] == "note" ){
-                        ?>
-                        <?
-                        echo BeginNote(), $type[ 1 ], EndNote(); ?>
-                        <?
-                    } ?>
-                </td>
-                <td width="30%">
-                    <?
-                    if( $arOption[ 3 ] ){
-                        ?>
-                        <p><?
-                            echo $arOption[ 3 ]; ?></p>
-                        <?
-                    } ?>
-                </td>
-            </tr>
-            <?
+            $element_text = $option[ 0 ];
+            $element      = $option[ 1 ];
+
+            if( $element === 'heading' ){
+                static::generate_tr_heading($element_text);
+            }else{
+                static::generate_tr($element, $element_text, $option_name, $option_val);
+            }
         }
     }
 
@@ -422,22 +445,6 @@ class OptionsHelpers
     public static function generate_js_script( $filter = [] )
     {
         $functions = [
-            'doShowAndHide'                    => "function doShowAndHide() {
-                var form = BX('options');
-                var selects = BX.findChildren(form, {tag: 'select'}, true);
-                for (var i = 0; i < selects.length; i++) {
-                    var selectedValue = selects[i].value;
-                    var trs = BX.findChildren(form, {tag: 'tr'}, true);
-                    for (var j = 0; j < trs.length; j++) {
-                        if (/show-for-/.test(trs[j].className)) {
-                            if (trs[j].className.indexOf(selectedValue) >= 0)
-                                trs[j].style.display = 'table-row';
-                            else
-                                trs[j].style.display = 'none';
-                        }
-                    }
-                }
-            }",
             'showDownloadsIfPriceva'           => "function showDownloadsIfPriceva() {
                 var form = BX('options');
                 var select_SYNC_DOMINANCE = BX.findChildren(form, {
