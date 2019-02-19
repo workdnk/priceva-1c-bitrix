@@ -71,6 +71,14 @@ class OptionsHelpers
     /**
      * @return bool|string|null
      */
+    public static function get_type_price_priceva_ID()
+    {
+        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA');
+    }
+
+    /**
+     * @return bool|string|null
+     */
     public static function get_sync_dominance()
     {
         return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_DOMINANCE');
@@ -519,19 +527,20 @@ class OptionsHelpers
     public static function get_default_options()
     {
         return [
-            "API_KEY"          => "",
-            "ID_TYPE_PRICE"    => "0",
-            "SYNC_FIELD"       => "articul",
-            "CLIENT_CODE"      => "ID",
-            "SYNC_DOMINANCE"   => "priceva",
-            "SYNC_ONLY_ACTIVE" => "YES",
-            "DOWNLOAD_AT_TIME" => "1000",
-            "PRICE_RECALC"     => "NO",
-            "CURRENCY"         => "RUB",
-            "ID_AGENT"         => "",
-            "ID_ARICUL_IBLOCK" => "",
-            "TRADE_OFFERS"     => "NO",
-            "DEBUG"            => "NO",
+            "API_KEY"               => "",
+            "ID_TYPE_PRICE"         => "0",
+            "ID_TYPE_PRICE_PRICEVA" => "0",
+            "SYNC_FIELD"            => "articul",
+            "CLIENT_CODE"           => "ID",
+            "SYNC_DOMINANCE"        => "priceva",
+            "SYNC_ONLY_ACTIVE"      => "YES",
+            "DOWNLOAD_AT_TIME"      => "1000",
+            "PRICE_RECALC"          => "NO",
+            "CURRENCY"              => "RUB",
+            "ID_AGENT"              => "",
+            "ID_ARICUL_IBLOCK"      => "",
+            "TRADE_OFFERS"          => "NO",
+            "DEBUG"                 => "NO",
         ];
     }
 }
