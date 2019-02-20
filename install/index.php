@@ -120,9 +120,6 @@ Class priceva_connector extends CModule
                 );
 
             }elseif( $step == 2 ){
-                $aTabs = OptionsHelpers::get_main_options([ 'DEBUG' ]);
-                OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
-
                 $this->need_save_unroll = true;
 
                 $this->InstallFiles();
@@ -134,6 +131,9 @@ Class priceva_connector extends CModule
                 COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
 
                 $this->need_save_unroll = false;
+
+                $aTabs = OptionsHelpers::get_main_options([ 'DEBUG' ]);
+                OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
 
                 if( $this->errors ){
 
