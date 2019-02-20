@@ -119,6 +119,9 @@ Class priceva_connector extends CModule
                 );
 
             }elseif( $step == 2 ){
+                $aTabs = \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::get_main_options([ 'DEBUG' ]);
+                \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
+
                 $this->need_save_unroll = true;
 
                 $this->InstallFiles();
@@ -144,9 +147,6 @@ Class priceva_connector extends CModule
                     );
                 }else{
                     ModuleManager::registerModule($this->common_helpers::MODULE_ID);
-
-                    $aTabs = \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::get_main_options([ 'DEBUG' ]);
-                    \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
 
                     $this->common_helpers->APPLICATION->IncludeAdminFile(
                         Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
