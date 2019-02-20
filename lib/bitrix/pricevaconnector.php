@@ -23,7 +23,7 @@ class PricevaConnector
         "product_not_found_bitrix"  => 0,
         "articul_priceva_is_empty"  => 0,
         "articul_bitrix_is_empty"   => 0,
-        "articul_duplicate"         => 0,
+        "product_duplicate"         => 0,
         "price_is_null_priceva"     => 0,
         "product_synced"            => 0,
         "product_not_synced"        => 0,
@@ -251,7 +251,7 @@ class PricevaConnector
         $products = \CIBlockElement::GetList([], $arFilter);
 
         if( $products->SelectedRowsCount() > 1 ){
-            ++$this->info[ 'articul_duplicate' ];
+            ++$this->info[ 'product_duplicate' ];
 
             return false;
         }
@@ -377,7 +377,7 @@ class PricevaConnector
             Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['articul_duplicate']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['product_duplicate']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}.";
     }
