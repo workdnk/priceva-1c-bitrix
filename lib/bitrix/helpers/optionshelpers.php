@@ -186,6 +186,17 @@ class OptionsHelpers
         ];
     }
 
+    private static function find_price_type_priceva_id()
+    {
+        $price_types = \CCatalogGroup::GetList([], [ 'NAME' => 'PRICEVA' ]);
+
+        if( $price_type_priceva = $price_types->Fetch() ){
+            return $price_type_priceva[ 'ID' ];
+        }
+
+        return false;
+    }
+
     /**
      * @param array $filter
      *
@@ -197,7 +208,15 @@ class OptionsHelpers
         $types_of_price = CommonHelpers::get_types_of_price();
         $currencies     = CommonHelpers::get_currencies();
 
-        // $agent_id       = OptionsHelpers::get_agent_id();
+        if( $filter ){
+            if( $price_type_priceva_id = static::find_price_type_priceva_id() ){
+                $types_of_price[ $price_type_priceva_id ] = 'PRICEVA';
+            }else{
+                $types_of_price[ 'need_create_priceva' ] = 'PRICEVA';
+            }
+        }
+
+        // $agent_id = OptionsHelpers::get_agent_id();
 
         $options = [
             "HEADING0"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
@@ -420,8 +439,9 @@ class OptionsHelpers
     /**
      * @param bool  $bVarsFromForm
      * @param array $aTabs
+     * @param int   $id_type_price_priceva
      */
-    public static function process_save_form( $bVarsFromForm, $aTabs )
+    public static function process_save_form( $bVarsFromForm, $aTabs, $id_type_price_priceva = 0 )
     {
         if( OptionsHelpers::is_restore_method() ) // если было выбрано "по умолчанию", то сбрасывает все option'ы
         {
@@ -433,12 +453,11 @@ class OptionsHelpers
             if( !$bVarsFromForm ){
                 foreach( $aTabs as $i => $aTab ){
                     foreach( $aTab[ "OPTIONS" ] as $name => $arOption ){
-                        $disabled = array_key_exists("disabled", $arOption) ? $arOption[ "disabled" ] : "";
-                        if( $disabled )
-                            continue;
-
                         $request = CommonHelpers::getInstance()->app->getContext()->getRequest();
                         $val     = $request->get($name);
+                        if( $id_type_price_priceva && $val === 'need_create_priceva' ){
+                            $val = $id_type_price_priceva;
+                        }
                         if( $arOption[ 1 ][ 0 ] == "checkbox" && $val != "Y" ){
                             $val = "N";
                         }

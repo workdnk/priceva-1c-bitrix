@@ -25,9 +25,13 @@ Loc::loadMessages(__FILE__);
          * @noinspection PhpUndefinedClassInspection
          * @var priceva_connector $Module
          */
-        $deleted_price = $Module->get_info('deleted_price');
+        $deleted_price         = $Module->get_info('deleted_price');
+        $deleted_price_priceva = $Module->get_info('deleted_price_priceva');
         if( $deleted_price ){
             echo ( new CAdminMessage($deleted_price) )->Show();
+        }
+        if( $deleted_price_priceva ){
+            echo ( new CAdminMessage($deleted_price_priceva) )->Show();
         } ?>
         <div>
             <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">

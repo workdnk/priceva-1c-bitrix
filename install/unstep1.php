@@ -12,7 +12,7 @@ use Priceva\Connector\Bitrix\Helpers\{OptionsHelpers};
 if( !check_bitrix_sessid() ) return;
 
 $base      = OptionsHelpers::type_price_is_base();
-$different = OptionsHelpers::get_type_price_ID() === OptionsHelpers::get_type_price_priceva_ID();
+$different = OptionsHelpers::get_type_price_ID() !== OptionsHelpers::get_type_price_priceva_ID();
 
 try{
     ?>
