@@ -14,7 +14,7 @@ try{
         "\\Priceva\\Connector\\Bitrix\\Helpers\\OptionsHelpers" => "lib/bitrix/helpers/optionshelpers.php",
     ]);
     \Bitrix\Main\Loader::registerAutoLoadClasses('priceva.connector', [
-        "\\Priceva\\Connector\\Bitrix\\PricevaModuleException" => "lib/bitrix/helpers/pricevamoduleexception.php",
+        "\\Priceva\\Connector\\Bitrix\\PricevaModuleException" => "lib/bitrix/pricevamoduleexception.php",
     ]);
 }catch( \Bitrix\Main\LoaderException $e ){
     error_log($e);

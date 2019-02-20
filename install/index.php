@@ -507,7 +507,8 @@ Class priceva_connector extends CModule
             !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ||
             !class_exists('\Priceva\Connector\Bitrix\PricevaModuleException')
         ){
-            CopyDirFiles(self::GetPatch() . "/lib/bitrix/helpers/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/helpers/", true, true);
+            CopyDirFiles(self::GetPatch() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
+
             require_once( self::GetPatch() . "/include.php" );
         }
 
