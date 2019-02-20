@@ -23,6 +23,7 @@ class PricevaConnector
         "product_not_found_bitrix"  => 0,
         "articul_priceva_is_empty"  => 0,
         "articul_bitrix_is_empty"   => 0,
+        "articul_duplicate"         => 0,
         "price_is_null_priceva"     => 0,
         "product_synced"            => 0,
         "product_not_synced"        => 0,
@@ -204,7 +205,9 @@ class PricevaConnector
     ){
         foreach( $priceva_products as $priceva_product ){
             if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
-                $this->process_bitrix_product($sync_field, $product, [ $priceva_product ], $currency, $id_type_of_price, $price_recalc);
+                //$this->set_price($product['ID'], [ $priceva_product ], $currency, $id_type_of_price, $price_recalc);
+                $price = $this->get_recommend_price($priceva_product);
+                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
             }else{
                 ++$this->info[ 'product_not_found_bitrix' ];
             }
@@ -218,7 +221,7 @@ class PricevaConnector
      * @param bool      $sync_only_active
      * @param \stdClass $priceva_product
      *
-     * @return array|null
+     * @return array|bool
      */
     private function get_bitrix_product( $sync_field, $sync_only_active, $priceva_product )
     {
@@ -246,6 +249,12 @@ class PricevaConnector
         }
 
         $products = \CIBlockElement::GetList([], $arFilter);
+
+        if( $products->SelectedRowsCount() > 1 ){
+            ++$this->info[ 'articul_duplicate' ];
+
+            return false;
+        }
 
         return $products->getNext();
     }
@@ -286,9 +295,21 @@ class PricevaConnector
      */
     private function prepare_filter_product( $sync_only_active )
     {
-        $arFilter = [
-            'IBLOCK_ID' => 2,
-        ];
+        $trade_offers = OptionsHelpers::get_trade_offers();
+
+        if( $trade_offers ){
+            $arFilter = [
+                [
+                    "LOGIC" => "OR",
+                    [ "IBLOCK_ID" => 2 ],
+                    [ "IBLOCK_ID" => 3 ],
+                ],
+            ];
+        }else{
+            $arFilter = [
+                'IBLOCK_ID' => 2,
+            ];
+        }
 
         if( $sync_only_active ){
             $arFilter = array_merge($arFilter, [
@@ -330,7 +351,7 @@ class PricevaConnector
 
             $bitrix_code = $product[ $what_use_as_client_code ];
         }
-        if( 0 < $price = $this->get_price($reports, $bitrix_code, $sync_field) ){
+        if( 0 < $price = $this->find_recommend_price($reports, $bitrix_code, $sync_field) ){
             $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
 
             return true;
@@ -356,6 +377,7 @@ class PricevaConnector
             Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['articul_duplicate']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}.";
     }
@@ -408,7 +430,7 @@ class PricevaConnector
      *
      * @return int
      */
-    private function get_price( $objects, $id, $sync_field )
+    private function find_recommend_price( $objects, $id, $sync_field )
     {
         $key = array_search($id, array_column($objects, $sync_field));
 
@@ -417,33 +439,57 @@ class PricevaConnector
 
             return 0;
         }else{
-            if( $objects[ $key ]->recommended_price == 0 ){
-                ++$this->info[ 'price_is_null_priceva' ];
-            }
-
-            return $objects[ $key ]->recommended_price;
+            return $this->get_recommend_price($objects[ $key ]);
         }
     }
 
-    private function set_price( $product_id, $price, $currency, $id_type_of_price, $price_recalc )
+    private function get_recommend_price( $product )
     {
-        $trade_offers = OptionsHelpers::get_trade_offers();
-
-        $arFields = [
-            "PRODUCT_ID"       => $product_id,
-            "CATALOG_GROUP_ID" => $id_type_of_price,
-            "PRICE"            => $price,
-            "CURRENCY"         => $currency,
-        ];
-
-        if( false === \CPrice::Add($arFields, $price_recalc) ){
-            ++$this->info[ 'product_not_synced' ];
-        }else{
-            ++$this->info[ 'product_synced' ];
+        if( $product->recommended_price == 0 ){
+            ++$this->info[ 'price_is_null_priceva' ];
         }
 
-        if( $trade_offers ){
-            // TODO
+        return $product->recommended_price;
+    }
+
+    /**
+     * @param int $id_type_of_price
+     *
+     * @return bool
+     */
+    private function type_price_is_base( $id_type_of_price )
+    {
+        return \CCatalogGroup::GetByID($id_type_of_price)[ 'BASE' ] === 'Y';
+    }
+
+    /**
+     * @param int    $product_id
+     * @param float  $price
+     * @param string $currency
+     * @param int    $price_type_id
+     * @param bool   $price_recalc
+     */
+    private function set_price( $product_id, $price, $currency, $price_type_id, $price_recalc )
+    {
+        $arFields = [
+            'PRODUCT_ID'       => $product_id,
+            'CATALOG_GROUP_ID' => $price_type_id,
+            'PRICE'            => $price,
+            'CURRENCY'         => $currency,
+            'RECALC'           => $price_recalc,
+
+        ];
+
+        if( $this->type_price_is_base($price_type_id) ){
+            $result = \CPrice::SetBasePrice($product_id, $price, $currency);
+        }else{
+            $result = \Bitrix\Catalog\Model\Price::update($product_id, $arFields);
+        }
+
+        if( $result ){
+            ++$this->info[ 'product_synced' ];
+        }else{
+            ++$this->info[ 'product_not_synced' ];
         }
     }
 }
