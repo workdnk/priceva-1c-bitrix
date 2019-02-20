@@ -186,7 +186,7 @@ class OptionsHelpers
         ];
     }
 
-    private static function find_price_type_priceva_id()
+    public static function find_price_type_priceva_id()
     {
         $price_types = \CCatalogGroup::GetList([], [ 'NAME' => 'PRICEVA' ]);
 

@@ -237,6 +237,10 @@ Class priceva_connector extends CModule
     {
         parent::InstallDB();
 
+        if( $price_type_priceva_id = $this->options_helpers::find_price_type_priceva_id() ){
+            return $price_type_priceva_id;
+        }
+
         $r = $this->add_price_type();
 
         $this->save_unroll($r, "UnInstallDB");
