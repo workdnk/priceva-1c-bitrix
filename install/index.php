@@ -9,6 +9,7 @@
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
+use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 use Priceva\Connector\Bitrix\PricevaModuleException;
 
 Loc::loadMessages(__FILE__);
@@ -119,8 +120,8 @@ Class priceva_connector extends CModule
                 );
 
             }elseif( $step == 2 ){
-                $aTabs = \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::get_main_options([ 'DEBUG' ]);
-                \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
+                $aTabs = OptionsHelpers::get_main_options([ 'DEBUG' ]);
+                OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ]);
 
                 $this->need_save_unroll = true;
 
@@ -507,7 +508,7 @@ Class priceva_connector extends CModule
             require_once( self::GetPatch() . "/include.php" );
         }
 
-        $this->common_helpers  = \Priceva\Connector\Bitrix\Helpers\CommonHelpers::getInstance();
-        $this->options_helpers = \Priceva\Connector\Bitrix\Helpers\OptionsHelpers::getInstance();
+        $this->common_helpers  = CommonHelpers::getInstance();
+        $this->options_helpers = OptionsHelpers::getInstance();
     }
 }
