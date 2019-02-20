@@ -41,9 +41,9 @@ Class priceva_connector extends CModule
     private $errors         = [];
     private $info           = [];
 
-    private $need_delete_options            = false;
-    private $need_delete_price_type         = false;
-    private $need_delete_price_type_priceva = false;
+    private $delete_options            = false;
+    private $delete_price_type         = false;
+    private $delete_price_type_priceva = false;
 
     function __construct()
     {
@@ -129,7 +129,6 @@ Class priceva_connector extends CModule
                 $this->InstallTasks();
                 $this->InstallEvents();
                 $id_type_price_priceva = $this->InstallDB();
-                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price_priceva);
                 COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA', $id_type_price_priceva);
                 $id_agent = $this->InstallAgents();
                 COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
@@ -189,9 +188,9 @@ Class priceva_connector extends CModule
 
                 $request = $this->common_helpers::getInstance()->app->getContext()->getRequest();
 
-                $this->need_delete_options            = $this->common_helpers::convert_to_bool($request->get('options'));
-                $this->need_delete_price_type         = $this->common_helpers::convert_to_bool($request->get('type_price'));
-                $this->need_delete_price_type_priceva = $this->common_helpers::convert_to_bool($request->get('price_type_priceva'));
+                $this->delete_options            = $this->common_helpers::convert_to_bool($request->get('options'));
+                $this->delete_price_type         = $this->common_helpers::convert_to_bool($request->get('type_price'));
+                $this->delete_price_type_priceva = $this->common_helpers::convert_to_bool($request->get('price_type_priceva'));
 
                 $this->need_save_unroll = true;
 
@@ -251,7 +250,7 @@ Class priceva_connector extends CModule
 
         $save_unroll = true;
 
-        if( $this->need_delete_price_type ){
+        if( $this->delete_price_type ){
             $type_price_ID = $this->options_helpers::get_type_price_ID();
 
             $type_price = $this->delete_price_type($type_price_ID);
@@ -261,11 +260,11 @@ Class priceva_connector extends CModule
             $save_unroll = $type_price;
         }
 
-        if( $this->need_delete_options ){
+        if( $this->delete_options ){
             \COption::RemoveOption($this->common_helpers::MODULE_ID);
         }
 
-        if( $this->need_delete_price_type_priceva ){
+        if( $this->delete_price_type_priceva ){
             $type_price_priceva_ID = $this->options_helpers::get_type_price_priceva_ID();
 
             $deleted_price_priceva = $this->delete_price_type($type_price_priceva_ID);
