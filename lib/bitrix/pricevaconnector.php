@@ -24,6 +24,7 @@ class PricevaConnector
         "product_not_found_bitrix"  => 0,
         "articul_priceva_is_empty"  => 0,
         "articul_bitrix_is_empty"   => 0,
+        "symbol_bitrix_is_empty"    => 0,
         "product_duplicate"         => 0,
         "price_is_null_priceva"     => 0,
         "product_synced"            => 0,
@@ -177,14 +178,14 @@ class PricevaConnector
         $id_type_of_price,
         $price_recalc
     ){
-            if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
-                if( 0 < $price = $this->get_recommend_price($priceva_product) ){
-                    $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
-                }
-            }else{
-                ++$this->info[ 'product_not_found_bitrix' ];
+        if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
+            if( 0 < $price = $this->get_recommend_price($priceva_product) ){
+                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
             }
+        }else{
+            ++$this->info[ 'product_not_found_bitrix' ];
         }
+    }
 
     /**
      * @noinspection PhpUndefinedClassInspection
@@ -247,6 +248,7 @@ class PricevaConnector
      * @param bool   $sync_only_active
      *
      * @throws PricevaException
+     * @throws PricevaModuleException
      */
     private function sync_bitrix_to_priceva(
         $api_key,
@@ -303,24 +305,44 @@ class PricevaConnector
      * @param array  $product
      *
      * @return bool|mixed
+     * @throws PricevaModuleException
      */
 
     private function get_bitrix_sync_code( $sync_field, $product )
     {
         if( $sync_field === "articul" ){
-            $bitrix_code = $this->get_bitrix_articul($product[ 'ID' ]);
-            if( !$bitrix_code ){
+            $bitrix_articul = $this->get_bitrix_articul($product[ 'ID' ]);
+            if( $bitrix_articul ){
+                return $bitrix_articul;
+            }else{
                 ++$this->info[ 'articul_bitrix_is_empty' ];
 
                 return false;
             }
         }else{
-            $what_use_as_client_code = OptionsHelpers::get_client_code();
+            switch( OptionsHelpers::get_client_code() ){
+                case 'ID':
+                    {
+                        return $product[ 'ID' ];
+                        break;
+                    }
+                case 'CODE':
+                    {
+                        if( $product[ 'CODE' ] ){
+                            return $product[ 'CODE' ];
+                        }else{
+                            ++$this->info[ 'symbol_bitrix_is_empty' ];
 
-            $bitrix_code = $product[ $what_use_as_client_code ];
+                            return false;
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        throw new PricevaModuleException('Wrong CLIENT_CODE option value');
+                    }
+            }
         }
-
-        return $bitrix_code;
     }
 
     /**
@@ -332,6 +354,7 @@ class PricevaConnector
      * @param bool   $price_recalc
      *
      * @return bool
+     * @throws PricevaModuleException
      */
     private function process_bitrix_product(
         $sync_field,
@@ -361,16 +384,20 @@ class PricevaConnector
     public function get_last_info_msg()
     {
         return
+            Loc::getMessage("PRICEVA_BC_INFO_ERRORS") .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['product_duplicate']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}, " .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}. " .
+            Loc::getMessage("PRICEVA_BC_INFO_WARN") .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT1") . ": {$this->info['product_not_found_priceva']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT2") . ": {$this->info['product_not_found_bitrix']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT3") . ": {$this->info['price_is_null_priceva']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
             Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['product_duplicate']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}.";
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT11") . ": {$this->info['symbol_bitrix_is_empty']}. " .
+            Loc::getMessage("PRICEVA_BC_INFO_SUCCESS") .
+            Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}.";
     }
 
     /**
