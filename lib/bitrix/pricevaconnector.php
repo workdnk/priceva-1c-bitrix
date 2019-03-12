@@ -286,12 +286,12 @@ class PricevaConnector
         $sync_field,
         $sync_only_active
     ){
-        $reports = $this->get_all_reports($api_key, $sync_only_active);
+        $priceva_products = $this->get_priceva_products($api_key, $sync_only_active);
 
         $bitrix_products = $this->get_bitrix_products($sync_only_active);
 
         while( $bitrix_product = $bitrix_products->Fetch() ){
-            $this->process_bitrix_product($sync_field, $bitrix_product, $reports, $currency, $id_type_of_price, $price_recalc);
+            $this->process_bitrix_product($sync_field, $bitrix_product, $priceva_products, $currency, $id_type_of_price, $price_recalc);
         }
     }
 
@@ -396,14 +396,14 @@ class PricevaConnector
      * @return array
      * @throws PricevaException
      */
-    private function get_all_reports( $api_key, $sync_only_active )
+    private function get_priceva_products( $api_key, $sync_only_active )
     {
         $api = new PricevaAPI($api_key);
 
         $filters        = new PricevaFilters();
         $product_fields = new PricevaProductFields();
 
-        $filters[ 'limit' ] = 1000;
+        $filters[ 'limit' ] = OptionsHelpers::get_download_at_time();
         $filters[ 'page' ]  = 1;
 
         if( $sync_only_active ){
