@@ -206,8 +206,9 @@ class PricevaConnector
         foreach( $priceva_products as $priceva_product ){
             if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
                 //$this->set_price($product['ID'], [ $priceva_product ], $currency, $id_type_of_price, $price_recalc);
-                $price = $this->get_recommend_price($priceva_product);
-                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
+                if( 0 < $price = $this->get_recommend_price($priceva_product) ){
+                    $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
+                }
             }else{
                 ++$this->info[ 'product_not_found_bitrix' ];
             }
