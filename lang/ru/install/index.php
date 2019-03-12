@@ -4,8 +4,8 @@
  * User: Sergey Pokoev
  * www.pokoev.ru
  */
-$MESS[ "PRICEVA_BC_MODULE_NAME" ]  = "Priceva: Коннектор";
-$MESS[ "PRICEVA_BC_MODULE_DESC" ]  = "Модуль для автоматической загрузки отчетов о ценах";
+$MESS[ "PRICEVA_BC_MODULE_NAME" ] = "Priceva: Коннектор";
+$MESS[ "PRICEVA_BC_MODULE_DESC" ] = "Мониторинг цен конкурентов и автоматизированное ценообразование. Модуль для автоматической загрузки отчетов о ценах из сервиса Priceva.ru";
 
 $MESS[ "PRICEVA_BC_INSTALL_TITLE" ]                              = "Установка модуля";
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_BITRIX_VERSION" ]               = "Версия главного модуля ниже 14. Не поддерживается технология D7, необходимая модулю «Priceva: Connector». Пожалуйста обновите систему.";
