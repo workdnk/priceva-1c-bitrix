@@ -13,6 +13,7 @@ require_once __DIR__ . "/../../sdk/vendor/autoload.php";
 
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Params\{Filters as PricevaFilters, ProductFields as PricevaProductFields};
 use Priceva\PricevaAPI;
 use Priceva\PricevaException;
 
@@ -155,8 +156,8 @@ class PricevaConnector
     ){
         $api = new PricevaAPI($api_key);
 
-        $filters        = new \Priceva\Params\Filters();
-        $product_fields = new \Priceva\Params\ProductFields();
+        $filters        = new PricevaFilters();
+        $product_fields = new PricevaProductFields();
 
         $filters[ 'limit' ] = OptionsHelpers::get_download_at_time();
         $filters[ 'page' ]  = 1;
@@ -394,8 +395,8 @@ class PricevaConnector
     {
         $api = new PricevaAPI($api_key);
 
-        $filters        = new \Priceva\Params\Filters();
-        $product_fields = new \Priceva\Params\ProductFields();
+        $filters        = new PricevaFilters();
+        $product_fields = new PricevaProductFields();
 
         $filters[ 'limit' ] = 1000;
         $filters[ 'page' ]  = 1;
