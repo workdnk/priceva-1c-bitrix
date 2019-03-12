@@ -301,6 +301,31 @@ class PricevaConnector
     /**
      * @param string $sync_field
      * @param array  $product
+     *
+     * @return bool|mixed
+     */
+
+    private function get_bitrix_sync_code( $sync_field, $product )
+    {
+        if( $sync_field === "articul" ){
+            $bitrix_code = $this->get_bitrix_articul($product[ 'ID' ]);
+            if( !$bitrix_code ){
+                ++$this->info[ 'articul_bitrix_is_empty' ];
+
+                return false;
+            }
+        }else{
+            $what_use_as_client_code = OptionsHelpers::get_client_code();
+
+            $bitrix_code = $product[ $what_use_as_client_code ];
+        }
+
+        return $bitrix_code;
+    }
+
+    /**
+     * @param string $sync_field
+     * @param array  $product
      * @param array  $reports
      * @param string $currency
      * @param int    $id_type_of_price
@@ -316,19 +341,8 @@ class PricevaConnector
         $id_type_of_price,
         $price_recalc
     ){
-        if( $sync_field === "articul" ){
-            $bitrix_code = $this->get_bitrix_articul($product[ 'ID' ]);
-            if( !$bitrix_code ){
-                ++$this->info[ 'articul_bitrix_is_empty' ];
-
-                return false;
-            }
-        }else{
-            $what_use_as_client_code = OptionsHelpers::get_client_code();
-
-            $bitrix_code = $product[ $what_use_as_client_code ];
-        }
-        if( 0 < $price = $this->find_recommend_price($reports, $bitrix_code, $sync_field) ){
+        $bitrix_sync_code = $this->get_bitrix_sync_code($sync_field, $product);
+        if( 0 < $price = $this->find_recommend_price($reports, $bitrix_sync_code, $sync_field) ){
             $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
 
             return true;
