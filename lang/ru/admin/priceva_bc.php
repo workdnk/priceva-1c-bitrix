@@ -7,3 +7,6 @@
  */
 
 $MESS[ "PRICEVA_BC_ADMIN_PAGE_RUN" ] = "Запустить синхронизацию";
+$MESS[ "PRICEVA_BC_INFO_WARN" ]      = "Предупреждения: ";
+$MESS[ "PRICEVA_BC_INFO_ERRORS" ]    = "Ошибки: ";
+$MESS[ "PRICEVA_BC_INFO_SUCCESS" ]   = "Успех: ";

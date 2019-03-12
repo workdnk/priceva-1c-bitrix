@@ -31,15 +31,32 @@ if( "POST" === $common_helpers->request_method() ){
         $info = $connector->get_last_info_msg();
     }
 }
+function priceva_get_info( $infos )
+{
+    $res = "<ul>";
+    foreach( $infos as $info ){
+        $res .= "<li>" . $info . "</li>";
+    }
+    $res .= "</ul>";
+
+    return $res;
+}
 
 ?>
-<?="<div id='info'>" . $info . "<br /><br /></div>"?>
+    <div id='info'>
+        <p style="color: red">
+            <b><?=Loc::getMessage("PRICEVA_BC_INFO_ERRORS")?></b><br/><?=priceva_get_info($info[ 'errors' ])?></p>
+        <p style="color: orange">
+            <b><?=Loc::getMessage("PRICEVA_BC_INFO_WARN")?></b><br/><?=priceva_get_info($info[ 'warnings' ])?></p>
+        <p style="color: green">
+            <b><?=Loc::getMessage("PRICEVA_BC_INFO_SUCCESS")?></b><br/><?=priceva_get_info($info[ 'success' ])?></p>
+    </div>
 
     <form method="post" action="<? echo $common_helpers->APPLICATION->GetCurPage() ?>?lang=<?=LANGUAGE_ID?>"
           id="priceva_bc">
         <input type="submit" name="run" value="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>"
                title="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>">
-</form>
+    </form>
 
 <?php
 require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/include/epilog_admin.php" );

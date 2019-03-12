@@ -132,7 +132,13 @@ class PricevaConnector
                 throw new \Exception("Wrong sync dominance type in module " . CommonHelpers::MODULE_ID);
         }
 
-        CommonHelpers::write_to_log($this->get_last_info_msg(), 'PRICEVA_SYNC');
+        $info     = $this->get_last_info_msg();
+        $info_str =
+            "Errors: " . implode(', ', $info[ 'errors' ]) . "; " .
+            "Warnings: " . implode(', ', $info[ 'warnings' ]) . "; " .
+            "Success: " . implode(', ', $info[ 'success' ]) . ".";
+
+        CommonHelpers::write_to_log($info_str, 'PRICEVA_SYNC');
     }
 
     /**
@@ -383,21 +389,25 @@ class PricevaConnector
 
     public function get_last_info_msg()
     {
-        return
-            Loc::getMessage("PRICEVA_BC_INFO_ERRORS") .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['product_duplicate']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}. " .
-            Loc::getMessage("PRICEVA_BC_INFO_WARN") .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT1") . ": {$this->info['product_not_found_priceva']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT2") . ": {$this->info['product_not_found_bitrix']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT3") . ": {$this->info['price_is_null_priceva']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}, " .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT11") . ": {$this->info['symbol_bitrix_is_empty']}. " .
-            Loc::getMessage("PRICEVA_BC_INFO_SUCCESS") .
-            Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}.";
+        return [
+            "errors"   => [
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT10") . ": {$this->info['product_duplicate']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT9") . ": {$this->info['priceva_errors']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT8") . ": {$this->info['module_errors']}",
+            ],
+            "warnings" => [
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT1") . ": {$this->info['product_not_found_priceva']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT2") . ": {$this->info['product_not_found_bitrix']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT3") . ": {$this->info['price_is_null_priceva']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT5") . ": {$this->info['product_not_synced']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT6") . ": {$this->info['articul_priceva_is_empty']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT7") . ": {$this->info['articul_bitrix_is_empty']}",
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT11") . ": {$this->info['symbol_bitrix_is_empty']}",
+            ],
+            "success"  => [
+                Loc::getMessage("PRICEVA_BC_INFO_TEXT4") . ": {$this->info['product_synced']}",
+            ],
+        ];
     }
 
     /**
