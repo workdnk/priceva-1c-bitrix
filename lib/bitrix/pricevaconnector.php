@@ -119,12 +119,12 @@ class PricevaConnector
         switch( $sync_dominance ){
             case "priceva":
                 {
-                    $this->priceva_to_bitrix($api_key, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
+                    $this->sync_priceva_to_bitrix($api_key, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
                     break;
                 }
             case "bitrix":
                 {
-                    $this->bitrix_to_priceva($api_key, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
+                    $this->sync_bitrix_to_priceva($api_key, $id_type_of_price, $price_recalc, $currency, $sync_field, $sync_only_active);
                     break;
                 }
             default:
@@ -146,7 +146,7 @@ class PricevaConnector
      *
      * @throws PricevaException
      */
-    private function priceva_to_bitrix(
+    private function sync_priceva_to_bitrix(
         $api_key,
         $id_type_of_price,
         $price_recalc,
@@ -271,7 +271,7 @@ class PricevaConnector
      *
      * @throws PricevaException
      */
-    private function bitrix_to_priceva(
+    private function sync_bitrix_to_priceva(
         $api_key,
         $id_type_of_price,
         $price_recalc,
