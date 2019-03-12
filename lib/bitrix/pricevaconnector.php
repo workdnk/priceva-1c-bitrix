@@ -261,6 +261,13 @@ class PricevaConnector
         return $products->getNext();
     }
 
+    private function get_bitrix_products( $sync_only_active )
+    {
+        $arFilter = $this->prepare_filter_product($sync_only_active);
+
+        return \CIBlockElement::GetList([], $arFilter);
+    }
+
     /**
      * @param string $api_key
      * @param int    $id_type_of_price
@@ -281,12 +288,10 @@ class PricevaConnector
     ){
         $reports = $this->get_all_reports($api_key, $sync_only_active);
 
-        $arFilter = $this->prepare_filter_product($sync_only_active);
+        $bitrix_products = $this->get_bitrix_products($sync_only_active);
 
-        $dbProducts = \CIBlockElement::GetList([], $arFilter);
-
-        while( $product = $dbProducts->Fetch() ){
-            $this->process_bitrix_product($sync_field, $product, $reports, $currency, $id_type_of_price, $price_recalc);
+        while( $bitrix_product = $bitrix_products->Fetch() ){
+            $this->process_bitrix_product($sync_field, $bitrix_product, $reports, $currency, $id_type_of_price, $price_recalc);
         }
     }
 
