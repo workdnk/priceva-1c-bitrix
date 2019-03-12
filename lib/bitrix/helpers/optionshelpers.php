@@ -472,6 +472,35 @@ class OptionsHelpers
     public static function generate_js_script( $filter = [] )
     {
         $functions = [
+            'showDownloadsIfPriceva'           => "function showDownloadsIfPriceva() {
+                var form = BX('options');
+                var select_SYNC_DOMINANCE = BX.findChildren(form, {
+                    tag: 'select',
+                    attribute: {name: 'SYNC_DOMINANCE'}
+                }, true);
+                BX.bind(select_SYNC_DOMINANCE[0], 'bxchange', check_showDownloadsIfPriceva)
+            }",
+            'check_showDownloadsIfPriceva'     => "function check_showDownloadsIfPriceva() {
+                var form = BX('options'),
+                    select_SYNC_DOMINANCE = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'SYNC_DOMINANCE'}
+                    }, true),
+                    select_DOWNLOAD_AT_TIME = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'DOWNLOAD_AT_TIME'}
+                    }, true);
+
+                var s = select_DOWNLOAD_AT_TIME[0],
+                    d = select_SYNC_DOMINANCE[0];
+
+                if (d.value != '0') {
+                    BX.adjust(s, {props: {disabled: false}});
+                } else {
+                    BX.adjust(s, {props: {disabled: true}});
+                    s.value = 0;
+                }
+            }",
             'showClientCodeIfClientCode'       => "function showClientCodeIfClientCode() {
                 var form = BX('options');
                 var select_SYNC_FIELD = BX.findChildren(form, {
