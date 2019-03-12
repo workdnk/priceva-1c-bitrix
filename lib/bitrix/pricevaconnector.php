@@ -184,9 +184,9 @@ class PricevaConnector
         $id_type_of_price,
         $price_recalc
     ){
-        if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
+        if( $bitrix_product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
             if( 0 < $price = $this->get_recommend_price($priceva_product) ){
-                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
+                $this->set_price($bitrix_product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
             }
         }else{
             ++$this->info[ 'product_not_found_bitrix' ];
@@ -353,7 +353,7 @@ class PricevaConnector
 
     /**
      * @param string $sync_field
-     * @param array  $product
+     * @param array  $bitrix_product
      * @param array  $reports
      * @param string $currency
      * @param int    $id_type_of_price
@@ -364,16 +364,15 @@ class PricevaConnector
      */
     private function process_bitrix_product(
         $sync_field,
-        $product,
+        $bitrix_product,
         $reports,
         $currency,
         $id_type_of_price,
         $price_recalc
     ){
-        $bitrix_sync_code = $this->get_bitrix_sync_code($sync_field, $product);
-        if( $priceva_product = $this->get_priceva_product($reports, $bitrix_sync_code, $sync_field) ){
+        if( $priceva_product = $this->get_priceva_product($reports, $bitrix_product, $sync_field) ){
             if( 0 < $price = $this->get_recommend_price($priceva_product) ){
-                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
+                $this->set_price($bitrix_product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
 
                 return true;
             }
@@ -454,22 +453,24 @@ class PricevaConnector
     }
 
     /**
-     * @param array  $objects
-     * @param int    $sync_code
+     * @param array  $priceva_products
+     * @param array  $bitrix_product
      * @param string $sync_field
      *
      * @return int
+     * @throws PricevaModuleException
      */
-    private function get_priceva_product( $objects, $sync_code, $sync_field )
+    private function get_priceva_product( $priceva_products, $bitrix_product, $sync_field )
     {
-        $key = array_search($sync_code, array_column($objects, $sync_field));
+        $sync_code = $bitrix_sync_code = $this->get_bitrix_sync_code($sync_field, $bitrix_product);
+        $key       = array_search($sync_code, array_column($priceva_products, $sync_field));
 
         if( $key === false ){
             ++$this->info[ 'product_not_found_priceva' ];
 
             return 0;
         }else{
-            return $objects[ $key ];
+            return $priceva_products[ $key ];
         }
     }
 
