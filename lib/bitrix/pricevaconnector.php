@@ -371,10 +371,12 @@ class PricevaConnector
         $price_recalc
     ){
         $bitrix_sync_code = $this->get_bitrix_sync_code($sync_field, $product);
-        if( 0 < $price = $this->find_recommend_price($reports, $bitrix_sync_code, $sync_field) ){
-            $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
+        if( $priceva_product = $this->get_priceva_product($reports, $bitrix_sync_code, $sync_field) ){
+            if( 0 < $price = $this->get_recommend_price($priceva_product) ){
+                $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
 
-            return true;
+                return true;
+            }
         }
 
         return false;
@@ -453,21 +455,21 @@ class PricevaConnector
 
     /**
      * @param array  $objects
-     * @param int    $id
+     * @param int    $sync_code
      * @param string $sync_field
      *
      * @return int
      */
-    private function find_recommend_price( $objects, $id, $sync_field )
+    private function get_priceva_product( $objects, $sync_code, $sync_field )
     {
-        $key = array_search($id, array_column($objects, $sync_field));
+        $key = array_search($sync_code, array_column($objects, $sync_field));
 
         if( $key === false ){
             ++$this->info[ 'product_not_found_priceva' ];
 
             return 0;
         }else{
-            return $this->get_recommend_price($objects[ $key ]);
+            return $objects[ $key ];
         }
     }
 
