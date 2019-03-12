@@ -154,59 +154,30 @@ class PricevaConnector
         $sync_field,
         $sync_only_active
     ){
-        $api = new PricevaAPI($api_key);
+        $priceva_products = $this->get_priceva_products($api_key, $sync_only_active);
 
-        $filters        = new PricevaFilters();
-        $product_fields = new PricevaProductFields();
-
-        $filters[ 'limit' ] = OptionsHelpers::get_download_at_time();
-        $filters[ 'page' ]  = 1;
-
-        if( $sync_only_active ){
-            $filters[ 'active' ] = 1;
-        }
-
-        $product_fields[] = 'client_code';
-        $product_fields[] = 'articul';
-
-        $reports = $api->report_list($filters, $product_fields);
-
-        $pages_cnt = (int)$reports->get_result()->pagination->pages_cnt;
-
-        $priceva_products = $reports->get_result()->objects;
-
-        $this->process_priceva_products($sync_field, $sync_only_active, $priceva_products, $currency, $id_type_of_price, $price_recalc);
-
-        while( $pages_cnt > 1 ){
-            $filters[ 'page' ] = $pages_cnt--;
-
-            $reports = $api->report_list($filters, $product_fields);
-
-            $priceva_products = $reports->get_result()->objects;
-
-            $this->process_priceva_products($sync_field, $sync_only_active, $priceva_products, $currency, $id_type_of_price, $price_recalc);
+        foreach( $priceva_products as $priceva_product ){
+            $this->process_priceva_product($sync_field, $sync_only_active, $priceva_product, $currency, $id_type_of_price, $price_recalc);
         }
     }
 
     /**
-     * @param string $sync_field
-     * @param bool   $sync_only_active
-     * @param array  $priceva_products
-     * @param string $currency
-     * @param int    $id_type_of_price
-     * @param bool   $price_recalc
+     * @param string    $sync_field
+     * @param bool      $sync_only_active
+     * @param \stdClass $priceva_product
+     * @param string    $currency
+     * @param int       $id_type_of_price
+     * @param bool      $price_recalc
      */
-    private function process_priceva_products(
+    private function process_priceva_product(
         $sync_field,
         $sync_only_active,
-        $priceva_products,
+        $priceva_product,
         $currency,
         $id_type_of_price,
         $price_recalc
     ){
-        foreach( $priceva_products as $priceva_product ){
             if( $product = $this->get_bitrix_product($sync_field, $sync_only_active, $priceva_product) ){
-                //$this->set_price($product['ID'], [ $priceva_product ], $currency, $id_type_of_price, $price_recalc);
                 if( 0 < $price = $this->get_recommend_price($priceva_product) ){
                     $this->set_price($product[ 'ID' ], $price, $currency, $id_type_of_price, $price_recalc);
                 }
@@ -214,7 +185,6 @@ class PricevaConnector
                 ++$this->info[ 'product_not_found_bitrix' ];
             }
         }
-    }
 
     /**
      * @noinspection PhpUndefinedClassInspection
