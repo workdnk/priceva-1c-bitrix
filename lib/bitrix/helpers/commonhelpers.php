@@ -172,6 +172,14 @@ class CommonHelpers
     /**
      * @return bool
      */
+    public static function bitrix_small_business()
+    {
+        return !\CBXFeatures::IsFeatureEnabled('');
+    }
+
+    /**
+     * @return bool
+     */
     public static function check_php_ext()
     {
         return extension_loaded('json') && extension_loaded('curl');
