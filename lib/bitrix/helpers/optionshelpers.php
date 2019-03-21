@@ -174,18 +174,20 @@ class OptionsHelpers
     }
 
     /**
+     * @param array $filter
+     *
      * @return array
      * @throws \Bitrix\Main\LoaderException
      */
-    public static function generate_options_tabs()
+    public static function generate_options_tabs($filter = [])
     {
         return [
             [
                 "DIV"     => "index",
                 "TAB"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_MAIN"),
-                "ICON"    => "testmodule_settings",
+                "ICON"    => "",
                 "TITLE"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_MAIN_TITLE"),
-                "OPTIONS" => self::get_main_options(),
+                "OPTIONS" => self::get_main_options($filter),
             ],
             [
                 "DIV"     => "rights",
