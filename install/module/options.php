@@ -24,10 +24,13 @@ try{
     $RIGHT = $common_helpers->APPLICATION->GetGroupRight($MODULE_ID);
 
     if( $RIGHT >= "R" ){
-        $bVarsFromForm = false; // пришли ли данные с формы
+        $bVarsFromForm = false;
 
-        // массив вкладок, свойств
-        $aTabs = OptionsHelpers::generate_options_tabs();
+        if( $this->common_helpers::bitrix_small_business() ){
+            $aTabs = OptionsHelpers::generate_options_tabs([ 'ID_TYPE_PRICE', 'PRICE_RECALC' ]);
+        }else{
+            $aTabs = OptionsHelpers::generate_options_tabs();
+        }
 
         $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
