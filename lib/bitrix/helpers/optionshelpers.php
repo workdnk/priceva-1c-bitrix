@@ -162,6 +162,17 @@ class OptionsHelpers
         }
     }
 
+    public static function get_base_price_type()
+    {
+        $price_types = \CCatalogGroup::GetList([], [ 'BASE' => 'Y' ]);
+
+        if( $base_price_type = $price_types->Fetch() ){
+            return $base_price_type[ 'ID' ];
+        }
+
+        return false;
+    }
+
     /**
      * @return array
      * @throws \Bitrix\Main\LoaderException
