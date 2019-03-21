@@ -264,10 +264,6 @@ Class priceva_connector extends CModule
             $save_unroll = $type_price;
         }
 
-        if( $this->delete_options ){
-            \COption::RemoveOption($this->common_helpers::MODULE_ID);
-        }
-
         if( $this->delete_price_type_priceva ){
             $type_price_priceva_ID = $this->options_helpers::get_type_price_priceva_ID();
 
@@ -276,6 +272,10 @@ Class priceva_connector extends CModule
             $this->info[ 'deleted_price_priceva' ] = $deleted_price_priceva;
 
             $save_unroll = $deleted_price_priceva && $save_unroll;
+        }
+
+        if( $this->delete_options ){
+            \COption::RemoveOption($this->common_helpers::MODULE_ID);
         }
 
         $this->save_unroll($save_unroll, "InstallDB");
