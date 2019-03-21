@@ -11,8 +11,9 @@ use Priceva\Connector\Bitrix\Helpers\{OptionsHelpers};
 
 if( !check_bitrix_sessid() ) return;
 
-$base      = OptionsHelpers::type_price_is_base();
-$different = OptionsHelpers::get_type_price_ID() !== OptionsHelpers::get_type_price_priceva_ID();
+$price_type = OptionsHelpers::get_type_price_ID();
+$base       = OptionsHelpers::type_price_is_base();
+$different  = OptionsHelpers::get_type_price_ID() !== OptionsHelpers::get_type_price_priceva_ID();
 
 try{
     ?>
@@ -31,7 +32,7 @@ try{
                     </select></td>
             </tr>
             <?php
-            if( !$base ){ ?>
+            if( !$base && !empty($price_type) ){ ?>
                 <!-- delete selected price type -->
                 <tr>
                     <td><label for="type_price"><?=Loc::getMessage("PRICEVA_BC_UNINSTALL_STEP1_TEXT1")?></label></td>

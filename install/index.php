@@ -99,6 +99,21 @@ Class priceva_connector extends CModule
     }
 
     /**
+     * @param int  $step
+     * @param bool $is_small_business
+     *
+     * @throws \Bitrix\Main\LoaderException
+     */
+    private function install( $step, $is_small_business )
+    {
+        if( $step < 2 ){
+            $this->install_step_1(!$is_small_business);
+        }elseif( $step == 2 ){
+            $this->install_step_2(!$is_small_business);
+        }
+    }
+
+    /**
      * @return bool
      */
     function DoInstall()
@@ -111,49 +126,9 @@ Class priceva_connector extends CModule
 
             $step = IntVal($step);
 
-            if( $step < 2 ){
-                $this->InstallFiles();
+            $is_small_business = $this->common_helpers::bitrix_small_business();
 
-                $this->common_helpers->APPLICATION->IncludeAdminFile(
-                    Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                    self::GetPatch() . "/install/step1.php"
-                );
-
-            }elseif( $step == 2 ){
-                $this->need_save_unroll = true;
-
-                $this->InstallFiles();
-                $this->InstallTasks();
-                $this->InstallEvents();
-                $id_type_price_priceva = $this->InstallDB();
-                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA', $id_type_price_priceva);
-                $id_agent = $this->InstallAgents();
-                COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
-
-                $this->need_save_unroll = false;
-
-                $aTabs = OptionsHelpers::get_main_options([ 'DEBUG' ]);
-                OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price_priceva);
-
-                if( $this->errors ){
-
-                    foreach( $this->unroll_methods as $method ){
-                        $this->$method();
-                    }
-
-                    $this->common_helpers->APPLICATION->IncludeAdminFile(
-                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/errors.php"
-                    );
-                }else{
-                    ModuleManager::registerModule($this->common_helpers::MODULE_ID);
-
-                    $this->common_helpers->APPLICATION->IncludeAdminFile(
-                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/step2.php"
-                    );
-                }
-            }
+            $this->install($step, $is_small_business);
 
         }catch( Throwable $e ){
             $this->common_helpers::write_to_log($e);
@@ -163,6 +138,141 @@ Class priceva_connector extends CModule
         }
 
         return true;
+    }
+
+    /**
+     * @param bool $full
+     */
+    private function install_step_1( $full )
+    {
+        $this->InstallFiles();
+
+        if( $full ){
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/step1_full_business.php"
+            );
+        }else{
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/step1_small_business.php"
+            );
+        }
+    }
+
+    /**
+     * @param $full
+     *
+     * @throws \Bitrix\Main\LoaderException
+     */
+    private function install_step_2( $full )
+    {
+        $this->need_save_unroll = true;
+
+        $this->InstallFiles();
+        $this->InstallTasks();
+        $this->InstallEvents();
+
+        $id_type_price = $this->InstallDB();
+
+        if( $full ){
+            COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA', $id_type_price);
+        }else{
+            COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
+        }
+
+        $id_agent = $this->InstallAgents();
+        COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
+
+        $this->need_save_unroll = false;
+
+        $aTabs = OptionsHelpers::get_main_options([ 'DEBUG', 'ID_TYPE_PRICE' ]);
+        OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price);
+
+        if( $this->errors ){
+
+            foreach( $this->unroll_methods as $method ){
+                $this->$method();
+            }
+
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/errors.php"
+            );
+        }else{
+            ModuleManager::registerModule($this->common_helpers::MODULE_ID);
+
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/step2.php"
+            );
+        }
+    }
+
+    private function uninstall_step_1( $full )
+    {
+        if( $full ){
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/unstep1_full_business.php"
+            );
+        }else{
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/unstep1_small_business.php"
+            );
+        }
+    }
+
+    /**
+     * @param bool $full
+     */
+    private function uninstall_step_2( $full )
+    {
+        $request = $this->common_helpers::getInstance()->app->getContext()->getRequest();
+
+        $this->delete_options = $this->common_helpers::convert_to_bool($request->get('options'));
+        if( $full ){
+            $this->delete_price_type         = $this->common_helpers::convert_to_bool($request->get('type_price'));
+            $this->delete_price_type_priceva = $this->common_helpers::convert_to_bool($request->get('price_type_priceva'));
+        }
+
+        $this->need_save_unroll = true;
+
+        $this->UnInstallAgents();
+        $this->UnInstallEvents();
+        $this->UnInstallTasks();
+        $this->UnInstallDB();
+        $this->UnInstallFiles();
+
+        $this->need_save_unroll = false;
+
+        if( $this->errors ){
+
+            foreach( $this->unroll_methods as $method ){
+                $this->$method();
+            }
+
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
+                self::GetPatch() . "/install/errors.php"
+            );
+        }else{
+            $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
+            $this->common_helpers->APPLICATION->IncludeAdminFile(
+                Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
+                self::GetPatch() . "/install/unstep2.php"
+            );
+        }
+    }
+
+    private function uninstall( $step, $is_small_business )
+    {
+        if( $step < 2 ){
+            $this->uninstall_step_1(!$is_small_business);
+        }elseif( $step == 2 ){
+            $this->uninstall_step_2(!$is_small_business);
+        }
     }
 
     /**
@@ -178,48 +288,10 @@ Class priceva_connector extends CModule
 
             $step = IntVal($step);
 
-            if( $step < 2 ){
-                $this->common_helpers->APPLICATION->IncludeAdminFile(
-                    Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                    self::GetPatch() . "/install/unstep1.php"
-                );
+            $is_small_business = $this->common_helpers::bitrix_small_business();
 
-            }elseif( $step == 2 ){
+            $this->uninstall($step, $is_small_business);
 
-                $request = $this->common_helpers::getInstance()->app->getContext()->getRequest();
-
-                $this->delete_options            = $this->common_helpers::convert_to_bool($request->get('options'));
-                $this->delete_price_type         = $this->common_helpers::convert_to_bool($request->get('type_price'));
-                $this->delete_price_type_priceva = $this->common_helpers::convert_to_bool($request->get('price_type_priceva'));
-
-                $this->need_save_unroll = true;
-
-                $this->UnInstallAgents();
-                $this->UnInstallEvents();
-                $this->UnInstallTasks();
-                $this->UnInstallDB();
-                $this->UnInstallFiles();
-
-                $this->need_save_unroll = false;
-
-                if( $this->errors ){
-
-                    foreach( $this->unroll_methods as $method ){
-                        $this->$method();
-                    }
-
-                    $this->common_helpers->APPLICATION->IncludeAdminFile(
-                        Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/errors.php"
-                    );
-                }else{
-                    $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
-                    $this->common_helpers->APPLICATION->IncludeAdminFile(
-                        Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                        self::GetPatch() . "/install/unstep2.php"
-                    );
-                }
-            }
         }catch( Throwable $e ){
             $this->common_helpers::write_to_log($e);
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
@@ -236,6 +308,12 @@ Class priceva_connector extends CModule
     function InstallDB()
     {
         parent::InstallDB();
+
+        $is_small_business = $this->common_helpers::bitrix_small_business();
+
+        if( $is_small_business ){
+            return $this->options_helpers::get_base_price_type();
+        }
 
         if( $price_type_priceva_id = $this->options_helpers::find_price_type_priceva_id() ){
             return $price_type_priceva_id;
