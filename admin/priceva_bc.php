@@ -24,6 +24,8 @@ if( $FORM_RIGHT <= "D" ) $common_helpers->APPLICATION->AuthForm(GetMessage("ACCE
 
 require( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/include/prolog_admin_after.php" );
 
+$info = null;
+
 if( "POST" === $common_helpers->request_method() ){
     if( $common_helpers->app->getContext()->getRequest()->getPost('run') ){
         $connector = new \Priceva\Connector\Bitrix\PricevaConnector();
@@ -42,7 +44,7 @@ function priceva_get_info( $infos )
     return $res;
 }
 
-?>
+if( $info ){ ?>
     <div id='info'>
         <p style="color: red">
             <b><?=Loc::getMessage("PRICEVA_BC_INFO_ERRORS")?></b><br/><?=priceva_get_info($info[ 'errors' ])?></p>
@@ -51,7 +53,7 @@ function priceva_get_info( $infos )
         <p style="color: green">
             <b><?=Loc::getMessage("PRICEVA_BC_INFO_SUCCESS")?></b><br/><?=priceva_get_info($info[ 'success' ])?></p>
     </div>
-
+<?php } ?>
     <form method="post" action="<? echo $common_helpers->APPLICATION->GetCurPage() ?>?lang=<?=LANGUAGE_ID?>"
           id="priceva_bc">
         <input type="submit" name="run" value="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>"
