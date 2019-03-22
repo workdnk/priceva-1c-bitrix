@@ -100,16 +100,16 @@ Class priceva_connector extends CModule
 
     /**
      * @param int  $step
-     * @param bool $is_small_business
+     * @param bool $is_full_business
      *
      * @throws \Bitrix\Main\LoaderException
      */
-    private function install( $step, $is_small_business )
+    private function install( $step, $is_full_business )
     {
         if( $step < 2 ){
-            $this->install_step_1(!$is_small_business);
+            $this->install_step_1($is_full_business);
         }elseif( $step == 2 ){
-            $this->install_step_2(!$is_small_business);
+            $this->install_step_2($is_full_business);
         }
     }
 
@@ -126,9 +126,9 @@ Class priceva_connector extends CModule
 
             $step = IntVal($step);
 
-            $is_small_business = $this->common_helpers::bitrix_small_business();
+            $is_full_business = $this->common_helpers::bitrix_full_business();
 
-            $this->install($step, $is_small_business);
+            $this->install($step, $is_full_business);
 
         }catch( Throwable $e ){
             $this->common_helpers::write_to_log($e);
@@ -266,12 +266,12 @@ Class priceva_connector extends CModule
         }
     }
 
-    private function uninstall( $step, $is_small_business )
+    private function uninstall( $step, $is_full_business )
     {
         if( $step < 2 ){
-            $this->uninstall_step_1(!$is_small_business);
+            $this->uninstall_step_1($is_full_business);
         }elseif( $step == 2 ){
-            $this->uninstall_step_2(!$is_small_business);
+            $this->uninstall_step_2($is_full_business);
         }
     }
 
@@ -288,9 +288,9 @@ Class priceva_connector extends CModule
 
             $step = IntVal($step);
 
-            $is_small_business = $this->common_helpers::bitrix_small_business();
+            $is_full_business = $this->common_helpers::bitrix_full_business();
 
-            $this->uninstall($step, $is_small_business);
+            $this->uninstall($step, $is_full_business);
 
         }catch( Throwable $e ){
             $this->common_helpers::write_to_log($e);
@@ -309,9 +309,9 @@ Class priceva_connector extends CModule
     {
         parent::InstallDB();
 
-        $is_small_business = $this->common_helpers::bitrix_small_business();
+        $is_full_business = $this->common_helpers::bitrix_full_business();
 
-        if( $is_small_business ){
+        if( !$is_full_business ){
             return $this->options_helpers::get_base_price_type();
         }
 

@@ -172,9 +172,9 @@ class CommonHelpers
     /**
      * @return bool
      */
-    public static function bitrix_small_business()
+    public static function bitrix_full_business()
     {
-        return !\CBXFeatures::IsFeatureEnabled('');
+        return \CBXFeatures::IsFeatureEnabled('CatMultiPrice');
     }
 
     /**
