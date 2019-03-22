@@ -26,7 +26,7 @@ try{
     if( $RIGHT >= "R" ){
         $bVarsFromForm = false;
 
-        if( $this->common_helpers::bitrix_small_business() ){
+        if( $common_helpers::bitrix_full_business() ){
             $aTabs = OptionsHelpers::generate_options_tabs([ 'ID_TYPE_PRICE', 'PRICE_RECALC' ]);
         }else{
             $aTabs = OptionsHelpers::generate_options_tabs();
