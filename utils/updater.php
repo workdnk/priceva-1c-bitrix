@@ -7,7 +7,13 @@
  */
 
 if( IsModuleInstalled('{MODULE_ID}') ){
-    if( is_dir(dirname(__FILE__) . '/install/components') ){
+
+    $updater = new CUpdater();
+
+    if( is_dir(dirname(__FILE__) . '/install/admin') ){
         $updater->CopyFiles("install/admin", "admin");
+    }
+    if( is_dir(dirname(__FILE__) . '/install/module') ){
+        $updater->CopyFiles("install/module", "");
     }
 }
