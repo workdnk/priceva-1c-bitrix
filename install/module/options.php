@@ -27,9 +27,9 @@ try{
         $bVarsFromForm = false;
 
         if( $common_helpers::bitrix_full_business() ){
-            $aTabs = OptionsHelpers::generate_options_tabs([ 'ID_TYPE_PRICE', 'PRICE_RECALC' ]);
-        }else{
             $aTabs = OptionsHelpers::generate_options_tabs();
+        }else{
+            $aTabs = OptionsHelpers::generate_options_tabs([ 'ID_TYPE_PRICE', 'PRICE_RECALC' ]);
         }
 
         $tabControl = new CAdminTabControl("tabControl", $aTabs);
