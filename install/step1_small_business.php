@@ -14,7 +14,7 @@ if( !check_bitrix_sessid() ) return;
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . CommonHelpers::MODULE_ID . "/options.php");
 
-$filter = [ 'DEBUG', 'HEADING0', 'HEADING1', 'HEADING2', 'ID_TYPE_PRICE' ];
+$filter = [ 'DEBUG', 'HEADING0', 'HEADING1', 'HEADING2', 'ID_TYPE_PRICE', 'PRICE_RECALC' ];
 
 try{
     $aTab = OptionsHelpers::get_main_options($filter);
