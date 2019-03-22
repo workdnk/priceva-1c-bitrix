@@ -4,27 +4,27 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit87ba27676e9f10b4c2d5c5d24dca5cd8
+class ComposerStaticInite82d852d532bce863d7545cc7f11d5c7
 {
-    public static $prefixLengthsPsr4 = array (
-        'P' => 
-        array (
-            'Priceva\\' => 8,
-        ),
-    );
+    public static $prefixLengthsPsr4 = [
+        'P' =>
+            [
+                'Priceva\\' => 8,
+            ],
+    ];
 
-    public static $prefixDirsPsr4 = array (
-        'Priceva\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/priceva/priceva-sdk-php/src',
-        ),
-    );
+    public static $prefixDirsPsr4 = [
+        'Priceva\\' =>
+            [
+                0 => __DIR__ . '/..' . '/priceva/priceva-sdk-php/src',
+            ],
+    ];
 
-    public static function getInitializer(ClassLoader $loader)
+    public static function getInitializer( ClassLoader $loader )
     {
-        return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit87ba27676e9f10b4c2d5c5d24dca5cd8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4    = ComposerStaticInit87ba27676e9f10b4c2d5c5d24dca5cd8::$prefixDirsPsr4;
+        return \Closure::bind(function () use ( $loader ){
+            $loader->prefixLengthsPsr4 = ComposerStaticInite82d852d532bce863d7545cc7f11d5c7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4    = ComposerStaticInite82d852d532bce863d7545cc7f11d5c7::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

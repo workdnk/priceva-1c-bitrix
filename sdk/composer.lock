@@ -12,12 +12,12 @@
       "source": {
         "type": "git",
         "url": "https://github.com/priceva/priceva-sdk-php.git",
-        "reference": "509f0f9dbf631281a4d76b56c426b48777342888"
+        "reference": "deb2c5a42483d328180937970eaa417695f0a0e7"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/priceva/priceva-sdk-php/zipball/509f0f9dbf631281a4d76b56c426b48777342888",
-        "reference": "509f0f9dbf631281a4d76b56c426b48777342888",
+        "url": "https://api.github.com/repos/priceva/priceva-sdk-php/zipball/deb2c5a42483d328180937970eaa417695f0a0e7",
+        "reference": "deb2c5a42483d328180937970eaa417695f0a0e7",
         "shasum": ""
       },
       "require": {
@@ -51,7 +51,7 @@
         "php",
         "priceva"
       ],
-      "time": "2018-10-25T15:49:29+00:00"
+      "time": "2019-03-01T12:44:08+00:00"
     }
   ],
   "packages-dev": [],
