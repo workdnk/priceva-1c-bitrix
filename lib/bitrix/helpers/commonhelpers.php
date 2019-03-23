@@ -227,4 +227,9 @@ class CommonHelpers
             Debug::writeToFile($message, "", "priceva.log");
         }
     }
+
+    public static function delete_debug_log()
+    {
+        \Bitrix\Main\IO\File::deleteFile($_SERVER[ 'DOCUMENT_ROOT' ] . "/priceva.log");
+    }
 }

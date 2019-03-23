@@ -179,7 +179,7 @@ class OptionsHelpers
      * @return array
      * @throws \Bitrix\Main\LoaderException
      */
-    public static function generate_options_tabs($filter = [])
+    public static function generate_options_tabs( $filter = [] )
     {
         return [
             [
@@ -311,20 +311,46 @@ class OptionsHelpers
     public static function generate_buttons()
     {
         ?>
-        <input type="submit" name="Update" value="<?=GetMessage("MAIN_SAVE")?>"
-               title="<?=GetMessage("MAIN_OPT_SAVE_TITLE")?>" class="adm-btn-save">
-        <input type="submit" name="Apply" value="<?=GetMessage("MAIN_OPT_APPLY")?>"
-               title="<?=GetMessage("MAIN_OPT_APPLY_TITLE")?>">
+        <input
+                class="adm-btn-save"
+                type="submit"
+                name="Update"
+                value="<?=Loc::getMessage("MAIN_SAVE")?>"
+                title="<?=Loc::getMessage("MAIN_OPT_SAVE_TITLE")?>"
+        >
+        <input
+                type="submit"
+                name="Apply"
+                value="<?=Loc::getMessage("MAIN_OPT_APPLY")?>"
+                title="<?=Loc::getMessage("MAIN_OPT_APPLY_TITLE")?>"
+        >
         <? if( strlen($_REQUEST[ "back_url_settings" ]) > 0 ): ?>
-        <input type="button" name="Cancel" value="<?=GetMessage("MAIN_OPT_CANCEL")?>"
-               title="<?=GetMessage("MAIN_OPT_CANCEL_TITLE")?>"
-               onclick="window.location='<? echo htmlspecialcharsbx(\CUtil::addslashes($_REQUEST[ "back_url_settings" ])) ?>'">
-        <input type="hidden" name="back_url_settings"
-               value="<?=htmlspecialcharsbx($_REQUEST[ "back_url_settings" ])?>">
+        <input
+                type="button"
+                name="Cancel"
+                value="<?=Loc::getMessage("MAIN_OPT_CANCEL")?>"
+                title="<?=Loc::getMessage("MAIN_OPT_CANCEL_TITLE")?>"
+                onclick="window.location='<? echo htmlspecialcharsbx(\CUtil::addslashes($_REQUEST[ "back_url_settings" ])) ?>'"
+        >
+        <input
+                type="hidden"
+                name="back_url_settings"
+                value="<?=htmlspecialcharsbx($_REQUEST[ "back_url_settings" ])?>"
+        >
     <? endif ?>
-        <input type="submit" name="RestoreDefaults" title="<? echo GetMessage("MAIN_HINT_RESTORE_DEFAULTS") ?>"
-               OnClick="return confirm('<? echo AddSlashes(GetMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING")) ?>')"
-               value="<? echo GetMessage("MAIN_RESTORE_DEFAULTS") ?>">
+        <input
+                type="submit"
+                name="RestoreDefaults"
+                title="<? echo Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS") ?>"
+                OnClick="return confirm('<? echo \CUtil::addslashes(Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING")) ?>')"
+                value="<? echo Loc::getMessage("MAIN_RESTORE_DEFAULTS") ?>"
+        >
+        <input
+                type="submit"
+                name="deleteDebugLog"
+                title="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG_TITLE") ?>"
+                value="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG") ?>"
+        >
         <?
     }
 

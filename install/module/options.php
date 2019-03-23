@@ -34,17 +34,17 @@ try{
 
         $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
-        if(
-            $common_helpers->is_post() &&
-            OptionsHelpers::is_save_method() &&
-            check_bitrix_sessid()
-        ){
+        if( $common_helpers->is_post() && check_bitrix_sessid() ){
+            if (OptionsHelpers::is_save_method()) { // save / restore / defaults action on form
             OptionsHelpers::process_save_form($bVarsFromForm, $aTabs);
 
             ob_start();
             $Update = $Update . $Apply;
             require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
             ob_end_clean();
+            } else { // delete debug log
+                $common_helpers::delete_debug_log();
+            }
         }
 
         $tabControl->Begin();
