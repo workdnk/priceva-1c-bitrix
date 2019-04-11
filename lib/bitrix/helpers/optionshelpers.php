@@ -252,10 +252,10 @@ class OptionsHelpers
             ],
             "HEADING1"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_CATALOG"), "heading" ],
             "CATALOG_MODE"     => [
-                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE"), [
                     "select", CommonHelpers::add_not_selected([
-                        "client_code" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ALL"),
-                        "articul"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ONE"),
+                        "all" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ALL"),
+                        "one" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ONE"),
                     ]),
                 ],
             ],
