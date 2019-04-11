@@ -9,14 +9,21 @@
 namespace Priceva\Connector\Bitrix\Helpers;
 
 
+use Bitrix\Main\ArgumentNullException;
+use Bitrix\Main\ArgumentOutOfRangeException;
+use Bitrix\Main\Config\Option;
+use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
+use CCatalogGroup;
+use COption;
+use CUtil;
 
 class OptionsHelpers
 {
     private static $instance;
 
     /**
-     * @return \Priceva\Connector\Bitrix\Helpers\OptionsHelpers
+     * @return OptionsHelpers
      */
     public static function getInstance()
     {
@@ -49,7 +56,7 @@ class OptionsHelpers
      */
     public static function get_agent_id()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'AGENT_ID');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'AGENT_ID');
     }
 
     /**
@@ -57,7 +64,7 @@ class OptionsHelpers
      */
     public static function get_api_key()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'API_KEY');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'API_KEY');
     }
 
     /**
@@ -65,7 +72,7 @@ class OptionsHelpers
      */
     public static function get_type_price_ID()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'ID_TYPE_PRICE');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'ID_TYPE_PRICE');
     }
 
     /**
@@ -73,7 +80,7 @@ class OptionsHelpers
      */
     public static function get_type_price_priceva_ID()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA');
     }
 
     /**
@@ -81,7 +88,7 @@ class OptionsHelpers
      */
     public static function get_sync_dominance()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_DOMINANCE');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_DOMINANCE');
     }
 
     /**
@@ -89,7 +96,7 @@ class OptionsHelpers
      */
     public static function get_sync_field()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_FIELD');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_FIELD');
     }
 
     /**
@@ -97,7 +104,7 @@ class OptionsHelpers
      */
     public static function get_currency()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'CURRENCY');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'CURRENCY');
     }
 
     /**
@@ -105,7 +112,7 @@ class OptionsHelpers
      */
     public static function get_price_recalc()
     {
-        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'PRICE_RECALC'));
+        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'PRICE_RECALC'));
     }
 
     /**
@@ -113,7 +120,7 @@ class OptionsHelpers
      */
     public static function get_sync_only_active()
     {
-        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_ONLY_ACTIVE'));
+        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'SYNC_ONLY_ACTIVE'));
     }
 
     /**
@@ -121,7 +128,7 @@ class OptionsHelpers
      */
     public static function get_download_at_time()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'DOWNLOAD_AT_TIME');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'DOWNLOAD_AT_TIME');
     }
 
     /**
@@ -129,7 +136,7 @@ class OptionsHelpers
      */
     public static function get_client_code()
     {
-        return \COption::GetOptionString(CommonHelpers::MODULE_ID, 'CLIENT_CODE');
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'CLIENT_CODE');
     }
 
     /**
@@ -137,7 +144,7 @@ class OptionsHelpers
      */
     public static function get_trade_offers()
     {
-        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'TRADE_OFFERS'));
+        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'TRADE_OFFERS'));
     }
 
     /**
@@ -145,7 +152,7 @@ class OptionsHelpers
      */
     public static function get_debug()
     {
-        return CommonHelpers::convert_to_bool(\COption::GetOptionString(CommonHelpers::MODULE_ID, 'DEBUG'));
+        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'DEBUG'));
     }
 
     /**
@@ -153,7 +160,7 @@ class OptionsHelpers
      */
     public static function type_price_is_base()
     {
-        $type_price = \CCatalogGroup::GetByID(static::get_type_price_ID());
+        $type_price = CCatalogGroup::GetByID(static::get_type_price_ID());
 
         if( false === $type_price ){
             return false;
@@ -164,7 +171,7 @@ class OptionsHelpers
 
     public static function get_base_price_type()
     {
-        $price_types = \CCatalogGroup::GetList([], [ 'BASE' => 'Y' ]);
+        $price_types = CCatalogGroup::GetList([], [ 'BASE' => 'Y' ]);
 
         if( $base_price_type = $price_types->Fetch() ){
             return $base_price_type[ 'ID' ];
@@ -177,7 +184,7 @@ class OptionsHelpers
      * @param array $filter
      *
      * @return array
-     * @throws \Bitrix\Main\LoaderException
+     * @throws LoaderException
      */
     public static function generate_options_tabs( $filter = [] )
     {
@@ -201,7 +208,7 @@ class OptionsHelpers
 
     public static function find_price_type_priceva_id()
     {
-        $price_types = \CCatalogGroup::GetList([], [ 'NAME' => 'PRICEVA' ]);
+        $price_types = CCatalogGroup::GetList([], [ 'NAME' => 'PRICEVA' ]);
 
         if( $price_type_priceva = $price_types->Fetch() ){
             return $price_type_priceva[ 'ID' ];
@@ -214,7 +221,7 @@ class OptionsHelpers
      * @param array $filter
      *
      * @return array
-     * @throws \Bitrix\Main\LoaderException
+     * @throws LoaderException
      */
     public static function get_main_options( $filter = [] )
     {
@@ -330,7 +337,7 @@ class OptionsHelpers
                 name="Cancel"
                 value="<?=Loc::getMessage("MAIN_OPT_CANCEL")?>"
                 title="<?=Loc::getMessage("MAIN_OPT_CANCEL_TITLE")?>"
-                onclick="window.location='<? echo htmlspecialcharsbx(\CUtil::addslashes($_REQUEST[ "back_url_settings" ])) ?>'"
+                onclick="window.location='<? echo htmlspecialcharsbx(CUtil::addslashes($_REQUEST[ "back_url_settings" ])) ?>'"
         >
         <input
                 type="hidden"
@@ -342,7 +349,7 @@ class OptionsHelpers
                 type="submit"
                 name="RestoreDefaults"
                 title="<? echo Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS") ?>"
-                OnClick="return confirm('<? echo \CUtil::addslashes(Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING")) ?>')"
+                OnClick="return confirm('<? echo CUtil::addslashes(Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING")) ?>')"
                 value="<? echo Loc::getMessage("MAIN_RESTORE_DEFAULTS") ?>"
         >
         <input
@@ -453,8 +460,8 @@ class OptionsHelpers
      * @param $aTab
      * @param $bVarsFromForm
      *
-     * @throws \Bitrix\Main\ArgumentNullException
-     * @throws \Bitrix\Main\ArgumentOutOfRangeException
+     * @throws ArgumentNullException
+     * @throws ArgumentOutOfRangeException
      */
     public static function generate_table( $aTab, $bVarsFromForm )
     {
@@ -462,7 +469,7 @@ class OptionsHelpers
             if( $bVarsFromForm ){
                 $option_val = $_POST[ $option_name ];
             }else{
-                $option_val = \Bitrix\Main\Config\Option::get(CommonHelpers::MODULE_ID, $option_name);
+                $option_val = Option::get(CommonHelpers::MODULE_ID, $option_name);
             }
             $element_text = $option[ 0 ];
             $element      = $option[ 1 ];
@@ -484,7 +491,7 @@ class OptionsHelpers
     {
         if( OptionsHelpers::is_restore_method() ) // если было выбрано "по умолчанию", то сбрасывает все option'ы
         {
-            \COption::RemoveOption(CommonHelpers::MODULE_ID);
+            COption::RemoveOption(CommonHelpers::MODULE_ID);
         }else{
             // только если у нас не восстановление параметров, запишем текущие значения в БД,
             // иначе мы сначала удалим значения опций (если без else просто добавить код ниже к коду выше),
@@ -501,7 +508,7 @@ class OptionsHelpers
                             $val = "N";
                         }
 
-                        \COption::SetOptionString(CommonHelpers::MODULE_ID, $name, $val, $arOption[ 0 ]);
+                        COption::SetOptionString(CommonHelpers::MODULE_ID, $name, $val, $arOption[ 0 ]);
                     }
                 }
             }

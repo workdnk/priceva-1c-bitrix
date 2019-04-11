@@ -9,9 +9,20 @@
 namespace Priceva\Connector\Bitrix\Helpers;
 
 
+use Bitrix\Main\Application;
 use Bitrix\Main\Diag\Debug;
+use Bitrix\Main\IO\File;
+use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\SystemException;
+use CAllMain;
+use CBXFeatures;
+use CCatalogGroup;
+use CCurrency;
+use CEventLog;
+use CMain;
+use Exception;
 
 class CommonHelpers
 {
@@ -22,11 +33,11 @@ class CommonHelpers
     private static $instance;
 
     /**
-     * @var \Bitrix\Main\Application|bool
+     * @var Application|bool
      */
     public $app;
     /**
-     * @var bool|\CAllMain|\CMain
+     * @var bool|CAllMain|CMain
      */
     public $APPLICATION;
 
@@ -47,14 +58,14 @@ class CommonHelpers
     }
 
     /**
-     * @return \Bitrix\Main\Application|bool
+     * @return Application|bool
      */
     private function get_app()
     {
         global $APPLICATION;
         try{
-            return \Bitrix\Main\Application::getInstance();
-        }catch( \Bitrix\Main\SystemException $e ){
+            return Application::getInstance();
+        }catch( SystemException $e ){
             $APPLICATION->ThrowException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_BITRIX_VERSION"));
 
             return false;
@@ -73,7 +84,7 @@ class CommonHelpers
     }
 
     /**
-     * @return \Priceva\Connector\Bitrix\Helpers\CommonHelpers
+     * @return CommonHelpers
      */
     public static function getInstance()
     {
@@ -128,11 +139,11 @@ class CommonHelpers
     {
         $arr = [];
 
-        if( !\Bitrix\Main\Loader::includeModule('catalog') ){
+        if( !Loader::includeModule('catalog') ){
             throw new LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
         }
 
-        $dbPriceType = \CCatalogGroup::GetList();
+        $dbPriceType = CCatalogGroup::GetList();
         while( $arPriceType = $dbPriceType->Fetch() ){
             $arr[ $arPriceType[ 'ID' ] ] = $arPriceType[ 'NAME' ];
         }
@@ -148,12 +159,12 @@ class CommonHelpers
     {
         $arr = [];
 
-        if( !\Bitrix\Main\Loader::includeModule('catalog') ){
+        if( !Loader::includeModule('catalog') ){
             throw new LoaderException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
         }
         $by           = "currency";
         $order        = "asc";
-        $dbCurrencies = \CCurrency::GetList($by, $order);
+        $dbCurrencies = CCurrency::GetList($by, $order);
         while( $dbCurrency = $dbCurrencies->Fetch() ){
             $arr[ $dbCurrency[ 'CURRENCY' ] ] = $dbCurrency[ 'FULL_NAME' ];
         }
@@ -174,7 +185,7 @@ class CommonHelpers
      */
     public static function bitrix_full_business()
     {
-        return \CBXFeatures::IsFeatureEnabled('CatMultiPrice');
+        return CBXFeatures::IsFeatureEnabled('CatMultiPrice');
     }
 
     /**
@@ -194,13 +205,13 @@ class CommonHelpers
     }
 
     /**
-     * @param string|\Exception $message
-     * @param string            $type
+     * @param string|Exception $message
+     * @param string           $type
      */
     public static function write_to_log( $message, $type = 'PRICEVA_ERROR' )
     {
         if( is_object($message) ){
-            \CEventLog::Add([
+            CEventLog::Add([
                 "SEVERITY"      => "",
                 "AUDIT_TYPE_ID" => $type,
                 "MODULE_ID"     => "priceva.connector",
@@ -212,7 +223,7 @@ class CommonHelpers
                     "line: " . $message->getLine(),
             ]);
         }else{
-            \CEventLog::Add([
+            CEventLog::Add([
                 "SEVERITY"      => "",
                 "AUDIT_TYPE_ID" => $type,
                 "MODULE_ID"     => "priceva.connector",
@@ -230,6 +241,6 @@ class CommonHelpers
 
     public static function delete_debug_log()
     {
-        \Bitrix\Main\IO\File::deleteFile($_SERVER[ 'DOCUMENT_ROOT' ] . "/priceva.log");
+        File::deleteFile($_SERVER[ 'DOCUMENT_ROOT' ] . "/priceva.log");
     }
 }
