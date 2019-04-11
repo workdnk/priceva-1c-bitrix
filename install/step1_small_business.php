@@ -14,7 +14,7 @@ if( !check_bitrix_sessid() ) return;
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . CommonHelpers::MODULE_ID . "/options.php");
 
-$filter = [ 'DEBUG', 'HEADING0', 'HEADING1', 'HEADING2', 'ID_TYPE_PRICE', 'PRICE_RECALC' ];
+$filter = [ 'DEBUG', 'HEADING0', 'HEADING1', 'HEADING2', 'HEADING3', 'ID_TYPE_PRICE', 'PRICE_RECALC' ];
 
 try{
     $aTab = OptionsHelpers::get_main_options($filter);
@@ -36,6 +36,6 @@ try{
         <?php echo OptionsHelpers::generate_js_script($filter); ?>
     </script>
     <?
-}catch( \Throwable $e ){
-    \Priceva\Connector\Bitrix\Helpers\CommonHelpers::write_to_log($e);
+}catch( Throwable $e ){
+    CommonHelpers::write_to_log($e);
 } ?>
