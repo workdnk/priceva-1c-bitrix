@@ -558,6 +558,35 @@ class OptionsHelpers
                     s.value = 0;
                 }
             }",
+            'showCatalogsIfOneCatalog'         => "function showCatalogsIfOneCatalog() {
+                var form = BX('options');
+                var select_CATALOG_MODE = BX.findChildren(form, {
+                    tag: 'select',
+                    attribute: {name: 'CATALOG_MODE'}
+                }, true);
+                BX.bind(select_CATALOG_MODE[0], 'bxchange', check_showCatalogsIfOneCatalog)
+            }",
+            'check_showCatalogsIfOneCatalog'   => "function check_showCatalogsIfOneCatalog() {
+                var form = BX('options'),
+                    select_CATALOG_MODE = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'CATALOG_MODE'}
+                    }, true),
+                    select_CATALOG_ID = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'CATALOG_ID'}
+                    }, true);
+
+                var m = select_CATALOG_MODE[0],
+                    i = select_CATALOG_ID[0];
+
+                if (m.value == 'one') {
+                    BX.adjust(i, {props: {disabled: false}});
+                } else {
+                    BX.adjust(i, {props: {disabled: true}});
+                    s.value = 0;
+                }
+            }",
             'showClientCodeIfClientCode'       => "function showClientCodeIfClientCode() {
                 var form = BX('options');
                 var select_SYNC_FIELD = BX.findChildren(form, {
