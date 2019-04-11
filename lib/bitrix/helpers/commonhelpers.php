@@ -9,12 +9,15 @@
 namespace Priceva\Connector\Bitrix\Helpers;
 
 
+use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Application;
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\IO\File;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
 use CAllMain;
 use CBXFeatures;
@@ -170,6 +173,36 @@ class CommonHelpers
         }
 
         return $arr;
+    }
+
+    public static function get_catalogs()
+    {
+        try{
+            Loader::includeModule('catalog');
+
+            $result = IblockTable::getList([
+                'select' => [ 'ID', 'NAME' ],
+                'filter' => [
+                    'IBLOCK_TYPE_ID' => 'catalog',
+                ],
+            ]);
+
+            $catalogs = [];
+
+            while( $catalog = $result->Fetch() ){
+                $catalogs[ $catalog[ 'ID' ] ] = $catalog[ 'NAME' ];
+            }
+
+            return $catalogs;
+        }catch( ObjectPropertyException $e ){
+
+        }catch( ArgumentException $e ){
+
+        }catch( SystemException $e ){
+
+        }catch( LoaderException $e ){
+
+        }
     }
 
     /**
