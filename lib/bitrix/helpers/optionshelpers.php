@@ -227,6 +227,7 @@ class OptionsHelpers
     {
         $types_of_price = CommonHelpers::get_types_of_price();
         $currencies     = CommonHelpers::get_currencies();
+        $catalogs       = CommonHelpers::get_catalogs();
 
         if( $filter ){
             if( $price_type_priceva_id = static::find_price_type_priceva_id() ){
@@ -249,7 +250,17 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING1"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
+            "HEADING1"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_CATALOG"), "heading" ],
+            "CATALOG_MODE"     => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
+                    "select", CommonHelpers::add_not_selected([
+                        "client_code" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ALL"),
+                        "articul"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ONE"),
+                    ]),
+                ],
+            ],
+            "CATALOG_ID"       => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_ID"), [ "select", CommonHelpers::add_not_selected($catalogs) ] ],
+            "HEADING2"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
             "SYNC_FIELD"       => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
                     "select", CommonHelpers::add_not_selected([
@@ -291,7 +302,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING2"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE"), "heading" ],
+            "HEADING3"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE"), "heading" ],
             "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_TYPE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
             "PRICE_RECALC"     => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
@@ -593,6 +604,7 @@ class OptionsHelpers
     {
         return [
             "API_KEY"               => "",
+            "DEBUG"                 => "NO",
             "ID_TYPE_PRICE"         => "0",
             "ID_TYPE_PRICE_PRICEVA" => "0",
             "SYNC_FIELD"            => "articul",
@@ -604,8 +616,9 @@ class OptionsHelpers
             "CURRENCY"              => "RUB",
             "ID_AGENT"              => "",
             "ID_ARICUL_IBLOCK"      => "",
+            "CATALOG_MODE"          => "",
+            "ID_CATALOG"            => "0",
             "TRADE_OFFERS"          => "NO",
-            "DEBUG"                 => "NO",
         ];
     }
 }
