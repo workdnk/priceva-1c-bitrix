@@ -11,11 +11,20 @@ namespace Priceva\Connector\Bitrix;
 require_once __DIR__ . "/../../sdk/vendor/autoload.php";
 
 
+use Bitrix\Catalog\Model\Price;
+use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
+use CCatalogGroup;
+use CCatalogProduct;
+use CIBlockElement;
+use CPrice;
+use Exception;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 use Priceva\Params\{Filters as PricevaFilters, ProductFields as PricevaProductFields};
 use Priceva\PricevaAPI;
 use Priceva\PricevaException;
+use stdClass;
+use Throwable;
 
 class PricevaConnector
 {
@@ -38,6 +47,12 @@ class PricevaConnector
         //
     }
 
+    /**
+     * @param $aGlobalMenu
+     * @param $aModuleMenu
+     *
+     * @return array
+     */
     public function AddGlobalMenuItem( &$aGlobalMenu, &$aModuleMenu )
     {
         $aModuleMenu[] = [
@@ -78,7 +93,7 @@ class PricevaConnector
     public function run()
     {
         try{
-            if( !\Bitrix\Main\Loader::includeModule('catalog') ){
+            if( !Loader::includeModule('catalog') ){
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
             }
 
@@ -96,7 +111,7 @@ class PricevaConnector
         }catch( PricevaException $e ){
             ++$this->info[ 'priceva_errors' ];
             CommonHelpers::write_to_log($e);
-        }catch( \Throwable $e ){
+        }catch( Throwable $e ){
             ++$this->info[ 'module_errors' ];
             CommonHelpers::write_to_log($e);
         }
@@ -107,7 +122,7 @@ class PricevaConnector
      * @param bool   $sync_only_active
      *
      * @throws PricevaException
-     * @throws \Exception
+     * @throws Exception
      */
     private function sync( $api_key, $sync_only_active )
     {
@@ -129,7 +144,7 @@ class PricevaConnector
                     break;
                 }
             default:
-                throw new \Exception("Wrong sync dominance type in module " . CommonHelpers::MODULE_ID);
+                throw new Exception("Wrong sync dominance type in module " . CommonHelpers::MODULE_ID);
         }
 
         $info     = $this->get_last_info_msg();
@@ -169,12 +184,12 @@ class PricevaConnector
     }
 
     /**
-     * @param string    $sync_field
-     * @param bool      $sync_only_active
-     * @param \stdClass $priceva_product
-     * @param string    $currency
-     * @param int       $id_type_of_price
-     * @param bool      $price_recalc
+     * @param string   $sync_field
+     * @param bool     $sync_only_active
+     * @param stdClass $priceva_product
+     * @param string   $currency
+     * @param int      $id_type_of_price
+     * @param bool     $price_recalc
      */
     private function process_priceva_product(
         $sync_field,
@@ -196,9 +211,9 @@ class PricevaConnector
     /**
      * @noinspection PhpUndefinedClassInspection
      *
-     * @param string    $sync_field
-     * @param bool      $sync_only_active
-     * @param \stdClass $priceva_product
+     * @param string   $sync_field
+     * @param bool     $sync_only_active
+     * @param stdClass $priceva_product
      *
      * @return array|bool
      */
@@ -227,7 +242,7 @@ class PricevaConnector
             ]);
         }
 
-        $products = \CIBlockElement::GetList([], $arFilter);
+        $products = CIBlockElement::GetList([], $arFilter);
 
         if( $products->SelectedRowsCount() > 1 ){
             ++$this->info[ 'product_duplicate' ];
@@ -242,7 +257,7 @@ class PricevaConnector
     {
         $arFilter = $this->prepare_filter_product($sync_only_active);
 
-        return \CIBlockElement::GetList([], $arFilter);
+        return CIBlockElement::GetList([], $arFilter);
     }
 
     /**
@@ -383,7 +398,7 @@ class PricevaConnector
 
     private function get_bitrix_articul( $id )
     {
-        $ar_res = \CCatalogProduct::GetByIDEx($id);
+        $ar_res = CCatalogProduct::GetByIDEx($id);
 
         return isset($ar_res[ 'PROPERTIES' ][ 'ARTNUMBER' ][ 'VALUE' ]) ? $ar_res[ 'PROPERTIES' ][ 'ARTNUMBER' ][ 'VALUE' ] : false;
     }
@@ -490,7 +505,7 @@ class PricevaConnector
      */
     private function type_price_is_base( $id_type_of_price )
     {
-        return \CCatalogGroup::GetByID($id_type_of_price)[ 'BASE' ] === 'Y';
+        return CCatalogGroup::GetByID($id_type_of_price)[ 'BASE' ] === 'Y';
     }
 
     /**
@@ -512,9 +527,9 @@ class PricevaConnector
         ];
 
         if( $this->type_price_is_base($price_type_id) ){
-            $result = \CPrice::SetBasePrice($product_id, $price, $currency);
+            $result = CPrice::SetBasePrice($product_id, $price, $currency);
         }else{
-            $result = \Bitrix\Catalog\Model\Price::update($product_id, $arFields);
+            $result = Price::update($product_id, $arFields);
         }
 
         if( $result ){
