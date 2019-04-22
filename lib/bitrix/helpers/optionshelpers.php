@@ -607,8 +607,6 @@ class OptionsHelpers
                             tag: 'select',
                             attribute: {name: 'IBLOCK_ID'}
                         }, true)[0];
-                        
-                    debugger;
                     
                     var length = select_IBLOCK_ID.options.length;
                     for (i = 0; i < length; i++) {
@@ -624,6 +622,15 @@ class OptionsHelpers
                       o.innerHTML = hash[i];
                       o.value = i;
                       select_IBLOCK_ID.appendChild(o);
+                   }
+                   
+                   debugger;
+                   if (select_IBLOCK_TYPE_ID.value != 'catalog') {
+                       select_TRADE_OFFERS = BX.findChildren(form, {
+                            tag: 'select',
+                            attribute: {name: 'TRADE_OFFERS'}
+                        }, true)[0];
+                        select_TRADE_OFFERS.value = 0;
                    }
                 });
             }",
