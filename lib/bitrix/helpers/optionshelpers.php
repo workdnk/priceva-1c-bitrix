@@ -73,6 +73,21 @@ class OptionsHelpers
         return COption::GetOptionString(CommonHelpers::MODULE_ID, 'API_KEY');
     }
 
+    public static function get_iblock_type_id()
+    {
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'IBLOCK_TYPE_ID');
+    }
+
+    public static function get_iblock_mode()
+    {
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'IBLOCK_MODE');
+    }
+
+    public static function get_iblock_id()
+    {
+        return COption::GetOptionString(CommonHelpers::MODULE_ID, 'IBLOCK_ID');
+    }
+
     /**
      * @return bool|string|null
      */
