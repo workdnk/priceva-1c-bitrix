@@ -21,6 +21,6 @@ $MESS[ "PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST" ] = "Не удалось созда
 $MESS[ "PRICEVA_BC_INSTALL_PRICE_TYPE_DELETED_EARLIER" ] = "Тип цен был удален ранее";
 $MESS[ "PRICEVA_BC_INSTALL_UNEXPECTED_SITUATION" ] = "Произошло неожиданное событие при удалении модуля. Обратитесь в службу тех. поддержки.";
 $MESS[ "PRICEVA_BC_INSTALL_SUCCESS_DELETE_PRICE_TYPE" ] = "Используемый модулем тип цен успешно удален: ";
-$MESS[ "PRICEVA_BC_INSTALL_ERROR_VERSION" ] = "Ошибка установки модуля: неподдерживаемая версия 1C-Bitrix.";
+$MESS[ "PRICEVA_BC_INSTALL_ERROR_VERSION" ] = "Ошибка установки модуля: неподдерживаемая версия 1C-Bitrix. Требуется: ";
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT" ] = "Для корректной работы модуля необходимо два активных php-расширения: json и curl. Если вы не знаете, как их активировать самостоятельно, обратитесь к вашему хостеру или в службу поддержки данного модуля.";
 $MESS[ "PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_VER" ] = "Для корректной работы модуля необходима версия php не ниже 7.1. Если вы не знаете, как изменить ее самостоятельно, обратитесь к вашему хостеру или в службу поддержки данного модуля.";

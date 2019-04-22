@@ -31,7 +31,9 @@ class CommonHelpers
 {
     CONST MODULE_ID = 'priceva.connector';
 
-    CONST NAME_PRICE_TYPE = 'PRICEVA';
+    const NAME_PRICE_TYPE = 'PRICEVA';
+
+    const NEEDED_BITRIX_VER = '17.05.10';
 
     private static $instance;
 
@@ -210,7 +212,7 @@ class CommonHelpers
      */
     public static function bitrix_d7()
     {
-        return CheckVersion(SM_VERSION, '14.00.00');
+        return CheckVersion(SM_VERSION, self::NEEDED_BITRIX_VER);
     }
 
     /**
