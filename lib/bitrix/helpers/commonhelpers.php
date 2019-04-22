@@ -10,6 +10,7 @@ namespace Priceva\Connector\Bitrix\Helpers;
 
 
 use Bitrix\Iblock\IblockTable;
+use Bitrix\Iblock\TypeTable;
 use Bitrix\Main\Application;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Diag\Debug;
@@ -29,7 +30,7 @@ use Exception;
 
 class CommonHelpers
 {
-    CONST MODULE_ID = 'priceva.connector';
+    const MODULE_ID = 'priceva.connector';
 
     const NAME_PRICE_TYPE = 'PRICEVA';
 
@@ -177,7 +178,35 @@ class CommonHelpers
         return $arr;
     }
 
-    public static function get_catalogs()
+    /**
+     * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function get_types_iblocks()
+    {
+        $iblockTypes = [];
+        $result      = TypeTable::getList([
+            'select' => [
+                'ID',
+                'NAME' => 'LANG_MESSAGE.NAME',
+            ],
+            'filter' => [ '=LANG_MESSAGE.LANGUAGE_ID' => 'ru' ],
+        ]);
+        while( $row = $result->fetch() ){
+            $iblockTypes[ $row[ 'ID' ] ] = $row[ 'NAME' ];
+        }
+
+        return $iblockTypes;
+    }
+
+    /**
+     * @param string $iblock_type_id
+     *
+     * @return array|bool
+     */
+    public static function get_iblocks( $iblock_type_id )
     {
         try{
             Loader::includeModule('catalog');
@@ -185,7 +214,7 @@ class CommonHelpers
             $result = IblockTable::getList([
                 'select' => [ 'ID', 'NAME' ],
                 'filter' => [
-                    'IBLOCK_TYPE_ID' => 'catalog',
+                    'IBLOCK_TYPE_ID' => $iblock_type_id,
                 ],
             ]);
 
@@ -197,14 +226,16 @@ class CommonHelpers
 
             return $catalogs;
         }catch( ObjectPropertyException $e ){
-
+            self::write_to_log($e);
         }catch( ArgumentException $e ){
-
+            self::write_to_log($e);
         }catch( SystemException $e ){
-
+            self::write_to_log($e);
         }catch( LoaderException $e ){
-
+            self::write_to_log($e);
         }
+
+        return false;
     }
 
     /**

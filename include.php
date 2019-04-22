@@ -6,16 +6,22 @@
  * Time: 17:07
  */
 
+use Bitrix\Main\Loader;
+use Bitrix\Main\LoaderException;
+
 try{
-    \Bitrix\Main\Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses('priceva.connector', [
         "\\Priceva\\Connector\\Bitrix\\Helpers\\CommonHelpers" => "lib/bitrix/helpers/commonhelpers.php",
     ]);
-    \Bitrix\Main\Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses('priceva.connector', [
         "\\Priceva\\Connector\\Bitrix\\Helpers\\OptionsHelpers" => "lib/bitrix/helpers/optionshelpers.php",
     ]);
-    \Bitrix\Main\Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses('priceva.connector', [
         "\\Priceva\\Connector\\Bitrix\\PricevaModuleException" => "lib/bitrix/pricevamoduleexception.php",
     ]);
-}catch( \Bitrix\Main\LoaderException $e ){
+    Loader::registerAutoLoadClasses('priceva.connector', [
+        "\\Priceva\\Connector\\Bitrix\\Ajax" => "lib/bitrix/ajax.php",
+    ]);
+}catch( LoaderException $e ){
     error_log($e);
 }

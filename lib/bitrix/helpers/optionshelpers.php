@@ -9,11 +9,14 @@
 namespace Priceva\Connector\Bitrix\Helpers;
 
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\ArgumentOutOfRangeException;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
 use CCatalogGroup;
 use COption;
 use CUtil;
@@ -44,6 +47,9 @@ class OptionsHelpers
         return isset($Update) || isset($Apply) || isset($RestoreDefaults);
     }
 
+    /**
+     * @return bool
+     */
     public static function is_restore_method()
     {
         global $RestoreDefaults;
@@ -169,6 +175,9 @@ class OptionsHelpers
         }
     }
 
+    /**
+     * @return int|bool
+     */
     public static function get_base_price_type()
     {
         $price_types = CCatalogGroup::GetList([], [ 'BASE' => 'Y' ]);
@@ -184,7 +193,10 @@ class OptionsHelpers
      * @param array $filter
      *
      * @return array
+     * @throws ArgumentException
      * @throws LoaderException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     public static function generate_options_tabs( $filter = [] )
     {
@@ -206,6 +218,9 @@ class OptionsHelpers
         ];
     }
 
+    /**
+     * @return int|bool
+     */
     public static function find_price_type_priceva_id()
     {
         $price_types = CCatalogGroup::GetList([], [ 'NAME' => 'PRICEVA' ]);
@@ -222,12 +237,16 @@ class OptionsHelpers
      *
      * @return array
      * @throws LoaderException
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     public static function get_main_options( $filter = [] )
     {
         $types_of_price = CommonHelpers::get_types_of_price();
         $currencies     = CommonHelpers::get_currencies();
-        $catalogs       = CommonHelpers::get_catalogs();
+        $types_iblocks  = CommonHelpers::get_types_iblocks();
+        $iblocks        = CommonHelpers::get_iblocks(Option::get(CommonHelpers::MODULE_ID, 'IBLOCK_TYPE_ID'));
 
         if( $filter ){
             if( $price_type_priceva_id = static::find_price_type_priceva_id() ){
@@ -373,6 +392,9 @@ class OptionsHelpers
         <?
     }
 
+    /**
+     * @param string $name
+     */
     private static function generate_tr_heading( $name )
     {
         ?>
@@ -392,10 +414,12 @@ class OptionsHelpers
     {
         ?>
         <tr>
+            <!--suppress HtmlDeprecatedAttribute -->
             <td class="adm-detail-content-cell-l"
                 width="40%" <? if( $element[ 0 ] == "textarea" ) echo 'class="adm-detail-valign-top"' ?>>
                 <label for="<?=htmlspecialcharsbx($option_name)?>"><?=$element_text?>:</label>
             </td>
+            <!--suppress HtmlDeprecatedAttribute -->
             <td class="adm-detail-content-cell-r" width="60%">
                 <?php
                 switch( $element[ 0 ] ){
@@ -559,27 +583,71 @@ class OptionsHelpers
                     s.value = 0;
                 }
             }",
-            'showCatalogsIfOneCatalog'         => "function showCatalogsIfOneCatalog() {
-                var form = BX('options');
-                var select_CATALOG_MODE = BX.findChildren(form, {
-                    tag: 'select',
-                    attribute: {name: 'CATALOG_MODE'}
-                }, true);
-                BX.bind(select_CATALOG_MODE[0], 'bxchange', check_showCatalogsIfOneCatalog)
-            }",
-            'check_showCatalogsIfOneCatalog'   => "function check_showCatalogsIfOneCatalog() {
+            'loadTypesInfoblocks'              => "function loadTypesInfoblocks() {
                 var form = BX('options'),
-                    select_CATALOG_MODE = BX.findChildren(form, {
+                    select_IBLOCK_TYPE_ID = BX.findChildren(form, {
                         tag: 'select',
-                        attribute: {name: 'CATALOG_MODE'}
+                        attribute: {name: 'IBLOCK_TYPE_ID'}
+                    }, true);
+                BX.bind(select_IBLOCK_TYPE_ID[0], 'bxchange', check_loadTypesInfoblocks)
+            }",
+            'check_loadTypesInfoblocks'        => "function check_loadTypesInfoblocks() {
+                var form = BX('options'),
+                    select_IBLOCK_TYPE_ID = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'IBLOCK_TYPE_ID'}
+                    }, true)[0];
+                    
+                BX.ajax.runAction('priceva:connector.api.ajax.getIblocks',{
+                    method: 'POST',
+                    data: {iblock_type_id: select_IBLOCK_TYPE_ID.value}
+                })
+                .then(function(response) {
+                    select_IBLOCK_ID = BX.findChildren(form, {
+                            tag: 'select',
+                            attribute: {name: 'IBLOCK_ID'}
+                        }, true)[0];
+                        
+                    debugger;
+                    
+                    var length = select_IBLOCK_ID.options.length;
+                    for (i = 0; i < length; i++) {
+                        if (select_IBLOCK_ID.options[i].value != 0) {
+                            select_IBLOCK_ID.options[i] = null;
+                        }
+                    }
+                    
+                    var hash = response.data.iblocks;
+                    
+                    for(i in hash) {
+                      o = document.createElement('OPTION');
+                      o.innerHTML = hash[i];
+                      o.value = i;
+                      select_IBLOCK_ID.appendChild(o);
+                   }
+                });
+            }",
+            'showIBlocksIfOneIBlock'           => "function showIBlocksIfOneIBlock() {
+                var form = BX('options'),
+                    select_IBLOCK_MODE = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'IBLOCK_MODE'}
+                    }, true);
+                BX.bind(select_IBLOCK_MODE[0], 'bxchange', check_showIBlocksIfOneIBlock)
+            }",
+            'check_showIBlocksIfOneIBlock'     => "function check_showIBlocksIfOneIBlock() {
+                var form = BX('options'),
+                    select_IBLOCK_MODE = BX.findChildren(form, {
+                        tag: 'select',
+                        attribute: {name: 'IBLOCK_MODE'}
                     }, true),
-                    select_CATALOG_ID = BX.findChildren(form, {
+                    select_IBLOCK_ID = BX.findChildren(form, {
                         tag: 'select',
-                        attribute: {name: 'CATALOG_ID'}
+                        attribute: {name: 'IBLOCK_ID'}
                     }, true);
 
-                var m = select_CATALOG_MODE[0],
-                    i = select_CATALOG_ID[0];
+                var m = select_IBLOCK_MODE[0],
+                    i = select_IBLOCK_ID[0];
 
                 if (m.value == 'one') {
                     BX.adjust(i, {props: {disabled: false}});
