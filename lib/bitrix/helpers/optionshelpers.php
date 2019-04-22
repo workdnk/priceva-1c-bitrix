@@ -251,15 +251,16 @@ class OptionsHelpers
                 ],
             ],
             "HEADING1"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_CATALOG"), "heading" ],
-            "CATALOG_MODE"     => [
-                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE"), [
+            "IBLOCK_TYPE_ID"   => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID"), [ "select", CommonHelpers::add_not_selected($types_iblocks) ] ],
+            "IBLOCK_MODE"      => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE"), [
                     "select", CommonHelpers::add_not_selected([
-                        "all" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ALL"),
-                        "one" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_MODE_TEXT_ONE"),
+                        "all" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL"),
+                        "one" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ONE"),
                     ]),
                 ],
             ],
-            "CATALOG_ID"       => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CATALOG_ID"), [ "select", CommonHelpers::add_not_selected($catalogs) ] ],
+            "IBLOCK_ID"        => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_ID"), [ "select", CommonHelpers::add_not_selected($iblocks) ] ],
             "HEADING2"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
             "SYNC_FIELD"       => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
@@ -634,19 +635,20 @@ class OptionsHelpers
         return [
             "API_KEY"               => "",
             "DEBUG"                 => "NO",
-            "ID_TYPE_PRICE"         => "0",
-            "ID_TYPE_PRICE_PRICEVA" => "0",
+            "IBLOCK_TYPE_ID"        => "",
+            "IBLOCK_MODE"           => "",
+            "IBLOCK_ID"             => "0",
             "SYNC_FIELD"            => "articul",
             "CLIENT_CODE"           => "ID",
             "SYNC_DOMINANCE"        => "priceva",
             "SYNC_ONLY_ACTIVE"      => "YES",
             "DOWNLOAD_AT_TIME"      => "1000",
+            "ID_TYPE_PRICE"         => "0",
+            "ID_TYPE_PRICE_PRICEVA" => "0",
             "PRICE_RECALC"          => "NO",
             "CURRENCY"              => "RUB",
             "ID_AGENT"              => "",
             "ID_ARICUL_IBLOCK"      => "",
-            "CATALOG_MODE"          => "",
-            "ID_CATALOG"            => "0",
             "TRADE_OFFERS"          => "NO",
         ];
     }
