@@ -6,9 +6,14 @@
  * Time: 18:10
  */
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\EventManager;
+use Bitrix\Main\Loader;
+use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 use Priceva\Connector\Bitrix\PricevaModuleException;
 
@@ -72,7 +77,7 @@ Class priceva_connector extends CModule
      * @param bool $uninstall
      *
      * @throws PricevaModuleException
-     * @throws \Bitrix\Main\LoaderException
+     * @throws LoaderException
      */
     private function check_system( $uninstall = false )
     {
@@ -90,10 +95,10 @@ Class priceva_connector extends CModule
         }
 
         if( !$this->common_helpers::bitrix_d7() ){
-            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION"));
+            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION") . $this->common_helpers::NEEDED_BITRIX_VER);
         }
 
-        if( !\Bitrix\Main\Loader::includeModule('catalog') ){
+        if( !Loader::includeModule('catalog') ){
             throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
         }
     }
@@ -102,7 +107,10 @@ Class priceva_connector extends CModule
      * @param int  $step
      * @param bool $is_full_business
      *
-     * @throws \Bitrix\Main\LoaderException
+     * @throws ArgumentException
+     * @throws LoaderException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     private function install( $step, $is_full_business )
     {
@@ -163,7 +171,10 @@ Class priceva_connector extends CModule
     /**
      * @param $full
      *
-     * @throws \Bitrix\Main\LoaderException
+     * @throws LoaderException
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     private function install_step_2( $full )
     {
@@ -353,7 +364,7 @@ Class priceva_connector extends CModule
         }
 
         if( $this->delete_options ){
-            \COption::RemoveOption($this->common_helpers::MODULE_ID);
+            COption::RemoveOption($this->common_helpers::MODULE_ID);
         }
 
         $this->save_unroll($save_unroll, "InstallDB");
@@ -457,14 +468,14 @@ Class priceva_connector extends CModule
     private function price_type_exist()
     {
         try{
-            $dbPriceType = \CCatalogGroup::GetList([], [ "NAME" => $this->common_helpers::NAME_PRICE_TYPE ]);
+            $dbPriceType = CCatalogGroup::GetList([], [ "NAME" => $this->common_helpers::NAME_PRICE_TYPE ]);
             while( $arPriceType = $dbPriceType->Fetch() ){
                 return $arPriceType[ 'ID' ];
             }
 
             return false;
 
-        }catch( \Throwable $e ){
+        }catch( Throwable $e ){
             $this->add_error($e);
 
             return false;
@@ -476,24 +487,24 @@ Class priceva_connector extends CModule
         try{
             $this->common_helpers->APPLICATION->ResetException();
 
-            if( false == $type_price_name = \CCatalogGroup::GetByID($type_price_ID)[ 'NAME' ] ){
+            if( false == $type_price_name = CCatalogGroup::GetByID($type_price_ID)[ 'NAME' ] ){
                 if( $error = $this->common_helpers->APPLICATION->GetException() ){
-                    throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
                 }else{
                     return Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_DELETED_EARLIER") . $type_price_name . "(id=" . $type_price_ID . ")";
                 }
             }
 
-            if( false === ( new \CCatalogGroup )->Delete($type_price_ID) ){
+            if( false === ( new CCatalogGroup )->Delete($type_price_ID) ){
                 if( $error = $this->common_helpers->APPLICATION->GetException() ){
-                    throw new \Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_ERROR_DELETE_PRICE_TYPE") . " " . $error);
                 }else{
-                    throw new \Exception(Loc::getMessage("PRICEVA_BC_INSTALL_UNEXPECTED_SITUATION"));
+                    throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_UNEXPECTED_SITUATION"));
                 }
             }
 
             return Loc::getMessage("PRICEVA_BC_INSTALL_SUCCESS_DELETE_PRICE_TYPE") . $type_price_name . "(id=" . $type_price_ID . ")";
-        }catch( \Throwable $e ){
+        }catch( Throwable $e ){
             $this->add_error($e);
         }
 
@@ -506,10 +517,10 @@ Class priceva_connector extends CModule
     private function add_price_type()
     {
         try{
-            \Bitrix\Main\Loader::includeModule('catalog');
+            Loader::includeModule('catalog');
 
             if( false !== $id = self::price_type_exist() ){
-                throw new \Exception(Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST") . $this->common_helpers::NAME_PRICE_TYPE . " (id=" . $id . ")");
+                throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST") . $this->common_helpers::NAME_PRICE_TYPE . " (id=" . $id . ")");
             }
             $arFields = [
                 "NAME"           => $this->common_helpers::NAME_PRICE_TYPE,
@@ -524,13 +535,13 @@ Class priceva_connector extends CModule
                 ],
             ];
 
-            $ID = ( new \CCatalogGroup )->Add($arFields);
+            $ID = ( new CCatalogGroup )->Add($arFields);
             if( $ID <= 0 ){
-                throw new \Bitrix\Main\SystemException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_PRICE_TYPE"));
+                throw new SystemException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_ADD_PRICE_TYPE"));
             }else{
                 return $ID;
             }
-        }catch( \Throwable $e ){
+        }catch( Throwable $e ){
             $this->add_error($e);
         }
 
@@ -587,6 +598,7 @@ Class priceva_connector extends CModule
         ){
             CopyDirFiles(self::GetPatch() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
 
+            /** @noinspection PhpIncludeInspection */
             require_once( self::GetPatch() . "/include.php" );
         }
 
