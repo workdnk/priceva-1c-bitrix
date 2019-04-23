@@ -17,6 +17,7 @@ use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
+use CAdminMessage;
 use CCatalogGroup;
 use COption;
 use CUtil;
@@ -275,7 +276,7 @@ class OptionsHelpers
 
         $options = [
             "HEADING0"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
-            "API_KEY"          => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_APIKEY"), [ "text", 32 ] ],
+            "API_KEY"          => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_API_KEY"), [ "text", 32 ] ],
             "DEBUG"            => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
                     "select", CommonHelpers::add_not_selected([
@@ -289,8 +290,8 @@ class OptionsHelpers
             "IBLOCK_MODE"      => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE"), [
                     "select", CommonHelpers::add_not_selected([
-                        "all" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL"),
-                        "one" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ONE"),
+                        "ALL" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL"),
+                        "ONE" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ONE"),
                     ]),
                 ],
             ],
@@ -313,7 +314,7 @@ class OptionsHelpers
                 ],
             ],
             "SYNC_ONLY_ACTIVE" => [
-                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ACTIVE_PRODUCT"), [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_ONLY_ACTIVE"), [
                     "select", CommonHelpers::add_not_selected([
                         "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
                         "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
@@ -338,7 +339,7 @@ class OptionsHelpers
                 ],
             ],
             "HEADING3"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE"), "heading" ],
-            "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_TYPE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
+            "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ID_TYPE_PRICE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
             "PRICE_RECALC"     => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
                     "select", CommonHelpers::add_not_selected([
@@ -534,6 +535,60 @@ class OptionsHelpers
     }
 
     /**
+     * @param string $name
+     * @param mixed  $val
+     * @param array  $list_options
+     *
+     * @return bool
+     */
+    public static function check_option( $name, $val, $list_options )
+    {
+        $options_dependencies = [
+            'IBLOCK_ID'   => [ 'IBLOCK_MODE' => [ '0', 'ALL' ] ],
+            'CLIENT_CODE' => [ 'SYNC_FIELD' => [ '0', 'articul' ], ],
+        ];
+
+        $options_inverse_dependencies = [
+            'TRADE_OFFERS' => [ 'IBLOCK_TYPE_ID' => [ 'catalog' ], ],
+        ];
+
+        $result = true;
+        // если значени пустое
+        if( empty($val) ){
+            // если есть какая-то зависимость для текущей опции
+            if( $options_dependencies[ $name ] || $options_inverse_dependencies[ $name ] ){
+                // переберем все прямые зависимости (их может быть больше одной)
+                foreach( $options_dependencies[ $name ] as $key => $dependency ){
+                    // проверим,  есть ли в массиве прямых зависимостей значение текущей зависимости,
+                    // разрешающее для текущего проверяемого поля пустое значение
+                    if( !in_array($list_options[ $key ], $dependency, true) ){
+                        $result = false;
+                        break;
+                    }
+                }
+                // переберем все обратные зависимости (их может быть больше одной)
+                foreach( $options_inverse_dependencies[ $name ] as $key => $dependency ){
+                    // проверим,  есть ли в массиве обратных зависимостей значение текущей зависимости,
+                    // запрещающее для текущего проверяемого поля пустое значение
+                    if( in_array($list_options[ $key ], $dependency, true) ){
+                        $result = false;
+                        break;
+                    }
+                }
+            }else{
+                // если никакой зависимости(ей) нет и поле просто пустое, то это не ОК
+                $result = false;
+            }
+
+            if( !$result ){
+                echo ( new CAdminMessage(Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_FILL_FIELD") . Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_" . $name)) )->Show();
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param bool  $bVarsFromForm
      * @param array $aTabs
      * @param int   $id_type_price_priceva
@@ -552,14 +607,24 @@ class OptionsHelpers
                     foreach( $aTab[ "OPTIONS" ] as $name => $arOption ){
                         $request = CommonHelpers::getInstance()->app->getContext()->getRequest();
                         $val     = $request->get($name);
+
+                        if( false !== strripos($name, 'HEADING') ){
+                            continue;
+                        }
+
                         if( $id_type_price_priceva && $val === 'need_create_priceva' ){
                             $val = $id_type_price_priceva;
                         }
+
                         if( $arOption[ 1 ][ 0 ] == "checkbox" && $val != "Y" ){
                             $val = "N";
                         }
 
-                        COption::SetOptionString(CommonHelpers::MODULE_ID, $name, $val, $arOption[ 0 ]);
+                        $list_options[ $name ] = $val;
+
+                        if( self::check_option($name, $val, $list_options) ){
+                            COption::SetOptionString(CommonHelpers::MODULE_ID, $name, $val, $arOption[ 0 ]);
+                        }
                     }
                 }
             }
@@ -639,14 +704,15 @@ class OptionsHelpers
                       select_IBLOCK_ID.appendChild(o);
                    }
                    
-                   debugger;
                    if (select_IBLOCK_TYPE_ID.value != 'catalog') {
                        select_TRADE_OFFERS = BX.findChildren(form, {
                             tag: 'select',
                             attribute: {name: 'TRADE_OFFERS'}
                         }, true)[0];
-                        select_TRADE_OFFERS.value = 0;
-                   }
+                        select_TRADE_OFFERS.value = 'NO';
+                        BX.adjust(select_TRADE_OFFERS, {props: {disabled: true}});
+                   } else {
+                   BX.adjust(select_TRADE_OFFERS, {props: {disabled: false}});}
                 });
             }",
             'showIBlocksIfOneIBlock'           => "function showIBlocksIfOneIBlock() {
@@ -662,20 +728,17 @@ class OptionsHelpers
                     select_IBLOCK_MODE = BX.findChildren(form, {
                         tag: 'select',
                         attribute: {name: 'IBLOCK_MODE'}
-                    }, true),
+                    }, true)[0],
                     select_IBLOCK_ID = BX.findChildren(form, {
                         tag: 'select',
                         attribute: {name: 'IBLOCK_ID'}
-                    }, true);
-
-                var m = select_IBLOCK_MODE[0],
-                    i = select_IBLOCK_ID[0];
-
-                if (m.value == 'one') {
-                    BX.adjust(i, {props: {disabled: false}});
+                    }, true)[0];
+                    
+                if (select_IBLOCK_MODE.value == 'ONE') {
+                    BX.adjust(select_IBLOCK_ID, {props: {disabled: false}});
                 } else {
-                    BX.adjust(i, {props: {disabled: true}});
-                    s.value = 0;
+                    BX.adjust(select_IBLOCK_ID, {props: {disabled: true}});
+                    select_IBLOCK_ID.value = 0;
                 }
             }",
             'showClientCodeIfClientCode'       => "function showClientCodeIfClientCode() {
@@ -714,7 +777,11 @@ class OptionsHelpers
         $script = '';
 
         foreach( $needed as $func_name => $function ){
-            $script .= $function . " BX.ready($func_name);\n";
+            if( $func_name === 'check_loadTypesInfoblocks' ){
+                $script .= $function . "\n";
+            }else{
+                $script .= $function . " BX.ready($func_name);\n";
+            }
         }
 
         return $script;
@@ -725,8 +792,8 @@ class OptionsHelpers
         return [
             "API_KEY"               => "",
             "DEBUG"                 => "NO",
-            "IBLOCK_TYPE_ID"        => "",
-            "IBLOCK_MODE"           => "",
+            "IBLOCK_TYPE_ID"        => "0",
+            "IBLOCK_MODE"           => "0",
             "IBLOCK_ID"             => "0",
             "SYNC_FIELD"            => "articul",
             "CLIENT_CODE"           => "ID",
@@ -738,7 +805,7 @@ class OptionsHelpers
             "PRICE_RECALC"          => "NO",
             "CURRENCY"              => "RUB",
             "ID_AGENT"              => "",
-            "ID_ARICUL_IBLOCK"      => "",
+            "ID_ARICUL_IBLOCK"      => "0",
             "TRADE_OFFERS"          => "NO",
         ];
     }
