@@ -9,17 +9,18 @@
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
 
+global $APPLICATION, $Update, $Apply;
+$MODULE_ID = "priceva.connector";
+
 try{
-    global $APPLICATION, $Update, $Apply;
-
-    $MODULE_ID = "priceva.connector";
-
     CModule::IncludeModule($MODULE_ID);
 
-    Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
+    $common_helpers = CommonHelpers::getInstance();
+
+    Loc::LoadMessages($common_helpers->get_current_path(true) . "/bitrix/modules/main/options.php");
     Loc::loadMessages(__FILE__);
 
-    $common_helpers = CommonHelpers::getInstance();
+    CUtil::InitJSCore([ $MODULE_ID ]);
 
     $RIGHT = $common_helpers->APPLICATION->GetGroupRight($MODULE_ID);
 
@@ -31,14 +32,14 @@ try{
         $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
         if( $common_helpers->is_post() && check_bitrix_sessid() ){
-            if (OptionsHelpers::is_save_method()) { // save / restore / defaults action on form
-            OptionsHelpers::process_save_form($bVarsFromForm, $aTabs);
+            if( OptionsHelpers::is_save_method() ){ // save / restore / defaults action on form
+                OptionsHelpers::process_save_form($bVarsFromForm, $aTabs);
 
-            ob_start();
-            $Update = $Update . $Apply;
-            require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
-            ob_end_clean();
-            } else { // delete debug log
+                ob_start();
+                $Update = $Update . $Apply;
+                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
+                ob_end_clean();
+            }else{ // delete debug log
                 $common_helpers::delete_debug_log();
             }
         }
