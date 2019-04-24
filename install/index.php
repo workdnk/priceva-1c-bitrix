@@ -197,7 +197,13 @@ Class priceva_connector extends CModule
 
         $this->need_save_unroll = false;
 
-        $aTabs = OptionsHelpers::get_main_options([ 'DEBUG', 'ID_TYPE_PRICE' ]);
+        if( $full ){
+            $filter = [ 'DEBUG', 'HEADING0', 'HEADING1', 'IBLOCK_TYPE_ID', 'IBLOCK_MODE', 'IBLOCK_ID', 'HEADING2', 'HEADING3' ];
+        }else{
+            $filter = [ 'DEBUG', 'HEADING0', 'HEADING1', 'IBLOCK_TYPE_ID', 'IBLOCK_MODE', 'IBLOCK_ID', 'HEADING2', 'HEADING3', 'ID_TYPE_PRICE', 'PRICE_RECALC' ];
+        }
+
+        $aTabs = OptionsHelpers::get_main_options($filter);
         OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price);
 
         if( $this->errors ){
