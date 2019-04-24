@@ -9,19 +9,33 @@
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
+$MODULE_ID = 'priceva.connector';
+
 try{
-    Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses($MODULE_ID, [
         "\\Priceva\\Connector\\Bitrix\\Helpers\\CommonHelpers" => "lib/bitrix/helpers/commonhelpers.php",
     ]);
-    Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses($MODULE_ID, [
         "\\Priceva\\Connector\\Bitrix\\Helpers\\OptionsHelpers" => "lib/bitrix/helpers/optionshelpers.php",
     ]);
-    Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses($MODULE_ID, [
         "\\Priceva\\Connector\\Bitrix\\PricevaModuleException" => "lib/bitrix/pricevamoduleexception.php",
     ]);
-    Loader::registerAutoLoadClasses('priceva.connector', [
+    Loader::registerAutoLoadClasses($MODULE_ID, [
         "\\Priceva\\Connector\\Bitrix\\Ajax" => "lib/bitrix/ajax.php",
     ]);
+
+    $arJsConfig = [
+        $MODULE_ID => [
+            'js'  => "/bitrix/js/$MODULE_ID/script.js",
+            'css' => false,
+            'rel' => false,
+        ],
+    ];
+
+    foreach( $arJsConfig as $ext => $arExt ){
+        CJSCore::RegisterExt($ext, $arExt);
+    }
 }catch( LoaderException $e ){
     error_log($e);
 }
