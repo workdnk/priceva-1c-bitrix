@@ -13,7 +13,7 @@ if( !check_bitrix_sessid() ) return;
 Loc::loadMessages(__FILE__);
 
 /**
- * @var $Module \priceva_connector
+ * @var $Module priceva_connector
  */
 $errors = $Module->get_errors();
 

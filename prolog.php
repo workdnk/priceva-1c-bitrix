@@ -7,6 +7,7 @@
  */
 
 define("ADMIN_MODULE_NAME", "priceva.connector");
+/** @noinspection HtmlDeprecatedAttribute */
 define("ADMIN_MODULE_ICON", "<a href=\"stat_list.php?lang=" . LANGUAGE_ID . "\">
 <img src=\"/bitrix/images/statistic/statistic.gif\" 
 width=\"48\" height=\"48\" border=\"0\" alt=\"" . GetMessage("STAT_MODULE_TITLE") . "\"

@@ -13,16 +13,11 @@ $MODULE_ID = 'priceva.connector';
 
 try{
     Loader::registerAutoLoadClasses($MODULE_ID, [
-        "\\Priceva\\Connector\\Bitrix\\Helpers\\CommonHelpers" => "lib/bitrix/helpers/commonhelpers.php",
-    ]);
-    Loader::registerAutoLoadClasses($MODULE_ID, [
+        "\\Priceva\\Connector\\Bitrix\\Ajax"                    => "lib/bitrix/ajax.php",
+        "\\Priceva\\Connector\\Bitrix\\Options"                 => "lib/bitrix/options.php",
+        "\\Priceva\\Connector\\Bitrix\\Helpers\\CommonHelpers"  => "lib/bitrix/helpers/commonhelpers.php",
         "\\Priceva\\Connector\\Bitrix\\Helpers\\OptionsHelpers" => "lib/bitrix/helpers/optionshelpers.php",
-    ]);
-    Loader::registerAutoLoadClasses($MODULE_ID, [
-        "\\Priceva\\Connector\\Bitrix\\PricevaModuleException" => "lib/bitrix/pricevamoduleexception.php",
-    ]);
-    Loader::registerAutoLoadClasses($MODULE_ID, [
-        "\\Priceva\\Connector\\Bitrix\\Ajax" => "lib/bitrix/ajax.php",
+        "\\Priceva\\Connector\\Bitrix\\PricevaModuleException"  => "lib/bitrix/pricevamoduleexception.php",
     ]);
 
     $arJsConfig = [

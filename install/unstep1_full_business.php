@@ -7,13 +7,14 @@
  */
 
 use Bitrix\Main\Localization\Loc;
-use Priceva\Connector\Bitrix\Helpers\{OptionsHelpers};
+use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Connector\Bitrix\Options;
 
 if( !check_bitrix_sessid() ) return;
 
-$price_type = OptionsHelpers::get_type_price_ID();
+$price_type = Options::type_price_ID();
 $base       = OptionsHelpers::type_price_is_base();
-$different  = OptionsHelpers::get_type_price_ID() !== OptionsHelpers::get_type_price_priceva_ID();
+$different  = Options::type_price_ID() !== Options::type_price_priceva_ID();
 
 try{
     ?>
@@ -60,6 +61,6 @@ try{
         </div>
     </form>
     <?
-}catch( \Throwable $e ){
-    \Priceva\Connector\Bitrix\Helpers\CommonHelpers::write_to_log($e);
+}catch( Throwable $e ){
+    CommonHelpers::write_to_log($e);
 } ?>

@@ -61,7 +61,9 @@ function check_loadTypesInfoblocks() {
                     select_IBLOCK_ID.options[i] = null;
                 }
             }
-
+            /**
+             * @type Array hash
+             */
             var hash = response.data.iblocks;
 
             for (var j = 0 in hash) {

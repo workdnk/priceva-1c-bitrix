@@ -7,6 +7,7 @@
  */
 
 use Bitrix\Main\Localization\Loc;
+use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
 
 if( !check_bitrix_sessid() ) return;
 
@@ -32,6 +33,6 @@ try{
         </div>
     </form>
     <?
-}catch( \Throwable $e ){
-    \Priceva\Connector\Bitrix\Helpers\CommonHelpers::write_to_log($e);
+}catch( Throwable $e ){
+    CommonHelpers::write_to_log($e);
 } ?>

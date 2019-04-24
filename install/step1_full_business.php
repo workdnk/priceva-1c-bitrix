@@ -7,7 +7,8 @@
  */
 
 use Bitrix\Main\Localization\Loc;
-use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\OptionsPage;
 
 if( !check_bitrix_sessid() ) return;
 
@@ -17,7 +18,7 @@ Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . CommonHelpe
 $filter_js = [ 'loadTypesInfoblocks', 'check_loadTypesInfoblocks', 'showCatalogsIfOneCatalog', 'check_showCatalogsIfOneCatalog' ];
 
 try{
-    $aTab = OptionsHelpers::get_main_options(true);
+    $aTab = OptionsPage::get_main_options(true);
     ?>
     <form action="<? echo $APPLICATION->GetCurPage(); ?>" id="options">
         <?=bitrix_sessid_post()?>
@@ -26,7 +27,7 @@ try{
         <input type="hidden" name="step" value="2">
         <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP1_TEXT_1")?></p>
         <table>
-            <?php OptionsHelpers::generate_table([ 'OPTIONS' => $aTab ], $bVarsFromForm); ?>
+            <?php OptionsPage::generate_table([ 'OPTIONS' => $aTab ], $bVarsFromForm); ?>
         </table>
         <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP1_TEXT_2")?></p>
         <div>
@@ -34,7 +35,7 @@ try{
         </div>
     </form>
     <script>
-        <?php echo OptionsHelpers::generate_js_script($filter_js); ?>
+        <?php echo OptionsPage::generate_js_script($filter_js); ?>
     </script>
     <?
 }catch( Throwable $e ){

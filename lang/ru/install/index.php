@@ -1,9 +1,4 @@
 <?
-/**
- * Created by PhpStorm.
- * User: Sergey Pokoev
- * www.pokoev.ru
- */
 $MESS[ "PRICEVA_BC_MODULE_NAME" ] = "Priceva: Коннектор";
 $MESS[ "PRICEVA_BC_MODULE_DESC" ] = "Мониторинг цен конкурентов и автоматизированное ценообразование. Модуль для автоматической загрузки отчетов о ценах из сервиса Priceva.ru";
 

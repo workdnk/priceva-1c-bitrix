@@ -15,6 +15,7 @@ use Bitrix\Main\ModuleManager;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Connector\Bitrix\OptionsPage;
 use Priceva\Connector\Bitrix\PricevaModuleException;
 
 Loc::loadMessages(__FILE__);
@@ -39,6 +40,10 @@ Class priceva_connector extends CModule
      * @var $options_helpers Priceva\Connector\Bitrix\Helpers\OptionsHelpers
      */
     private $options_helpers;
+    /**
+     * @var $options_helpers Priceva\Connector\Bitrix\Options
+     */
+    private $options;
 
     private $need_save_unroll = false;
 
@@ -197,8 +202,8 @@ Class priceva_connector extends CModule
 
         $this->need_save_unroll = false;
 
-        $aTabs = OptionsHelpers::get_main_options(true);
-        OptionsHelpers::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price);
+        $aTabs = OptionsPage::get_main_options(true);
+        OptionsPage::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price);
 
         if( $this->errors ){
 
@@ -344,7 +349,7 @@ Class priceva_connector extends CModule
         $save_unroll = true;
 
         if( $this->delete_price_type ){
-            $type_price_ID = $this->options_helpers::get_type_price_ID();
+            $type_price_ID = $this->options::type_price_ID();
 
             $type_price = $this->delete_price_type($type_price_ID);
 
@@ -354,7 +359,7 @@ Class priceva_connector extends CModule
         }
 
         if( $this->delete_price_type_priceva ){
-            $type_price_priceva_ID = $this->options_helpers::get_type_price_priceva_ID();
+            $type_price_priceva_ID = $this->options::type_price_priceva_ID();
 
             $deleted_price_priceva = $this->delete_price_type($type_price_priceva_ID);
 
@@ -599,6 +604,9 @@ Class priceva_connector extends CModule
         if(
             !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ||
             !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ||
+            !class_exists('\Priceva\Connector\Bitrix\Options') ||
+            !class_exists('\Priceva\Connector\Bitrix\OptionsPage') ||
+            !class_exists('\Priceva\Connector\Bitrix\Ajax') ||
             !class_exists('\Priceva\Connector\Bitrix\PricevaModuleException')
         ){
             CopyDirFiles(self::get_current_path() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
@@ -609,5 +617,6 @@ Class priceva_connector extends CModule
 
         $this->common_helpers  = CommonHelpers::getInstance();
         $this->options_helpers = OptionsHelpers::getInstance();
+        $this->options         = OptionsHelpers::class;
     }
 }

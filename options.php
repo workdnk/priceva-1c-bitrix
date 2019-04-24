@@ -7,7 +7,8 @@
  */
 
 use Bitrix\Main\Localization\Loc;
-use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\OptionsPage;
 
 global $APPLICATION, $Update, $Apply;
 $MODULE_ID = "priceva.connector";
@@ -27,13 +28,13 @@ try{
     if( $RIGHT >= "R" ){
         $bVarsFromForm = false;
 
-        $aTabs = OptionsHelpers::generate_options_tabs();
+        $aTabs = OptionsPage::generate_options_tabs();
 
         $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
         if( $common_helpers->is_post() && check_bitrix_sessid() ){
-            if( OptionsHelpers::is_save_method() ){ // save / restore / defaults action on form
-                OptionsHelpers::process_save_form($bVarsFromForm, $aTabs);
+            if( OptionsPage::is_save_method() ){ // save / restore / defaults action on form
+                OptionsPage::process_save_form($bVarsFromForm, $aTabs);
 
                 ob_start();
                 $Update = $Update . $Apply;
@@ -53,18 +54,18 @@ try{
                 $tabControl->BeginNextTab();
 
                 if( $aTab[ "DIV" ] != "rights" ){
-                    OptionsHelpers::generate_table($aTab, $bVarsFromForm);
+                    OptionsPage::generate_table($aTab, $bVarsFromForm);
                 }elseif( $aTab[ "DIV" ] == "rights" ){
                     require( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
                 }
             }
             $tabControl->Buttons();
-            OptionsHelpers::generate_buttons();
+            OptionsPage::generate_buttons();
             echo bitrix_sessid_post();
             $tabControl->End(); ?>
         </form>
         <script>
-            <?= OptionsHelpers::generate_js_script()?>
+            <?= OptionsPage::generate_js_script()?>
         </script>
     <? }
 }catch( Exception $e ){

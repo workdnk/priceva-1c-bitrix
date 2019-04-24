@@ -6,6 +6,6 @@
  * Time: 14:42
  */
 
-use Priceva\Connector\Bitrix\Helpers\OptionsHelpers;
+use Priceva\Connector\Bitrix\Options;
 
-$priceva_connector_default_option = OptionsHelpers::get_default_options();
+$priceva_connector_default_option = Options::default_options();

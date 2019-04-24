@@ -8,7 +8,9 @@
 
 namespace Priceva\Connector\Bitrix;
 
-class PricevaModuleException extends \Exception
+use Exception;
+
+class PricevaModuleException extends Exception
 {
 
 }

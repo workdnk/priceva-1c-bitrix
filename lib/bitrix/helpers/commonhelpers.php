@@ -27,6 +27,7 @@ use CCurrency;
 use CEventLog;
 use CMain;
 use Exception;
+use Priceva\Connector\Bitrix\Options;
 
 class CommonHelpers
 {
@@ -106,16 +107,6 @@ class CommonHelpers
         }
 
         return static::$instance;
-    }
-
-    /**
-     * @param array $select_values
-     *
-     * @return array
-     */
-    public static function add_not_selected( $select_values )
-    {
-        return [ '0' => Loc::getMessage("PRICEVA_BC_COMMON_HELPERS_NOT_SELECTED") ] + $select_values;
     }
 
     /**
@@ -306,7 +297,7 @@ class CommonHelpers
             ]);
         }
 
-        if( OptionsHelpers::get_debug() ){
+        if( Options::debug() ){
             $message = date("d.m.y H:i:s") . ": " . $message;
             Debug::writeToFile($message, "", "priceva.log");
         }

@@ -17,6 +17,7 @@ use Bitrix\Main\Localization\Loc;
 use CCatalogGroup;
 use CCatalogProduct;
 use CIBlockElement;
+use CIBlockResult;
 use COption;
 use CPrice;
 use Exception;
@@ -106,7 +107,7 @@ class PricevaConnector
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
             }
 
-            $options = OptionsHelpers::get_main_options();
+            $options = OptionsPage::get_main_options();
 
             $check_result = true;
 
@@ -126,8 +127,8 @@ class PricevaConnector
                 throw new PricevaModuleException('Sync failed. Check options op module options page.');
             }
 
-            $api_key          = OptionsHelpers::get_api_key();
-            $sync_only_active = OptionsHelpers::get_sync_only_active();
+            $api_key          = Options::api_key();
+            $sync_only_active = Options::sync_only_active();
 
             $this->sync($api_key, $sync_only_active);
         }catch( PricevaModuleException $e ){
@@ -151,11 +152,11 @@ class PricevaConnector
      */
     private function sync( $api_key, $sync_only_active )
     {
-        $id_type_of_price = OptionsHelpers::get_type_price_ID();
-        $price_recalc     = OptionsHelpers::get_price_recalc();
-        $currency         = OptionsHelpers::get_currency();
-        $sync_field       = OptionsHelpers::get_sync_field();
-        $sync_dominance   = OptionsHelpers::get_sync_dominance();
+        $id_type_of_price = Options::type_price_ID();
+        $price_recalc     = Options::price_recalc();
+        $currency         = Options::currency();
+        $sync_field       = Options::sync_field();
+        $sync_dominance   = Options::sync_dominance();
 
         switch( $sync_dominance ){
             case "priceva":
@@ -192,6 +193,7 @@ class PricevaConnector
      * @param bool   $sync_only_active
      *
      * @throws PricevaException
+     * @throws PricevaModuleException
      */
     private function sync_priceva_to_bitrix(
         $api_key,
@@ -215,6 +217,8 @@ class PricevaConnector
      * @param string   $currency
      * @param int      $id_type_of_price
      * @param bool     $price_recalc
+     *
+     * @throws PricevaModuleException
      */
     private function process_priceva_product(
         $sync_field,
@@ -241,6 +245,7 @@ class PricevaConnector
      * @param stdClass $priceva_product
      *
      * @return array|bool
+     * @throws PricevaModuleException
      */
     private function get_bitrix_product( $sync_field, $sync_only_active, $priceva_product )
     {
@@ -260,7 +265,7 @@ class PricevaConnector
             ]);
         }else{
             $client_code             = $priceva_product->client_code;
-            $what_use_as_client_code = OptionsHelpers::get_client_code();
+            $what_use_as_client_code = Options::client_code();
 
             $arFilter = array_merge($arFilter, [
                 $what_use_as_client_code => $client_code,
@@ -278,6 +283,12 @@ class PricevaConnector
         return $products->getNext();
     }
 
+    /**
+     * @param $sync_only_active
+     *
+     * @return CIBlockResult|int
+     * @throws PricevaModuleException
+     */
     private function get_bitrix_products( $sync_only_active )
     {
         $arFilter = $this->prepare_filter_product($sync_only_active);
@@ -366,7 +377,7 @@ class PricevaConnector
                 return false;
             }
         }else{
-            switch( OptionsHelpers::get_client_code() ){
+            switch( Options::client_code() ){
                 case 'ID':
                     {
                         return $product[ 'ID' ];
@@ -465,7 +476,7 @@ class PricevaConnector
         $filters        = new PricevaFilters();
         $product_fields = new PricevaProductFields();
 
-        $filters[ 'limit' ] = OptionsHelpers::get_download_at_time();
+        $filters[ 'limit' ] = Options::download_at_time();
         $filters[ 'page' ]  = 1;
 
         if( $sync_only_active ){
