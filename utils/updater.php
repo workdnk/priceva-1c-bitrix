@@ -6,7 +6,9 @@
  * Time: 11:40
  */
 
-if( IsModuleInstalled('{MODULE_ID}') ){
+$module_id = '{MODULE_ID}';
+
+if( IsModuleInstalled($module_id) ){
 
     $updater = new CUpdater();
 
@@ -15,5 +17,12 @@ if( IsModuleInstalled('{MODULE_ID}') ){
     }
     if( is_dir(dirname(__FILE__) . '/install/module') ){
         $updater->CopyFiles("install/module", "");
+    }
+
+    $trade_offers = COption::GetOptionString($module_id, 'TRADE_OFFERS');
+
+    if( $trade_offers ){
+        COption::RemoveOption($module_id, 'TRADE_OFFERS');
+        COption::SetOptionString($module_id, 'TRADE_OFFERS_ENABLE', $trade_offers);
     }
 }
