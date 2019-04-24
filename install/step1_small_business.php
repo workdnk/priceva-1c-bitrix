@@ -14,7 +14,7 @@ if( !check_bitrix_sessid() ) return;
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . CommonHelpers::MODULE_ID . "/options.php");
 
-$filter_options = [ 'DEBUG', 'HEADING0', 'HEADING1', 'IBLOCK_TYPE_ID', 'CATALOG_MODE', 'IBLOCK_ID', 'HEADING2', 'HEADING3', 'ID_TYPE_PRICE', 'PRICE_RECALC' ];
+$filter_options = [ 'DEBUG', 'HEADING0', 'HEADING1', 'IBLOCK_TYPE_ID', 'IBLOCK_MODE', 'IBLOCK_ID', 'HEADING2', 'HEADING3', 'ID_TYPE_PRICE', 'PRICE_RECALC' ];
 $filter_js      = [ 'loadTypesInfoblocks', 'check_loadTypesInfoblocks', 'showCatalogsIfOneCatalog', 'check_showCatalogsIfOneCatalog' ];
 
 try{
