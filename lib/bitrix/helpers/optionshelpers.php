@@ -659,157 +659,18 @@ class OptionsHelpers
     public static function generate_js_script( $filter = [] )
     {
         $functions = [
-            'showDownloadsIfPriceva'           => "function showDownloadsIfPriceva() {
-                var form = BX('options');
-                var select_SYNC_DOMINANCE = BX.findChildren(form, {
-                    tag: 'select',
-                    attribute: {name: 'SYNC_DOMINANCE'}
-                }, true);
-                BX.bind(select_SYNC_DOMINANCE[0], 'bxchange', check_showDownloadsIfPriceva)
-            }",
-            'check_showDownloadsIfPriceva'     => "function check_showDownloadsIfPriceva() {
-                var form = BX('options'),
-                    select_SYNC_DOMINANCE = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'SYNC_DOMINANCE'}
-                    }, true),
-                    select_DOWNLOAD_AT_TIME = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'DOWNLOAD_AT_TIME'}
-                    }, true);
-
-                var s = select_DOWNLOAD_AT_TIME[0],
-                    d = select_SYNC_DOMINANCE[0];
-
-                if (d.value != '0') {
-                    BX.adjust(s, {props: {disabled: false}});
-                } else {
-                    BX.adjust(s, {props: {disabled: true}});
-                    s.value = 0;
-                }
-            }",
-            'loadTypesInfoblocks'              => "function loadTypesInfoblocks() {
-                var form = BX('options'),
-                    select_IBLOCK_TYPE_ID = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'IBLOCK_TYPE_ID'}
-                    }, true);
-                BX.bind(select_IBLOCK_TYPE_ID[0], 'bxchange', check_loadTypesInfoblocks)
-            }",
-            'check_loadTypesInfoblocks'        => "function check_loadTypesInfoblocks() {
-                var form = BX('options'),
-                    select_IBLOCK_TYPE_ID = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'IBLOCK_TYPE_ID'}
-                    }, true)[0];
-                    
-                BX.ajax.runAction('priceva:connector.api.ajax.getIblocks',{
-                    method: 'POST',
-                    data: {iblock_type_id: select_IBLOCK_TYPE_ID.value}
-                })
-                .then(function(response) {
-                    select_IBLOCK_ID = BX.findChildren(form, {
-                            tag: 'select',
-                            attribute: {name: 'IBLOCK_ID'}
-                        }, true)[0];
-                    
-                    var length = select_IBLOCK_ID.options.length;
-                    for (i = 0; i < length; i++) {
-                        if (select_IBLOCK_ID.options[i].value != 0) {
-                            select_IBLOCK_ID.options[i] = null;
-                        }
-                    }
-                    
-                    var hash = response.data.iblocks;
-                    
-                    for(i in hash) {
-                      o = document.createElement('OPTION');
-                      o.innerHTML = hash[i];
-                      o.value = i;
-                      select_IBLOCK_ID.appendChild(o);
-                   }
-                   
-                   if (select_IBLOCK_TYPE_ID.value != 'catalog') {
-                       select_TRADE_OFFERS = BX.findChildren(form, {
-                            tag: 'select',
-                            attribute: {name: 'TRADE_OFFERS'}
-                        }, true)[0];
-                        select_TRADE_OFFERS.value = 'NO';
-                        BX.adjust(select_TRADE_OFFERS, {props: {disabled: true}});
-                   } else {
-                   BX.adjust(select_TRADE_OFFERS, {props: {disabled: false}});}
-                });
-            }",
-            'showIBlocksIfOneIBlock'           => "function showIBlocksIfOneIBlock() {
-                var form = BX('options'),
-                    select_IBLOCK_MODE = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'IBLOCK_MODE'}
-                    }, true);
-                BX.bind(select_IBLOCK_MODE[0], 'bxchange', check_showIBlocksIfOneIBlock)
-            }",
-            'check_showIBlocksIfOneIBlock'     => "function check_showIBlocksIfOneIBlock() {
-                var form = BX('options'),
-                    select_IBLOCK_MODE = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'IBLOCK_MODE'}
-                    }, true)[0],
-                    select_IBLOCK_ID = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'IBLOCK_ID'}
-                    }, true)[0];
-                    
-                if (select_IBLOCK_MODE.value == 'ONE') {
-                    BX.adjust(select_IBLOCK_ID, {props: {disabled: false}});
-                } else {
-                    BX.adjust(select_IBLOCK_ID, {props: {disabled: true}});
-                    select_IBLOCK_ID.value = 0;
-                }
-            }",
-            'showClientCodeIfClientCode'       => "function showClientCodeIfClientCode() {
-                var form = BX('options');
-                var select_SYNC_FIELD = BX.findChildren(form, {
-                    tag: 'select',
-                    attribute: {name: 'SYNC_FIELD'}
-                }, true);
-                BX.bind(select_SYNC_FIELD[0], 'bxchange', check_showClientCodeIfClientCode)
-            }",
-            'check_showClientCodeIfClientCode' => "function check_showClientCodeIfClientCode() {
-                var form = BX('options'),
-                    select_SYNC_FIELD = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'SYNC_FIELD'}
-                    }, true),
-                    select_CLIENT_CODE = BX.findChildren(form, {
-                        tag: 'select',
-                        attribute: {name: 'CLIENT_CODE'}
-                    }, true);
-
-                var s = select_CLIENT_CODE[0],
-                    d = select_SYNC_FIELD[0];
-
-                if (d.value === 'client_code') {
-                    BX.adjust(s, {props: {disabled: false}});
-                } else {
-                    BX.adjust(s, {props: {disabled: true}});
-                    s.value = 0;
-                }
-            }",
+            'showDownloadsIfPriceva',
+            'check_showDownloadsIfPriceva',
+            'loadTypesInfoblocks',
+            'showIBlocksIfOneIBlock',
+            'check_showIBlocksIfOneIBlock',
+            'showClientCodeIfClientCode',
+            'check_showClientCodeIfClientCode',
         ];
 
-        $needed = array_diff_key($functions, array_flip($filter));
+        $needed = array_diff($functions, $filter);
 
-        $script = '';
-
-        foreach( $needed as $func_name => $function ){
-            if( $func_name === 'check_loadTypesInfoblocks' ){
-                $script .= $function . "\n";
-            }else{
-                $script .= $function . " BX.ready($func_name);\n";
-            }
-        }
-
-        return $script;
+        return 'var priceva_func_filter = ' . json_encode($needed) . ";";
     }
 
     public static function get_default_options()
