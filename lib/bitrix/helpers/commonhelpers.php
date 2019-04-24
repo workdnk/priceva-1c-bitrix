@@ -53,6 +53,13 @@ class CommonHelpers
         $this->APPLICATION = $this->get_application();
     }
 
+    public function get_current_path( $notDocumentRoot = false )
+    {
+        return ( $notDocumentRoot )
+            ? str_ireplace($this->app::getDocumentRoot(), '', dirname(__DIR__))
+            : dirname(__DIR__);
+    }
+
     /**
      * @param string $val
      *
