@@ -65,7 +65,7 @@ Class priceva_connector extends CModule
         $this->PARTNER_URI  = "https://priceva.ru";
     }
 
-    static public function GetPatch( $notDocumentRoot = false )
+    static public function get_current_path( $notDocumentRoot = false )
     {
         if( $notDocumentRoot )
             return str_ireplace($_SERVER[ "DOCUMENT_ROOT" ], '', dirname(__DIR__));
@@ -158,12 +158,12 @@ Class priceva_connector extends CModule
         if( $full ){
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/step1_full_business.php"
+                self::get_current_path() . "/install/step1_full_business.php"
             );
         }else{
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/step1_small_business.php"
+                self::get_current_path() . "/install/step1_small_business.php"
             );
         }
     }
@@ -208,14 +208,14 @@ Class priceva_connector extends CModule
 
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/errors.php"
+                self::get_current_path() . "/install/errors.php"
             );
         }else{
             ModuleManager::registerModule($this->common_helpers::MODULE_ID);
 
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/step2.php"
+                self::get_current_path() . "/install/step2.php"
             );
         }
     }
@@ -225,12 +225,12 @@ Class priceva_connector extends CModule
         if( $full ){
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/unstep1_full_business.php"
+                self::get_current_path() . "/install/unstep1_full_business.php"
             );
         }else{
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/unstep1_small_business.php"
+                self::get_current_path() . "/install/unstep1_small_business.php"
             );
         }
     }
@@ -266,13 +266,13 @@ Class priceva_connector extends CModule
 
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_UNINSTALL_TITLE_1"),
-                self::GetPatch() . "/install/errors.php"
+                self::get_current_path() . "/install/errors.php"
             );
         }else{
             $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
-                self::GetPatch() . "/install/unstep2.php"
+                self::get_current_path() . "/install/unstep2.php"
             );
         }
     }
@@ -374,11 +374,11 @@ Class priceva_connector extends CModule
     {
         parent::InstallFiles();
 
-        $r1 = CopyDirFiles(self::GetPatch() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
-        $r2 = CopyDirFiles(self::GetPatch() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
+        $r1 = CopyDirFiles(self::get_current_path() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
+        $r2 = CopyDirFiles(self::get_current_path() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
 
-        $r3 = CopyDirFiles(self::GetPatch() . "/lang/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lang/", true, true);
-        $r4 = CopyDirFiles(self::GetPatch() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin/", true, true);
+        $r3 = CopyDirFiles(self::get_current_path() . "/lang/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lang/", true, true);
+        $r4 = CopyDirFiles(self::get_current_path() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin/", true, true);
 
         $this->save_unroll($r1 && $r2 && $r3 && $r4, "UnInstallFiles");
     }
@@ -596,10 +596,10 @@ Class priceva_connector extends CModule
             !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ||
             !class_exists('\Priceva\Connector\Bitrix\PricevaModuleException')
         ){
-            CopyDirFiles(self::GetPatch() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
+            CopyDirFiles(self::get_current_path() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
 
             /** @noinspection PhpIncludeInspection */
-            require_once( self::GetPatch() . "/include.php" );
+            require_once( self::get_current_path() . "/include.php" );
         }
 
         $this->common_helpers  = CommonHelpers::getInstance();
