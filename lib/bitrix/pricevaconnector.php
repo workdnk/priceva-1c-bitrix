@@ -17,6 +17,7 @@ use Bitrix\Main\Localization\Loc;
 use CCatalogGroup;
 use CCatalogProduct;
 use CIBlockElement;
+use COption;
 use CPrice;
 use Exception;
 use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
@@ -93,12 +94,30 @@ class PricevaConnector
     public function run()
     {
         try{
+            $common_helpers = CommonHelpers::getInstance();
+
+            Loc::loadLanguageFile($common_helpers->get_current_path() . '../../options.php');
+
             if( !Loader::includeModule('catalog') ){
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
             }
 
             if( !CommonHelpers::check_php_ext() ){
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
+            }
+
+            $options = OptionsHelpers::get_main_options();
+
+            foreach( $options as $option_name => $option ){
+                if( false !== strripos($option_name, 'HEADING') ){
+                    continue;
+                }
+
+                $option_value                 = COption::GetOptionString(CommonHelpers::MODULE_ID, $option_name);
+                $list_options[ $option_name ] = $option_value;
+                if( !OptionsHelpers::check_option($option_name, $option_value, $list_options) ){
+                    throw new PricevaModuleException('Sync failed. Check options op module options page.');
+                }
             }
 
             $api_key          = OptionsHelpers::get_api_key();
