@@ -375,12 +375,15 @@ Class priceva_connector extends CModule
         parent::InstallFiles();
 
         $r1 = CopyDirFiles(self::get_current_path() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
-        $r2 = CopyDirFiles(self::get_current_path() . "/install/module/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
 
-        $r3 = CopyDirFiles(self::get_current_path() . "/lang/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lang/", true, true);
-        $r4 = CopyDirFiles(self::get_current_path() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin/", true, true);
+        $r2 = CopyDirFiles(self::get_current_path() . "/default_option.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
+        $r3 = CopyDirFiles(self::get_current_path() . "/options.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
+        $r4 = CopyDirFiles(self::get_current_path() . "/prolog.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
 
-        $this->save_unroll($r1 && $r2 && $r3 && $r4, "UnInstallFiles");
+        $r5 = CopyDirFiles(self::get_current_path() . "/lang/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lang/", true, true);
+        $r6 = CopyDirFiles(self::get_current_path() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin/", true, true);
+
+        $this->save_unroll($r1 && $r2 && $r3 && $r4 && $r5 && $r6, "UnInstallFiles");
     }
 
     function UnInstallFiles()

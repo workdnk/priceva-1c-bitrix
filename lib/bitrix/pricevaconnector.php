@@ -96,7 +96,7 @@ class PricevaConnector
         try{
             $common_helpers = CommonHelpers::getInstance();
 
-            Loc::loadLanguageFile($common_helpers->get_current_path() . '../../options.php');
+            Loc::loadLanguageFile($common_helpers->get_current_path() . '/../../options.php');
 
             if( !Loader::includeModule('catalog') ){
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_CATALOG_NOT_INSTALLED"));
@@ -108,6 +108,8 @@ class PricevaConnector
 
             $options = OptionsHelpers::get_main_options();
 
+            $check_result = true;
+
             foreach( $options as $option_name => $option ){
                 if( false !== strripos($option_name, 'HEADING') ){
                     continue;
@@ -116,8 +118,12 @@ class PricevaConnector
                 $option_value                 = COption::GetOptionString(CommonHelpers::MODULE_ID, $option_name);
                 $list_options[ $option_name ] = $option_value;
                 if( !OptionsHelpers::check_option($option_name, $option_value, $list_options) ){
-                    throw new PricevaModuleException('Sync failed. Check options op module options page.');
+                    $check_result = $check_result && false;
                 }
+            }
+
+            if( !$check_result ){
+                throw new PricevaModuleException('Sync failed. Check options op module options page.');
             }
 
             $api_key          = OptionsHelpers::get_api_key();
