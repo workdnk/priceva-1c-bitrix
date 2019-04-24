@@ -300,9 +300,9 @@ class OptionsHelpers
         // $agent_id = OptionsHelpers::get_agent_id();
 
         $options = [
-            "HEADING0"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
-            "API_KEY"          => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_API_KEY"), [ "text", 32 ] ],
-            "DEBUG"            => [
+            "HEADING0"       => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
+            "API_KEY"        => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_API_KEY"), [ "text", 32 ] ],
+            "DEBUG"          => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
                     "select", CommonHelpers::add_not_selected([
                         "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ON"),
@@ -310,9 +310,9 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING1"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_CATALOG"), "heading" ],
-            "IBLOCK_TYPE_ID"   => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID"), [ "select", CommonHelpers::add_not_selected($types_iblocks) ] ],
-            "IBLOCK_MODE"      => [
+            "HEADING1"       => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_IBLOCK"), "heading" ],
+            "IBLOCK_TYPE_ID" => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID"), [ "select", CommonHelpers::add_not_selected($types_iblocks) ] ],
+            "IBLOCK_MODE"    => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE"), [
                     "select", CommonHelpers::add_not_selected([
                         "ALL" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL"),
