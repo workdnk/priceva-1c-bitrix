@@ -16,7 +16,6 @@ $MESS[ "PRICEVA_BC_OPTIONS_TEXT_SYNC_DOMINANCE" ]           = "Первоист�
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_DOWNLOAD_AT_TIME" ]         = "Количество загрузок за раз";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC" ]             = "Пересчитывать цену при ее установке";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_CURRENCY" ]                 = "Валюта";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS" ]             = "Обрабатывать торговые предложения";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_RIGHTS" ]                   = "Права";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_OPTIONS_RIGHTS" ]           = "Настройки прав на модуль";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_DEBUG" ]                    = "Режим отладки модуля";
@@ -27,10 +26,19 @@ $MESS[ "PRICEVA_BC_OPTIONS_HEADING_SYNC" ]                  = "Синхрони�
 $MESS[ "PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE" ]            = "Работа с ценами";
 $MESS[ "PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG" ]       = "Удалить лог отладки";
 $MESS[ "PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG_TITLE" ] = "При нажатии удалится лог отладки, созданный по адресу http://ваш_сайт.домен/priceva.log";
-$MESS[ "PRICEVA_BC_OPTIONS_HEADING_IBLOCK" ] = "Работа с инфоблоками";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE" ]              = "Обрабатывать каталоги";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL" ]     = "Все";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ONE" ]     = "Только выбранный";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_ID" ]                = "Выбранный каталог";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID" ]           = "Выбранный тип инфоблоков";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_FILL_FIELD" ]               = "Необходимо указать значение данного поля: ";
+// Инфоблоки основные
+$MESS[ "PRICEVA_BC_OPTIONS_HEADING_IBLOCK" ]             = "Работа с простыми товарами";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_SIMPLE_PRODUCT_ENABLE" ] = "Обрабатывать простые товары";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE" ]           = "Обрабатывать инфоблоки";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL" ]  = "Все";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ONE" ]  = "Только выбранный";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID" ]        = "Выбранный тип инфоблоков";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_IBLOCK_ID" ]             = "Выбранный инфоблок";
+// Инфоблоки торг предложений
+$MESS[ "PRICEVA_BC_OPTIONS_HEADING_TRADE_OFFERS_IBLOCK" ]      = "Работа с торговыми предложениями";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_ENABLE" ]         = "Обрабатывать торговые предложения";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_MODE" ]    = "Обрабатывать инфоблоки";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_TYPE_ID" ] = "Выбранный тип инфоблоков";
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_ID" ]      = "Выбранный инфоблок";
+// Общее
+$MESS[ "PRICEVA_BC_OPTIONS_TEXT_FILL_FIELD" ] = "Необходимо указать значение данного поля: ";

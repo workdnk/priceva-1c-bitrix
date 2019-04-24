@@ -164,9 +164,9 @@ class OptionsHelpers
     /**
      * @return bool
      */
-    public static function get_trade_offers()
+    public static function get_trade_offers_enable()
     {
-        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'TRADE_OFFERS'));
+        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'TRADE_OFFERS_ENABLE'));
     }
 
     /**
@@ -278,9 +278,15 @@ class OptionsHelpers
                     'HEADING1',
                     'HEADING2',
                     'HEADING3',
+                    'HEADING4',
+                    'SIMPLE_PRODUCT_ENABLE',
                     'IBLOCK_TYPE_ID',
                     'IBLOCK_MODE',
                     'IBLOCK_ID',
+                    'TRADE_OFFERS_ENABLE',
+                    'TRADE_OFFERS_IBLOCK_TYPE_ID',
+                    'TRADE_OFFERS_IBLOCK_MODE',
+                    'TRADE_OFFERS_IBLOCK_ID',
                 ];
         }
 
@@ -300,9 +306,9 @@ class OptionsHelpers
         // $agent_id = OptionsHelpers::get_agent_id();
 
         $options = [
-            "HEADING0"       => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
-            "API_KEY"        => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_API_KEY"), [ "text", 32 ] ],
-            "DEBUG"          => [
+            "HEADING0"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS"), "heading" ],
+            "API_KEY"                     => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_API_KEY"), [ "text", 32 ] ],
+            "DEBUG"                       => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DEBUG"), [
                     "select", CommonHelpers::add_not_selected([
                         "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ON"),
@@ -310,9 +316,17 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING1"       => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_IBLOCK"), "heading" ],
-            "IBLOCK_TYPE_ID" => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID"), [ "select", CommonHelpers::add_not_selected($types_iblocks) ] ],
-            "IBLOCK_MODE"    => [
+            "HEADING1"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_IBLOCK"), "heading" ],
+            "SIMPLE_PRODUCT_ENABLE"       => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SIMPLE_PRODUCT_ENABLE"), [
+                    "select", CommonHelpers::add_not_selected([
+                        "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
+                        "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
+                    ]),
+                ],
+            ],
+            "IBLOCK_TYPE_ID"              => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_TYPE_ID"), [ "select", CommonHelpers::add_not_selected($types_iblocks) ] ],
+            "IBLOCK_MODE"                 => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE"), [
                     "select", CommonHelpers::add_not_selected([
                         "ALL" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL"),
@@ -320,9 +334,28 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "IBLOCK_ID"        => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_ID"), [ "select", CommonHelpers::add_not_selected($iblocks) ] ],
-            "HEADING2"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
-            "SYNC_FIELD"       => [
+            "IBLOCK_ID"                   => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_ID"), [ "select", CommonHelpers::add_not_selected($iblocks) ] ],
+            "HEADING2"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_TRADE_OFFERS_IBLOCK"), "heading" ],
+            "TRADE_OFFERS_ENABLE"         => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_ENABLE"), [
+                    "select", CommonHelpers::add_not_selected([
+                        "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
+                        "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
+                    ]),
+                ],
+            ],
+            "TRADE_OFFERS_IBLOCK_TYPE_ID" => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_TYPE_ID"), [ "select", CommonHelpers::add_not_selected($types_iblocks) ] ],
+            "TRADE_OFFERS_IBLOCK_MODE"    => [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_MODE"), [
+                    "select", CommonHelpers::add_not_selected([
+                        "ALL" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ALL"),
+                        "ONE" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_IBLOCK_MODE_TEXT_ONE"),
+                    ]),
+                ],
+            ],
+            "TRADE_OFFERS_IBLOCK_ID"      => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_ID"), [ "select", CommonHelpers::add_not_selected($iblocks) ] ],
+            "HEADING3"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
+            "SYNC_FIELD"                  => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
                     "select", CommonHelpers::add_not_selected([
                         "client_code" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE"),
@@ -330,7 +363,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "CLIENT_CODE"      => [
+            "CLIENT_CODE"                 => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE_ANALOG"), [
                     "select", CommonHelpers::add_not_selected([
                         "ID"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRODUCT_ID"),
@@ -338,7 +371,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "SYNC_ONLY_ACTIVE" => [
+            "SYNC_ONLY_ACTIVE"            => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_ONLY_ACTIVE"), [
                     "select", CommonHelpers::add_not_selected([
                         "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
@@ -346,7 +379,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "SYNC_DOMINANCE"   => [
+            "SYNC_DOMINANCE"              => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_DOMINANCE"), [
                     "select", CommonHelpers::add_not_selected([
                         "bitrix"  => "Bitrix",
@@ -354,7 +387,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "DOWNLOAD_AT_TIME" => [
+            "DOWNLOAD_AT_TIME"            => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_DOWNLOAD_AT_TIME"), [
                     "select", CommonHelpers::add_not_selected([
                         "10"   => "10",
@@ -363,9 +396,9 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "HEADING3"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE"), "heading" ],
-            "ID_TYPE_PRICE"    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ID_TYPE_PRICE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
-            "PRICE_RECALC"     => [
+            "HEADING4"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_WORK_PRICE"), "heading" ],
+            "ID_TYPE_PRICE"               => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_ID_TYPE_PRICE"), [ "select", CommonHelpers::add_not_selected($types_of_price) ] ],
+            "PRICE_RECALC"                => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRICE_RECALC"), [
                     "select", CommonHelpers::add_not_selected([
                         "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
@@ -373,15 +406,7 @@ class OptionsHelpers
                     ]),
                 ],
             ],
-            "CURRENCY"         => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", CommonHelpers::add_not_selected($currencies) ] ],
-            "TRADE_OFFERS"     => [
-                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS"), [
-                    "select", CommonHelpers::add_not_selected([
-                        "NO"  => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_NO"),
-                        "YES" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_YES"),
-                    ]),
-                ],
-            ],
+            "CURRENCY"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CURRENCY"), [ "select", CommonHelpers::add_not_selected($currencies) ] ],
         ];
 
         return array_diff_key($options, array_flip($filter));
@@ -574,7 +599,7 @@ class OptionsHelpers
         ];
 
         $options_inverse_dependencies = [
-            'TRADE_OFFERS' => [ 'IBLOCK_TYPE_ID' => [ 'catalog' ], ],
+            'TRADE_OFFERS_ENABLE' => [ 'IBLOCK_TYPE_ID' => [ 'catalog' ], ],
         ];
 
         $result = true;
@@ -676,23 +701,27 @@ class OptionsHelpers
     public static function get_default_options()
     {
         return [
-            "API_KEY"               => "",
-            "DEBUG"                 => "NO",
-            "IBLOCK_TYPE_ID"        => "0",
-            "IBLOCK_MODE"           => "0",
-            "IBLOCK_ID"             => "0",
-            "SYNC_FIELD"            => "articul",
-            "CLIENT_CODE"           => "ID",
-            "SYNC_DOMINANCE"        => "priceva",
-            "SYNC_ONLY_ACTIVE"      => "YES",
-            "DOWNLOAD_AT_TIME"      => "1000",
-            "ID_TYPE_PRICE"         => "0",
-            "ID_TYPE_PRICE_PRICEVA" => "0",
-            "PRICE_RECALC"          => "NO",
-            "CURRENCY"              => "RUB",
-            "ID_AGENT"              => "",
-            "ID_ARICUL_IBLOCK"      => "0",
-            "TRADE_OFFERS"          => "NO",
+            "API_KEY"                     => "",
+            "DEBUG"                       => "NO",
+            "SIMPLE_PRODUCT_ENABLE"       => "YES",
+            "IBLOCK_TYPE_ID"              => "0",
+            "IBLOCK_MODE"                 => "0",
+            "IBLOCK_ID"                   => "0",
+            "TRADE_OFFERS_ENABLE"         => "NO",
+            "TRADE_OFFERS_IBLOCK_TYPE_ID" => "0",
+            "TRADE_OFFERS_IBLOCK_MODE"    => "0",
+            "TRADE_OFFERS_IBLOCK_ID"      => "0",
+            "SYNC_FIELD"                  => "articul",
+            "CLIENT_CODE"                 => "ID",
+            "SYNC_DOMINANCE"              => "priceva",
+            "SYNC_ONLY_ACTIVE"            => "YES",
+            "DOWNLOAD_AT_TIME"            => "1000",
+            "ID_TYPE_PRICE"               => "0",
+            "ID_TYPE_PRICE_PRICEVA"       => "0",
+            "PRICE_RECALC"                => "NO",
+            "CURRENCY"                    => "RUB",
+            "ID_AGENT"                    => "0",
+            "ID_ARICUL_IBLOCK"            => "0",
         ];
     }
 }
