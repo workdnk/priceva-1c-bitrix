@@ -7,6 +7,8 @@
  */
 
 use Bitrix\Main\Localization\Loc;
+use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\PricevaConnector;
 
 $MODULE_ID = "priceva.connector";
 
@@ -17,7 +19,7 @@ CModule::IncludeModule($MODULE_ID);
 
 Loc::loadMessages(__FILE__);
 
-$common_helpers = \Priceva\Connector\Bitrix\Helpers\CommonHelpers::getInstance();
+$common_helpers = CommonHelpers::getInstance();
 
 $FORM_RIGHT = $common_helpers->APPLICATION->GetGroupRight($MODULE_ID);
 if( $FORM_RIGHT <= "D" ) $common_helpers->APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
@@ -28,7 +30,7 @@ $info = null;
 
 if( "POST" === $common_helpers->request_method() ){
     if( $common_helpers->app->getContext()->getRequest()->getPost('run') ){
-        $connector = new \Priceva\Connector\Bitrix\PricevaConnector();
+        $connector = new PricevaConnector();
         $connector->run();
         $info = $connector->get_last_info_msg();
     }
