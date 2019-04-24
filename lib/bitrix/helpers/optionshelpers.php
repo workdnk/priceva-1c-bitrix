@@ -603,12 +603,12 @@ class OptionsHelpers
             // иначе мы сначала удалим значения опций (если без else просто добавить код ниже к коду выше),
             // и потом их сразу же ставим нулевые все, код ниже не возьмет значения по умолчанию
             if( !$bVarsFromForm ){
-                foreach( $aTabs as $i => $aTab ){
-                    foreach( $aTab[ "OPTIONS" ] as $name => $arOption ){
+                foreach( $aTabs as $aTab ){
+                    foreach( $aTab[ "OPTIONS" ] as $option_name => $option ){
                         $request = CommonHelpers::getInstance()->app->getContext()->getRequest();
-                        $val     = $request->get($name);
+                        $val     = $request->get($option_name);
 
-                        if( false !== strripos($name, 'HEADING') ){
+                        if( false !== strripos($option_name, 'HEADING') ){
                             continue;
                         }
 
@@ -616,15 +616,15 @@ class OptionsHelpers
                             $val = $id_type_price_priceva;
                         }
 
-                        if( $arOption[ 1 ][ 0 ] == "checkbox" && $val != "Y" ){
+                        if( $option[ 1 ][ 0 ] == "checkbox" && $val != "Y" ){
                             $val = "N";
                         }
 
-                        $list_options[ $name ] = $val;
+                        $list_options[ $option_name ] = $val;
 
-                        if( self::check_option($name, $val, $list_options) ){
-                            COption::SetOptionString(CommonHelpers::MODULE_ID, $name, $val, $arOption[ 0 ]);
-                        }
+                        self::check_option($option_name, $val, $list_options);
+
+                        COption::SetOptionString(CommonHelpers::MODULE_ID, $option_name, $val, $option[ 0 ]);
                     }
                 }
             }
