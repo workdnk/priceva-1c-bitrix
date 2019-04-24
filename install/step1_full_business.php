@@ -14,11 +14,10 @@ if( !check_bitrix_sessid() ) return;
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
 Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . CommonHelpers::MODULE_ID . "/options.php");
 
-$filter_options = [ 'DEBUG', 'HEADING0', 'HEADING1', 'IBLOCK_TYPE_ID', 'IBLOCK_MODE', 'IBLOCK_ID', 'HEADING2', 'HEADING3' ];
-$filter_js      = [ 'loadTypesInfoblocks', 'check_loadTypesInfoblocks', 'showCatalogsIfOneCatalog', 'check_showCatalogsIfOneCatalog' ];
+$filter_js = [ 'loadTypesInfoblocks', 'check_loadTypesInfoblocks', 'showCatalogsIfOneCatalog', 'check_showCatalogsIfOneCatalog' ];
 
 try{
-    $aTab = OptionsHelpers::get_main_options($filter_options);
+    $aTab = OptionsHelpers::get_main_options(true);
     ?>
     <form action="<? echo $APPLICATION->GetCurPage(); ?>" id="options">
         <?=bitrix_sessid_post()?>

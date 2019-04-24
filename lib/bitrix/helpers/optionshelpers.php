@@ -206,7 +206,7 @@ class OptionsHelpers
     }
 
     /**
-     * @param array $filter
+     * @param bool $install
      *
      * @return array
      * @throws ArgumentException
@@ -214,7 +214,7 @@ class OptionsHelpers
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public static function generate_options_tabs( $filter = [] )
+    public static function generate_options_tabs( $install = false )
     {
         return [
             [
@@ -222,7 +222,7 @@ class OptionsHelpers
                 "TAB"     => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_MAIN"),
                 "ICON"    => "",
                 "TITLE"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_MAIN_TITLE"),
-                "OPTIONS" => self::get_main_options($filter),
+                "OPTIONS" => self::get_main_options($install),
             ],
             [
                 "DIV"     => "rights",
@@ -249,16 +249,41 @@ class OptionsHelpers
     }
 
     /**
-     * @param array $filter
+     *
+     * @param bool $install
      *
      * @return array
-     * @throws LoaderException
      * @throws ArgumentException
+     * @throws ArgumentNullException
+     * @throws ArgumentOutOfRangeException
+     * @throws LoaderException
      * @throws ObjectPropertyException
      * @throws SystemException
      */
-    public static function get_main_options( $filter = [] )
+    public static function get_main_options( $install = false )
     {
+        $filter = [];
+
+        if( !CommonHelpers::bitrix_full_business() ){
+            $filter = $filter + [
+                    'ID_TYPE_PRICE',
+                    'PRICE_RECALC',
+                ];
+        }
+
+        if( $install ){
+            $filter = $filter + [
+                    'DEBUG',
+                    'HEADING0',
+                    'HEADING1',
+                    'HEADING2',
+                    'HEADING3',
+                    'IBLOCK_TYPE_ID',
+                    'IBLOCK_MODE',
+                    'IBLOCK_ID',
+                ];
+        }
+
         $types_of_price = CommonHelpers::get_types_of_price();
         $currencies     = CommonHelpers::get_currencies();
         $types_iblocks  = CommonHelpers::get_types_iblocks();
