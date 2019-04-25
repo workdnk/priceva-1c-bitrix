@@ -6,17 +6,26 @@
  * Time: 11:40
  */
 
-$module_id = '{MODULE_ID}';
+$module_id = 'priceva.connector';
 
 if( IsModuleInstalled($module_id) ){
 
-    $updater = new CUpdater();
-
     if( is_dir(dirname(__FILE__) . '/install/admin') ){
+        /**
+         * @var CUpdater $updater
+         */
         $updater->CopyFiles("install/admin", "admin");
     }
-    if( is_dir(dirname(__FILE__) . '/install/module') ){
-        $updater->CopyFiles("install/module", "");
+
+    if( is_dir(dirname(__FILE__) . '/assets/js') ){
+
+        $bitrix_root = $_SERVER[ "DOCUMENT_ROOT" ] . $updater->kernelPath;
+
+        if( !is_dir($bitrix_root . "/js/$module_id") ){
+            mkdir($bitrix_root . "/js/$module_id", 0755);
+        }
+
+        $updater->CopyFiles("assets/js", "js/$module_id");
     }
 
     $trade_offers = COption::GetOptionString($module_id, 'TRADE_OFFERS');
