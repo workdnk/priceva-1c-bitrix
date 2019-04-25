@@ -17,6 +17,7 @@ use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
+use CAdminMessage;
 use COption;
 use CUtil;
 use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
@@ -64,16 +65,27 @@ class OptionsPage
         $functions = [
             'showDownloadsIfPriceva',
             'check_showDownloadsIfPriceva',
-            'loadTypesInfoblocks',
-            'showIBlocksIfOneIBlock',
-            'check_showIBlocksIfOneIBlock',
+
             'showClientCodeIfClientCode',
             'check_showClientCodeIfClientCode',
+
+            'showIblocksIfSimpleProductEnable',
+            'check_showIblocksIfSimpleProductEnable',
+            'showIBlocksIfOneIBlock',
+            'check_showIBlocksIfOneIBlock',
+            'loadTypesInfoblocks',
+
+            'showIblocksIfTradeOffersEnable',
+            'check_showIblocksIfTradeOffersEnable',
+            'showTradeOffersIBlocksIfOneIBlock',
+            'check_showTradeOffersIBlocksIfOneIBlock',
+            'loadTradeOffersTypesInfoblocks',
+
         ];
 
         $needed = array_diff($functions, $filter);
 
-        return 'var priceva_func_filter = ' . json_encode($needed) . ";";
+        return 'window.priceva_func_filter = ' . json_encode($needed) . ";";
     }
 
     /**
@@ -322,10 +334,11 @@ class OptionsPage
                 ];
         }
 
-        $types_of_price = CommonHelpers::get_types_of_price();
-        $currencies     = CommonHelpers::get_currencies();
-        $types_iblocks  = CommonHelpers::get_types_iblocks();
-        $iblocks        = CommonHelpers::get_iblocks(Option::get(CommonHelpers::MODULE_ID, 'IBLOCK_TYPE_ID'));
+        $types_of_price       = CommonHelpers::get_types_of_price();
+        $currencies           = CommonHelpers::get_currencies();
+        $types_iblocks        = CommonHelpers::get_types_iblocks();
+        $iblocks              = CommonHelpers::get_iblocks(Option::get(CommonHelpers::MODULE_ID, 'IBLOCK_TYPE_ID'));
+        $trade_offers_iblocks = CommonHelpers::get_iblocks(Option::get(CommonHelpers::MODULE_ID, 'TRADE_OFFERS_IBLOCK_TYPE_ID'));
 
         if( $filter ){
             if( $price_type_priceva_id = OptionsHelpers::find_price_type_priceva_id() ){
@@ -385,7 +398,7 @@ class OptionsPage
                     ]),
                 ],
             ],
-            "TRADE_OFFERS_IBLOCK_ID"      => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_ID"), [ "select", OptionsPage::add_not_selected($iblocks) ] ],
+            "TRADE_OFFERS_IBLOCK_ID"      => [ Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_TRADE_OFFERS_IBLOCK_ID"), [ "select", OptionsPage::add_not_selected($trade_offers_iblocks) ] ],
             "HEADING3"                    => [ Loc::getMessage("PRICEVA_BC_OPTIONS_HEADING_SYNC"), "heading" ],
             "SYNC_FIELD"                  => [
                 Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD"), [
@@ -478,12 +491,66 @@ class OptionsPage
 
                         $list_options[ $option_name ] = $val;
 
-                        OptionsHelpers::check_option($option_name, $val, $list_options);
+                        self::check_option($option_name, $val, $list_options);
 
                         COption::SetOptionString(CommonHelpers::MODULE_ID, $option_name, $val, $option[ 0 ]);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $val
+     * @param array  $list_options
+     *
+     * @return bool
+     */
+    public static function check_option( $name, $val, $list_options )
+    {
+        $options_dependencies = [
+            'IBLOCK_ID'   => [ 'IBLOCK_MODE' => [ '0', 'ALL' ] ],
+            'CLIENT_CODE' => [ 'SYNC_FIELD' => [ '0', 'articul' ], ],
+        ];
+
+        $options_inverse_dependencies = [
+            'TRADE_OFFERS_ENABLE' => [ 'IBLOCK_TYPE_ID' => [ 'catalog' ], ],
+        ];
+
+        $result = true;
+        // если значени пустое
+        if( empty($val) ){
+            // если есть какая-то зависимость для текущей опции
+            if( $options_dependencies[ $name ] || $options_inverse_dependencies[ $name ] ){
+                // переберем все прямые зависимости (их может быть больше одной)
+                foreach( $options_dependencies[ $name ] as $key => $dependency ){
+                    // проверим,  есть ли в массиве прямых зависимостей значение текущей зависимости,
+                    // разрешающее для текущего проверяемого поля пустое значение
+                    if( !in_array($list_options[ $key ], $dependency, true) ){
+                        $result = false;
+                        break;
+                    }
+                }
+                // переберем все обратные зависимости (их может быть больше одной)
+                foreach( $options_inverse_dependencies[ $name ] as $key => $dependency ){
+                    // проверим,  есть ли в массиве обратных зависимостей значение текущей зависимости,
+                    // запрещающее для текущего проверяемого поля пустое значение
+                    if( in_array($list_options[ $key ], $dependency, true) ){
+                        $result = false;
+                        break;
+                    }
+                }
+            }else{
+                // если никакой зависимости(ей) нет и поле просто пустое, то это не ОК
+                $result = false;
+            }
+
+            if( !$result ){
+                echo ( new CAdminMessage(Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_FILL_FIELD") . Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_" . $name)) )->Show();
+            }
+        }
+
+        return $result;
     }
 }
