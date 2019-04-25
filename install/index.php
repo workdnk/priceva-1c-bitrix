@@ -203,7 +203,7 @@ Class priceva_connector extends CModule
         $this->need_save_unroll = false;
 
         $aTabs = OptionsPage::get_main_options(true);
-        OptionsPage::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price);
+        OptionsPage::process_save_form(false, [ [ 'OPTIONS' => $aTabs ] ], $id_type_price, true);
 
         if( $this->errors ){
 

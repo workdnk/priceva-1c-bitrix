@@ -461,8 +461,9 @@ class OptionsPage
      * @param bool  $bVarsFromForm
      * @param array $aTabs
      * @param int   $id_type_price_priceva
+     * @param bool  $install
      */
-    public static function process_save_form( $bVarsFromForm, $aTabs, $id_type_price_priceva = 0 )
+    public static function process_save_form( $bVarsFromForm, $aTabs, $id_type_price_priceva = 0, $install = false )
     {
         if( self::is_restore_method() ) // если было выбрано "по умолчанию", то сбрасывает все option'ы
         {
@@ -491,7 +492,9 @@ class OptionsPage
 
                         $list_options[ $option_name ] = $val;
 
-                        self::check_option($option_name, $val, $list_options);
+                        if( !$install ){
+                            self::check_option($option_name, $val, $list_options);
+                        }
 
                         COption::SetOptionString(CommonHelpers::MODULE_ID, $option_name, $val, $option[ 0 ]);
                     }
@@ -524,21 +527,25 @@ class OptionsPage
             // если есть какая-то зависимость для текущей опции
             if( $options_dependencies[ $name ] || $options_inverse_dependencies[ $name ] ){
                 // переберем все прямые зависимости (их может быть больше одной)
-                foreach( $options_dependencies[ $name ] as $key => $dependency ){
-                    // проверим,  есть ли в массиве прямых зависимостей значение текущей зависимости,
-                    // разрешающее для текущего проверяемого поля пустое значение
-                    if( !in_array($list_options[ $key ], $dependency, true) ){
-                        $result = false;
-                        break;
+                if( key_exists($name, $options_dependencies) ){
+                    foreach( $options_dependencies[ $name ] as $key => $dependency ){
+                        // проверим,  есть ли в массиве прямых зависимостей значение текущей зависимости,
+                        // разрешающее для текущего проверяемого поля пустое значение
+                        if( !in_array($list_options[ $key ], $dependency, true) ){
+                            $result = false;
+                            break;
+                        }
                     }
                 }
-                // переберем все обратные зависимости (их может быть больше одной)
-                foreach( $options_inverse_dependencies[ $name ] as $key => $dependency ){
-                    // проверим,  есть ли в массиве обратных зависимостей значение текущей зависимости,
-                    // запрещающее для текущего проверяемого поля пустое значение
-                    if( in_array($list_options[ $key ], $dependency, true) ){
-                        $result = false;
-                        break;
+                if( key_exists($name, $options_inverse_dependencies) ){
+                    // переберем все обратные зависимости (их может быть больше одной)
+                    foreach( $options_inverse_dependencies[ $name ] as $key => $dependency ){
+                        // проверим,  есть ли в массиве обратных зависимостей значение текущей зависимости,
+                        // запрещающее для текущего проверяемого поля пустое значение
+                        if( in_array($list_options[ $key ], $dependency, true) ){
+                            $result = false;
+                            break;
+                        }
                     }
                 }
             }else{
