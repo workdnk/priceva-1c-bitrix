@@ -12,6 +12,33 @@ namespace Priceva\Connector\Bitrix;
 use COption;
 use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
 
+/**
+ * Class Options
+ *
+ * @package Priceva\Connector\Bitrix
+ *
+ * @property string API_KEY
+ * @property bool   $DEBUG
+ * @property bool   $SIMPLE_PRODUCT_ENABLE
+ * @property string $IBLOCK_TYPE_ID
+ * @property string $IBLOCK_MODE
+ * @property int    $IBLOCK_ID
+ * @property bool   $TRADE_OFFERS_ENABLE
+ * @property string $TRADE_OFFERS_IBLOCK_TYPE_ID
+ * @property string $TRADE_OFFERS_IBLOCK_MODE
+ * @property int    $TRADE_OFFERS_IBLOCK_ID
+ * @property string $SYNC_FIELD
+ * @property string $CLIENT_CODE
+ * @property string $SYNC_DOMINANCE
+ * @property bool   $SYNC_ONLY_ACTIVE
+ * @property int    $DOWNLOAD_AT_TIME
+ * @property int    $ID_TYPE_PRICE
+ * @property int    $ID_TYPE_PRICE_PRICEVA
+ * @property bool   $PRICE_RECALC
+ * @property string $CURRENCY
+ * @property int    $ID_AGENT
+ * @property int    $ID_ARICUL_IBLOCK
+ */
 class Options
 {
     /**
@@ -162,6 +189,14 @@ class Options
     public static function trade_offers_enable()
     {
         return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'TRADE_OFFERS_ENABLE'));
+    }
+
+    /**
+     * @return bool
+     */
+    public static function simple_product_enable()
+    {
+        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'SIMPLE_PRODUCT_ENABLE'));
     }
 
     /**
