@@ -41,34 +41,90 @@ use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
  */
 class Options
 {
+    const DEFAULT_VALUES = [
+        "API_KEY"                     => [ 'type' => 'string', 'value' => "" ],
+        "DEBUG"                       => [ 'type' => 'bool', 'value' => "NO" ],
+        "SIMPLE_PRODUCT_ENABLE"       => [ 'type' => 'bool', 'value' => "YES" ],
+        "IBLOCK_TYPE_ID"              => [ 'type' => 'string', 'value' => "0" ],
+        "IBLOCK_MODE"                 => [ 'type' => 'string', 'value' => "0" ],
+        "IBLOCK_ID"                   => [ 'type' => 'int', 'value' => "0" ],
+        "TRADE_OFFERS_ENABLE"         => [ 'type' => 'bool', 'value' => "NO" ],
+        "TRADE_OFFERS_IBLOCK_TYPE_ID" => [ 'type' => 'string', 'value' => "0" ],
+        "TRADE_OFFERS_IBLOCK_MODE"    => [ 'type' => 'string', 'value' => "0" ],
+        "TRADE_OFFERS_IBLOCK_ID"      => [ 'type' => 'int', 'value' => "0" ],
+        "SYNC_FIELD"                  => [ 'type' => 'string', 'value' => "articul" ],
+        "CLIENT_CODE"                 => [ 'type' => 'string', 'value' => "ID" ],
+        "SYNC_DOMINANCE"              => [ 'type' => 'string', 'value' => "priceva" ],
+        "SYNC_ONLY_ACTIVE"            => [ 'type' => 'bool', 'value' => "YES" ],
+        "DOWNLOAD_AT_TIME"            => [ 'type' => 'int', 'value' => "1000" ],
+        "ID_TYPE_PRICE"               => [ 'type' => 'int', 'value' => "0" ],
+        "ID_TYPE_PRICE_PRICEVA"       => [ 'type' => 'int', 'value' => "0" ],
+        "PRICE_RECALC"                => [ 'type' => 'bool', 'value' => "NO" ],
+        "CURRENCY"                    => [ 'type' => 'string', 'value' => "RUB" ],
+        "ID_AGENT"                    => [ 'type' => 'int', 'value' => "0" ],
+        "ID_ARICUL_IBLOCK"            => [ 'type' => 'int', 'value' => "0" ],
+    ];
+
+    private static $instance;
+
+    /**
+     * @return Options
+     */
+    public static function getInstance()
+    {
+        if( null === static::$instance ){
+            static::$instance = new static();
+        }
+
+        return static::$instance;
+    }
+
     /**
      * @return array
      */
     public static function default_options()
     {
-        return [
-            "API_KEY"                     => "",
-            "DEBUG"                       => "NO",
-            "SIMPLE_PRODUCT_ENABLE"       => "YES",
-            "IBLOCK_TYPE_ID"              => "0",
-            "IBLOCK_MODE"                 => "0",
-            "IBLOCK_ID"                   => "0",
-            "TRADE_OFFERS_ENABLE"         => "NO",
-            "TRADE_OFFERS_IBLOCK_TYPE_ID" => "0",
-            "TRADE_OFFERS_IBLOCK_MODE"    => "0",
-            "TRADE_OFFERS_IBLOCK_ID"      => "0",
-            "SYNC_FIELD"                  => "articul",
-            "CLIENT_CODE"                 => "ID",
-            "SYNC_DOMINANCE"              => "priceva",
-            "SYNC_ONLY_ACTIVE"            => "YES",
-            "DOWNLOAD_AT_TIME"            => "1000",
-            "ID_TYPE_PRICE"               => "0",
-            "ID_TYPE_PRICE_PRICEVA"       => "0",
-            "PRICE_RECALC"                => "NO",
-            "CURRENCY"                    => "RUB",
-            "ID_AGENT"                    => "0",
-            "ID_ARICUL_IBLOCK"            => "0",
-        ];
+        return array_combine(array_keys(self::DEFAULT_VALUES), array_column(self::DEFAULT_VALUES, 'value'));
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool|string|int|null
+     * @throws PricevaModuleException
+     */
+    public function __get( $name )
+    {
+        if( key_exists($name, self::DEFAULT_VALUES) ){
+            switch( self::DEFAULT_VALUES[ $name ][ 'type' ] ){
+                case 'int':
+                    {
+                        return COption::GetOptionInt(CommonHelpers::MODULE_ID, $name);
+                        break;
+                    }
+                case 'bool':
+                    {
+                        return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, $name));
+
+                        break;
+                    }
+                case 'string':
+                    {
+                        return COption::GetOptionString(CommonHelpers::MODULE_ID, $name);
+
+                        break;
+                    }
+                default:
+                    {
+                        $type = self::DEFAULT_VALUES[ $name ][ 'type' ];
+                        throw new PricevaModuleException("Module dont have option type '$type'.");
+
+                        break;
+                    }
+            }
+        }else{
+            throw new PricevaModuleException("Module dont have option '$name'.");
+        }
     }
 
     /**
