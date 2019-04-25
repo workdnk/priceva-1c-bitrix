@@ -21,7 +21,7 @@ use CIBlockResult;
 use COption;
 use CPrice;
 use Exception;
-use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
 use Priceva\Params\{Filters as PricevaFilters, ProductFields as PricevaProductFields};
 use Priceva\PricevaAPI;
 use Priceva\PricevaException;
@@ -44,9 +44,14 @@ class PricevaConnector
         "priceva_errors"            => 0,
     ];
 
+    /**
+     * @var Options
+     */
+    private $options;
+
     public function __construct()
     {
-        //
+        $this->options = Options::getInstance();
     }
 
     /**
@@ -118,7 +123,7 @@ class PricevaConnector
 
                 $option_value                 = COption::GetOptionString(CommonHelpers::MODULE_ID, $option_name);
                 $list_options[ $option_name ] = $option_value;
-                if( !OptionsHelpers::check_option($option_name, $option_value, $list_options) ){
+                if( !OptionsPage::check_option($option_name, $option_value, $list_options) ){
                     $check_result = $check_result && false;
                 }
             }
@@ -325,28 +330,113 @@ class PricevaConnector
     }
 
     /**
+     * @return array
+     * @throws PricevaModuleException
+     */
+    private function prepare_iblock_ids()
+    {
+        $iblock_ids = [];
+
+        $simple_product_enable = $this->options->SIMPLE_PRODUCT_ENABLE;
+
+        if( $simple_product_enable ){
+            $iblock_mode = $this->options->IBLOCK_MODE;
+
+            switch( $iblock_mode ){
+                case 'ALL':
+                    {
+                        $iblocks    = CommonHelpers::get_iblocks($this->options->IBLOCK_TYPE_ID);
+                        $iblock_ids = $iblock_ids + array_keys($iblocks);
+
+                        break;
+                    }
+                case 'ONE':
+                    {
+                        $iblock_ids[] = $this->options->IBLOCK_ID;
+
+                        break;
+                    }
+                default:
+                    {
+                        throw new PricevaModuleException('Wrong value of IBLOCK_MODE option.');
+
+                        break;
+                    }
+            }
+        }
+
+        $trade_offers_enable = $this->options->TRADE_OFFERS_ENABLE;
+
+        if( $trade_offers_enable ){
+            $trade_offers_iblock_mode = $this->options->TRADE_OFFERS_IBLOCK_MODE;
+
+            switch( $trade_offers_iblock_mode ){
+                case 'ALL':
+                    {
+                        $trade_offers_iblocks = CommonHelpers::get_iblocks($this->options->TRADE_OFFERS_IBLOCK_TYPE_ID);
+                        $iblock_ids           = $iblock_ids + array_keys($trade_offers_iblocks);
+
+                        break;
+                    }
+                case 'ONE':
+                    {
+                        $iblock_ids[] = $this->options->TRADE_OFFERS_IBLOCK_ID;
+
+                        break;
+                    }
+                default:
+                    {
+                        throw new PricevaModuleException('Wrong value of TRADE_OFFERS_IBLOCK_MODE option.');
+
+                        break;
+                    }
+            }
+        }
+
+        return $iblock_ids;
+    }
+
+    /**
      * @param bool $sync_only_active
      *
      * @return array
+     * @throws PricevaModuleException
      */
     private function prepare_filter_product( $sync_only_active )
     {
-        $trade_offers = OptionsHelpers::get_trade_offers();
+        $iblock_ids = $this->prepare_iblock_ids();
 
-        if( $trade_offers ){
-            $arFilter = [
-                [
-                    "LOGIC" => "OR",
-                    [ "IBLOCK_ID" => 2 ],
-                    [ "IBLOCK_ID" => 3 ],
-                ],
-            ];
-        }else{
-            $arFilter = [
-                'IBLOCK_ID' => 2,
-            ];
+        // start to generate filters
+        // infoblocks
+        $cnt_iblocks = count($iblock_ids);
+
+        switch( $cnt_iblocks ){
+            case 1:
+                {
+                    $arFilter = [
+                        'IBLOCK_ID' => array_shift($iblock_ids),
+                    ];
+                    break;
+                }
+            default:
+                {
+                    $iblocks_filter = [ "LOGIC" => "OR" ];
+
+                    foreach( $iblock_ids as $iblock_id ){
+                        $iblocks_filter[] = [ 'IBLOCK_ID' => $iblock_id ];
+                    }
+
+                    $arFilter = [ $iblocks_filter ];
+
+                    break;
+                }
+            case 0:
+                {
+                    throw new PricevaModuleException('You must select at least one version of the iblock in the module settings.');
+                    break;
+                }
         }
-
+        // active / not active products
         if( $sync_only_active ){
             $arFilter = array_merge($arFilter, [
                 'ACTIVE'      => 'Y',
