@@ -23,7 +23,11 @@ try{
 
     $arJsConfig = [
         $MODULE_ID => [
-            'js'  => "/bitrix/js/$MODULE_ID/script.js",
+            'js'  => [
+                "/bitrix/js/$MODULE_ID/options_main.js",
+                "/bitrix/js/$MODULE_ID/options_iblocks.js",
+                "/bitrix/js/$MODULE_ID/script.js",
+            ],
             'css' => false,
             'rel' => false,
         ],
