@@ -15,6 +15,36 @@ use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
 class Options
 {
     /**
+     * @return array
+     */
+    public static function default_options()
+    {
+        return [
+            "API_KEY"                     => "",
+            "DEBUG"                       => "NO",
+            "SIMPLE_PRODUCT_ENABLE"       => "YES",
+            "IBLOCK_TYPE_ID"              => "0",
+            "IBLOCK_MODE"                 => "0",
+            "IBLOCK_ID"                   => "0",
+            "TRADE_OFFERS_ENABLE"         => "NO",
+            "TRADE_OFFERS_IBLOCK_TYPE_ID" => "0",
+            "TRADE_OFFERS_IBLOCK_MODE"    => "0",
+            "TRADE_OFFERS_IBLOCK_ID"      => "0",
+            "SYNC_FIELD"                  => "articul",
+            "CLIENT_CODE"                 => "ID",
+            "SYNC_DOMINANCE"              => "priceva",
+            "SYNC_ONLY_ACTIVE"            => "YES",
+            "DOWNLOAD_AT_TIME"            => "1000",
+            "ID_TYPE_PRICE"               => "0",
+            "ID_TYPE_PRICE_PRICEVA"       => "0",
+            "PRICE_RECALC"                => "NO",
+            "CURRENCY"                    => "RUB",
+            "ID_AGENT"                    => "0",
+            "ID_ARICUL_IBLOCK"            => "0",
+        ];
+    }
+
+    /**
      * @return bool|string|null
      */
     public static function agent_id()
@@ -140,35 +170,5 @@ class Options
     public static function debug()
     {
         return CommonHelpers::convert_to_bool(COption::GetOptionString(CommonHelpers::MODULE_ID, 'DEBUG'));
-    }
-
-    /**
-     * @return array
-     */
-    public static function default_options()
-    {
-        return [
-            "API_KEY"                     => "",
-            "DEBUG"                       => "NO",
-            "SIMPLE_PRODUCT_ENABLE"       => "YES",
-            "IBLOCK_TYPE_ID"              => "0",
-            "IBLOCK_MODE"                 => "0",
-            "IBLOCK_ID"                   => "0",
-            "TRADE_OFFERS_ENABLE"         => "NO",
-            "TRADE_OFFERS_IBLOCK_TYPE_ID" => "0",
-            "TRADE_OFFERS_IBLOCK_MODE"    => "0",
-            "TRADE_OFFERS_IBLOCK_ID"      => "0",
-            "SYNC_FIELD"                  => "articul",
-            "CLIENT_CODE"                 => "ID",
-            "SYNC_DOMINANCE"              => "priceva",
-            "SYNC_ONLY_ACTIVE"            => "YES",
-            "DOWNLOAD_AT_TIME"            => "1000",
-            "ID_TYPE_PRICE"               => "0",
-            "ID_TYPE_PRICE_PRICEVA"       => "0",
-            "PRICE_RECALC"                => "NO",
-            "CURRENCY"                    => "RUB",
-            "ID_AGENT"                    => "0",
-            "ID_ARICUL_IBLOCK"            => "0",
-        ];
     }
 }
