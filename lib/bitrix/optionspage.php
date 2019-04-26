@@ -409,7 +409,7 @@ class OptionsPage
                 ],
             ],
             "CLIENT_CODE"                 => [
-                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE_ANALOG"), [
+                Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE"), [
                     "select", OptionsPage::add_not_selected([
                         "ID"   => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRODUCT_ID"),
                         "CODE" => Loc::getMessage("PRICEVA_BC_OPTIONS_TEXT_PRODUCT_CODE"),

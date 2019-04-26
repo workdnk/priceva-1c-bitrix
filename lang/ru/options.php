@@ -22,7 +22,6 @@ $MESS[ "PRICEVA_BC_OPTIONS_HEADING_SYNC" ]            = "Синхронизац�
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_SYNC_FIELD" ]         = "Ключ-поле синхронизации цен";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE" ]        = "Внутренний код клиента";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_ARTICUL" ]            = "Артикул";
-$MESS[ "PRICEVA_BC_OPTIONS_TEXT_CLIENT_CODE_ANALOG" ] = "Что использовать в качестве внутреннего кода клиента";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_PRODUCT_ID" ]         = "ID товара";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_PRODUCT_CODE" ]       = "Симольный код товара";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_SYNC_ONLY_ACTIVE" ]   = "В синхронизации участвуют только активные товары";
