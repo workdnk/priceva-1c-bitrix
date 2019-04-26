@@ -18,7 +18,7 @@ try{
 
     $common_helpers = CommonHelpers::getInstance();
 
-    Loc::LoadMessages($common_helpers->get_current_path(true) . "/bitrix/modules/main/options.php");
+    Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
     Loc::loadMessages(__FILE__);
 
     CUtil::InitJSCore([ $MODULE_ID ]);
