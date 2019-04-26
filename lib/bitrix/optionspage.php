@@ -309,29 +309,29 @@ class OptionsPage
         $filter = [];
 
         if( !CommonHelpers::bitrix_full_business() ){
-            $filter = $filter + [
-                    'ID_TYPE_PRICE',
-                    'PRICE_RECALC',
-                ];
+            $filter = [
+                'ID_TYPE_PRICE',
+                'PRICE_RECALC',
+            ];
         }
 
         if( $install ){
-            $filter = $filter + [
-                    'DEBUG',
-                    'HEADING0',
-                    'HEADING1',
-                    'HEADING2',
-                    'HEADING3',
-                    'HEADING4',
-                    'SIMPLE_PRODUCT_ENABLE',
-                    'IBLOCK_TYPE_ID',
-                    'IBLOCK_MODE',
-                    'IBLOCK_ID',
-                    'TRADE_OFFERS_ENABLE',
-                    'TRADE_OFFERS_IBLOCK_TYPE_ID',
-                    'TRADE_OFFERS_IBLOCK_MODE',
-                    'TRADE_OFFERS_IBLOCK_ID',
-                ];
+            $filter = array_merge($filter, [
+                'DEBUG',
+                'HEADING0',
+                'HEADING1',
+                'HEADING2',
+                'HEADING3',
+                'HEADING4',
+                'SIMPLE_PRODUCT_ENABLE',
+                'IBLOCK_TYPE_ID',
+                'IBLOCK_MODE',
+                'IBLOCK_ID',
+                'TRADE_OFFERS_ENABLE',
+                'TRADE_OFFERS_IBLOCK_TYPE_ID',
+                'TRADE_OFFERS_IBLOCK_MODE',
+                'TRADE_OFFERS_IBLOCK_ID',
+            ]);
         }
 
         $types_of_price       = CommonHelpers::get_types_of_price();
