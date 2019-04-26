@@ -490,10 +490,8 @@ class OptionsPage
                             $val = "N";
                         }
 
-                        $list_options[ $option_name ] = $val;
-
                         if( !$install ){
-                            self::check_option($option_name, $val, $list_options);
+                            self::check_option($option_name, $val);
                         }
 
                         COption::SetOptionString(CommonHelpers::MODULE_ID, $option_name, $val, $option[ 0 ]);
@@ -506,20 +504,44 @@ class OptionsPage
     /**
      * @param string $name
      * @param mixed  $val
-     * @param array  $list_options
      *
      * @return bool
      */
-    public static function check_option( $name, $val, $list_options )
+    public static function check_option( $name, $val )
     {
         $options_dependencies = [
-            'IBLOCK_ID'   => [ 'IBLOCK_MODE' => [ '0', 'ALL' ] ],
+            'IBLOCK_TYPE_ID' => [
+                'SIMPLE_PRODUCT_ENABLE' => [ '0', false ],
+            ],
+            'IBLOCK_MODE'    => [
+                'IBLOCK_TYPE_ID'        => [ '0' ],
+                'SIMPLE_PRODUCT_ENABLE' => [ '0', false ],
+            ],
+            'IBLOCK_ID'      => [
+                'IBLOCK_MODE'           => [ '0', 'ALL' ],
+                'SIMPLE_PRODUCT_ENABLE' => [ '0', false, true ],
+            ],
+
+            'TRADE_OFFERS_IBLOCK_TYPE_ID' => [
+                'TRADE_OFFERS_ENABLE' => [ '0', false ],
+            ],
+            'TRADE_OFFERS_IBLOCK_MODE'    => [
+                'TRADE_OFFERS_IBLOCK_TYPE_ID' => [ '0' ],
+                'TRADE_OFFERS_ENABLE'         => [ '0', false ],
+            ],
+            'TRADE_OFFERS_IBLOCK_ID'      => [
+                'TRADE_OFFERS_IBLOCK_MODE' => [ '0', 'ALL' ],
+                'TRADE_OFFERS_ENABLE'      => [ '0', false, true ],
+            ],
+
             'CLIENT_CODE' => [ 'SYNC_FIELD' => [ '0', 'articul' ], ],
         ];
 
         $options_inverse_dependencies = [
             'TRADE_OFFERS_ENABLE' => [ 'IBLOCK_TYPE_ID' => [ 'catalog' ], ],
         ];
+
+        $options = Options::getInstance();
 
         $result = true;
         // если значени пустое
@@ -531,7 +553,8 @@ class OptionsPage
                     foreach( $options_dependencies[ $name ] as $key => $dependency ){
                         // проверим,  есть ли в массиве прямых зависимостей значение текущей зависимости,
                         // разрешающее для текущего проверяемого поля пустое значение
-                        if( !in_array($list_options[ $key ], $dependency, true) ){
+                        $val_cur_dep = $options->$key;
+                        if( !in_array($val_cur_dep, $dependency, true) ){
                             $result = false;
                             break;
                         }
@@ -542,7 +565,8 @@ class OptionsPage
                     foreach( $options_inverse_dependencies[ $name ] as $key => $dependency ){
                         // проверим,  есть ли в массиве обратных зависимостей значение текущей зависимости,
                         // запрещающее для текущего проверяемого поля пустое значение
-                        if( in_array($list_options[ $key ], $dependency, true) ){
+                        $val_cur_dep = $options->$key;
+                        if( in_array($val_cur_dep, $dependency, true) ){
                             $result = false;
                             break;
                         }

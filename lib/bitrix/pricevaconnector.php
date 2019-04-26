@@ -122,8 +122,7 @@ class PricevaConnector
                 }
 
                 $option_value                 = COption::GetOptionString(CommonHelpers::MODULE_ID, $option_name);
-                $list_options[ $option_name ] = $option_value;
-                if( !OptionsPage::check_option($option_name, $option_value, $list_options) ){
+                if( !OptionsPage::check_option($option_name, $option_value) ){
                     $check_result = $check_result && false;
                 }
             }
