@@ -375,20 +375,53 @@ Class priceva_connector extends CModule
         $this->save_unroll($save_unroll, "InstallDB");
     }
 
+    /**
+     * @param $from
+     * @param $to
+     *
+     * @return bool
+     * @throws PricevaModuleException
+     */
+    private function copy_dir_or_files( $from, $to )
+    {
+        $result = false;
+
+        if( is_dir($from) ){
+            // если копируем папку
+            if( false === $result = CopyDirFiles($from, $to, true, true) ){
+                // не получилось скопировать папку - сообщим об этом ошибкой
+                throw new PricevaModuleException("Cant copy directory: $to");
+            }
+        }elseif( is_file($from) ){
+            // если копируем файл
+            if( false === $result = CopyDirFiles($from, $to) ){
+                // не получилось создать файл - сообщим об этом ошибкой
+                throw new PricevaModuleException("Cant copy file: $to");
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @throws PricevaModuleException
+     */
     function InstallFiles()
     {
         parent::InstallFiles();
 
-        $r1 = CopyDirFiles(self::get_current_path() . "/install/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/admin/", true, true);
+        $bitrix_root         = $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix";
+        $module_root         = $bitrix_root . "/modules/" . $this->common_helpers::MODULE_ID;
+        $current_dir         = self::get_current_path();
+        $current_install_dir = self::get_current_path() . "/install";
 
-        $r2 = CopyDirFiles(self::get_current_path() . "/default_option.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
-        $r3 = CopyDirFiles(self::get_current_path() . "/options.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
-        $r4 = CopyDirFiles(self::get_current_path() . "/prolog.php", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID, true, true);
-
-        $r5 = CopyDirFiles(self::get_current_path() . "/lang/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/lang/", true, true);
-        $r6 = CopyDirFiles(self::get_current_path() . "/admin/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $this->common_helpers::MODULE_ID . "/admin/", true, true);
-
-        $r7 = CopyDirFiles(self::get_current_path() . "/assets/js/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/js/" . $this->common_helpers::MODULE_ID, true, true);
+        $r1 = $this->copy_dir_or_files($current_install_dir . "/admin", $bitrix_root . "/admin");
+        $r2 = $this->copy_dir_or_files($current_dir . "/default_option.php", $module_root . "/default_option.php");
+        $r3 = $this->copy_dir_or_files($current_dir . "/options.php", $module_root . "/options.php");
+        $r4 = $this->copy_dir_or_files($current_dir . "/prolog.php", $module_root . "/prolog.php");
+        $r5 = $this->copy_dir_or_files($current_dir . "/lang", $module_root . "/lang");
+        $r6 = $this->copy_dir_or_files($current_dir . "/admin", $module_root . "/admin");
+        $r7 = $this->copy_dir_or_files($current_dir . "/assets/js/", $bitrix_root . "/js/" . $this->common_helpers::MODULE_ID);
 
         $this->save_unroll($r1 && $r2 && $r3 && $r4 && $r5 && $r6 && $r7, "UnInstallFiles");
     }
@@ -617,6 +650,5 @@ Class priceva_connector extends CModule
 
         $this->common_helpers  = CommonHelpers::getInstance();
         $this->options_helpers = OptionsHelpers::getInstance();
-        $this->options         = OptionsHelpers::class;
     }
 }
