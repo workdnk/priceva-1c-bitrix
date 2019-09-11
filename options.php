@@ -8,6 +8,7 @@
 
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\Helpers\PathHelpers;
 use Priceva\Connector\Bitrix\OptionsPage;
 
 global $APPLICATION, $Update, $Apply;
@@ -18,7 +19,7 @@ try{
 
     $common_helpers = CommonHelpers::getInstance();
 
-    Loc::LoadMessages($_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/options.php");
+    Loc::LoadMessages(PathHelpers::lang_main_options());
     Loc::loadMessages(__FILE__);
 
     CUtil::InitJSCore([ $MODULE_ID ]);
@@ -38,7 +39,8 @@ try{
 
                 ob_start();
                 $Update = $Update . $Apply;
-                require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
+                /** @noinspection PhpIncludeInspection */
+                require_once( PathHelpers::group_rights() );
                 ob_end_clean();
             }else{ // delete debug log
                 $common_helpers::delete_debug_log();
@@ -56,7 +58,8 @@ try{
                 if( $aTab[ "DIV" ] != "rights" ){
                     OptionsPage::generate_table($aTab, $bVarsFromForm);
                 }elseif( $aTab[ "DIV" ] == "rights" ){
-                    require( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/admin/group_rights.php" );
+                    /** @noinspection PhpIncludeInspection */
+                    require( PathHelpers::group_rights() );
                 }
             }
             $tabControl->Buttons();

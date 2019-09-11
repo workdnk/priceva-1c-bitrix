@@ -8,23 +8,30 @@
 
 use Bitrix\Main\Localization\Loc;
 use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\Helpers\PathHelpers;
 use Priceva\Connector\Bitrix\PricevaConnector;
+
+/** @noinspection PhpIncludeInspection */
+require_once( PathHelpers::prolog_admin() );
+/** @noinspection PhpIncludeInspection */
+require_once( PathHelpers::prolog_module() );
 
 $MODULE_ID = "priceva.connector";
 
-require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/include/prolog_admin.php" );
-require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/" . $MODULE_ID . "/prolog.php" );
+$common_helpers = CommonHelpers::getInstance();
+
+/** @noinspection PhpIncludeInspection */
+require_once( PathHelpers::prolog_module() );
 
 CModule::IncludeModule($MODULE_ID);
 
 Loc::loadMessages(__FILE__);
 
-$common_helpers = CommonHelpers::getInstance();
-
 $FORM_RIGHT = $common_helpers->APPLICATION->GetGroupRight($MODULE_ID);
 if( $FORM_RIGHT <= "D" ) $common_helpers->APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
 
-require( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/include/prolog_admin_after.php" );
+/** @noinspection PhpIncludeInspection */
+require( PathHelpers::prolog_admin_after() );
 
 $info = null;
 
@@ -63,5 +70,5 @@ if( $info ){ ?>
     </form>
 
 <?php
-require_once( $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/main/include/epilog_admin.php" );
-?>
+/** @noinspection PhpIncludeInspection */
+require_once( PathHelpers::epilog_admin() );
