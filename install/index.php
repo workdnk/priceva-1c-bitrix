@@ -14,11 +14,11 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
-use Priceva\Connector\Bitrix\Helpers\{CommonHelpers, OptionsHelpers};
+use Priceva\Connector\Bitrix\Helpers\CommonHelpers;
+use Priceva\Connector\Bitrix\Helpers\OptionsHelpers;
+use Priceva\Connector\Bitrix\Options;
 use Priceva\Connector\Bitrix\OptionsPage;
 use Priceva\Connector\Bitrix\PricevaModuleException;
-
-Loc::loadMessages(__FILE__);
 
 Class priceva_connector extends CModule
 {
@@ -57,6 +57,8 @@ Class priceva_connector extends CModule
 
     function __construct()
     {
+        Loc::loadMessages(__FILE__);
+
         $arModuleVersion = [];
 
         include( __DIR__ . "/version.php" );
