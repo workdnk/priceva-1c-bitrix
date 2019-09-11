@@ -41,7 +41,7 @@ Class priceva_connector extends CModule
      */
     private $options_helpers;
     /**
-     * @var $options_helpers Priceva\Connector\Bitrix\Options
+     * @var $options Priceva\Connector\Bitrix\Options
      */
     private $options;
 
@@ -116,6 +116,7 @@ Class priceva_connector extends CModule
      * @throws LoaderException
      * @throws ObjectPropertyException
      * @throws SystemException
+     * @throws PricevaModuleException
      */
     private function install( $step, $is_full_business )
     {
@@ -155,6 +156,8 @@ Class priceva_connector extends CModule
 
     /**
      * @param bool $full
+     *
+     * @throws PricevaModuleException
      */
     private function install_step_1( $full )
     {
