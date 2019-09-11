@@ -180,6 +180,7 @@ Class priceva_connector extends CModule
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
+     * @throws PricevaModuleException
      */
     private function install_step_2( $full )
     {
@@ -415,15 +416,17 @@ Class priceva_connector extends CModule
         $current_dir         = self::get_current_path();
         $current_install_dir = self::get_current_path() . "/install";
 
-        $r1 = $this->copy_dir_or_files($current_install_dir . "/admin", $bitrix_root . "/admin");
-        $r2 = $this->copy_dir_or_files($current_dir . "/default_option.php", $module_root . "/default_option.php");
-        $r3 = $this->copy_dir_or_files($current_dir . "/options.php", $module_root . "/options.php");
-        $r4 = $this->copy_dir_or_files($current_dir . "/prolog.php", $module_root . "/prolog.php");
-        $r5 = $this->copy_dir_or_files($current_dir . "/lang", $module_root . "/lang");
-        $r6 = $this->copy_dir_or_files($current_dir . "/admin", $module_root . "/admin");
-        $r7 = $this->copy_dir_or_files($current_dir . "/assets/js/", $bitrix_root . "/js/" . $this->common_helpers::MODULE_ID);
+        $res = true;
 
-        $this->save_unroll($r1 && $r2 && $r3 && $r4 && $r5 && $r6 && $r7, "UnInstallFiles");
+        $res = $res && $this->copy_dir_or_files($current_install_dir . "/admin", $bitrix_root . "/admin");
+        $res = $res && $this->copy_dir_or_files($current_dir . "/default_option.php", $module_root . "/default_option.php");
+        $res = $res && $this->copy_dir_or_files($current_dir . "/options.php", $module_root . "/options.php");
+        $res = $res && $this->copy_dir_or_files($current_dir . "/prolog.php", $module_root . "/prolog.php");
+        $res = $res && $this->copy_dir_or_files($current_dir . "/lang", $module_root . "/lang");
+        $res = $res && $this->copy_dir_or_files($current_dir . "/admin", $module_root . "/admin");
+        $res = $res && $this->copy_dir_or_files($current_dir . "/assets/js/", $bitrix_root . "/js/" . $this->common_helpers::MODULE_ID);
+
+        $this->save_unroll($res, "UnInstallFiles");
     }
 
     function UnInstallFiles()
