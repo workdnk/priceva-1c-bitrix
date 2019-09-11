@@ -658,5 +658,6 @@ Class priceva_connector extends CModule
 
         $this->common_helpers  = CommonHelpers::getInstance();
         $this->options_helpers = OptionsHelpers::getInstance();
+        $this->options         = Options::class;
     }
 }
