@@ -12,6 +12,8 @@ $MESS[ "PRICEVA_BC_OPTIONS_TEXT_FILL_FIELD" ]               = "Необходи�
 $MESS[ "PRICEVA_BC_COMMON_HELPERS_NOT_SELECTED" ]           = "Не выбрано";
 $MESS[ "PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG" ]       = "Удалить лог отладки";
 $MESS[ "PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG_TITLE" ] = "При нажатии удалится лог отладки, созданный по адресу http://ваш_сайт.домен/priceva.log";
+$MESS[ "PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG" ] = "Открыть лог отладки";
+$MESS[ "PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG_TITLE" ] = "При нажатии вы откроете лог отладки модуля, который находится по адресу http://ваш_сайт.домен/priceva.log. При необходимости, вы можете сохранить его и отправить в служб поддержки компании Priceva.";
 // Основные настройки
 $MESS[ "PRICEVA_BC_OPTIONS_HEADING_MAIN_PARAMS" ] = "Основные параметры";
 $MESS[ "PRICEVA_BC_OPTIONS_TEXT_API_KEY" ]        = "Api-ключ вашей кампании в аккаунте Priceva";

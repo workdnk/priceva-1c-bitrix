@@ -301,6 +301,13 @@ class OptionsPage
                 title="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG_TITLE") ?>"
                 value="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG") ?>"
         >
+        <input
+                type="button"
+                name="DownloadDebugLog"
+                title="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG_TITLE") ?>"
+                value="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG") ?>"
+                onclick="window.open('/priceva.log', '_blank');"
+        >
         <?
     }
 
