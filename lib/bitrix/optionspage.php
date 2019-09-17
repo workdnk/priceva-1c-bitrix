@@ -280,7 +280,7 @@ class OptionsPage
                 name="Cancel"
                 value="<?=Loc::getMessage("MAIN_OPT_CANCEL")?>"
                 title="<?=Loc::getMessage("MAIN_OPT_CANCEL_TITLE")?>"
-                onclick="window.location='<? echo htmlspecialcharsbx(CUtil::addslashes($_REQUEST[ "back_url_settings" ])) ?>'"
+                onclick="window.location='<?=htmlspecialcharsbx(CUtil::addslashes($_REQUEST[ "back_url_settings" ]))?>'"
         >
         <input
                 type="hidden"
@@ -291,21 +291,21 @@ class OptionsPage
         <input
                 type="submit"
                 name="RestoreDefaults"
-                title="<? echo Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS") ?>"
-                OnClick="return confirm('<? echo CUtil::addslashes(Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING")) ?>')"
-                value="<? echo Loc::getMessage("MAIN_RESTORE_DEFAULTS") ?>"
+                title="<?=Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS")?>"
+                OnClick="return confirm('<?=CUtil::addslashes(Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING"))?>')"
+                value="<?=Loc::getMessage("MAIN_RESTORE_DEFAULTS")?>"
         >
         <input
                 type="submit"
                 name="deleteDebugLog"
-                title="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG_TITLE") ?>"
-                value="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG") ?>"
+                title="<?=Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG_TITLE")?>"
+                value="<?=Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DELETE_DEBUG_LOG")?>"
         >
         <input
                 type="button"
                 name="DownloadDebugLog"
-                title="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG_TITLE") ?>"
-                value="<? echo Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG") ?>"
+                title="<?=Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG_TITLE")?>"
+                value="<?=Loc::getMessage("PRICEVA_BC_OPTIONS_BUTTON_DOWNLOAD_DEBUG_LOG")?>"
                 onclick="window.open('/priceva.log', '_blank');"
         >
         <?

@@ -29,8 +29,8 @@ if( $errors_str ){
 
 ( new CAdminMessage(Loc::getMessage("PRICEVA_BC_INSTALL_ERRORS_TITLE")) )->Show(); ?>
 
-<form action="<? echo $APPLICATION->GetCurPage(); ?>">
-    <input type="hidden" name="lang" value="<? echo LANG ?>">
+<form action="<?=$APPLICATION->GetCurPage();?>">
+    <input type="hidden" name="lang" value="<?=LANG?>">
     <?=$errors_str?>
-    <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
+    <input type="submit" name="" value="<?=Loc::getMessage("MOD_BACK");?>">
 </form>

@@ -18,7 +18,7 @@ $different  = Options::type_price_ID() !== Options::type_price_priceva_ID();
 
 try{
     ?>
-    <form action="<? echo $APPLICATION->GetCurPage(); ?>" id="options">
+    <form action="<?=$APPLICATION->GetCurPage();?>" id="options">
         <?=bitrix_sessid_post()?>
         <input type="hidden" name="id" value="priceva.connector">
         <input type="hidden" name="uninstall" value="Y">
@@ -57,7 +57,7 @@ try{
             <?php } ?>
         </table>
         <div>
-            <input type="submit" name="inst" value="<? echo Loc::getMessage("MOD_UNINST_DEL"); ?>">
+            <input type="submit" name="inst" value="<?=Loc::getMessage("MOD_UNINST_DEL");?>">
         </div>
     </form>
     <?

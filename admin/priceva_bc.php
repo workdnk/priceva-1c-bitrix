@@ -56,7 +56,7 @@ if( $info ){ ?>
             <b><?=Loc::getMessage("PRICEVA_BC_INFO_SUCCESS")?></b><br/><?=priceva_get_info($info[ 'success' ])?></p>
     </div>
 <?php } ?>
-    <form method="post" action="<? echo $common_helpers->APPLICATION->GetCurPage() ?>?lang=<?=LANGUAGE_ID?>"
+    <form method="post" action="<?=$common_helpers->APPLICATION->GetCurPage()?>?lang=<?=LANGUAGE_ID?>"
           id="priceva_bc">
         <input type="submit" name="run" value="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>"
                title="<?=Loc::getMessage("PRICEVA_BC_ADMIN_PAGE_RUN")?>">

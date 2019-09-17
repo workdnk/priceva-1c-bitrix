@@ -20,7 +20,7 @@ $filter_js      = [ 'loadTypesInfoblocks', 'check_loadTypesInfoblocks', 'showCat
 try{
     $aTab = OptionsPage::get_main_options(true);
     ?>
-    <form action="<? echo $APPLICATION->GetCurPage(); ?>" id="options">
+    <form action="<?=$APPLICATION->GetCurPage();?>" id="options">
         <?=bitrix_sessid_post()?>
         <input type="hidden" name="id" value="priceva.connector">
         <input type="hidden" name="install" value="Y">
@@ -30,7 +30,7 @@ try{
             <?php OptionsPage::generate_table([ 'OPTIONS' => $aTab ], $bVarsFromForm); ?>
         </table>
         <div>
-            <input type="submit" name="inst" value="<? echo Loc::getMessage("MOD_INSTALL"); ?>">
+            <input type="submit" name="inst" value="<?=Loc::getMessage("MOD_INSTALL");?>">
         </div>
     </form>
     <script>

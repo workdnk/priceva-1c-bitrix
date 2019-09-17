@@ -14,8 +14,8 @@ if( !check_bitrix_sessid() ) return;
 Loc::loadMessages(__FILE__);
 ?>
 
-    <form action="<? echo $APPLICATION->GetCurPage(); ?>">
-        <input type="hidden" name="lang" value="<? echo LANG ?>">
+    <form action="<?=$APPLICATION->GetCurPage();?>">
+        <input type="hidden" name="lang" value="<?=LANG?>">
         <?php
         echo ( new CAdminMessage([
             "MESSAGE" => Loc::getMessage("PRICEVA_BC_UNINSTALL_DELETE"),
@@ -34,7 +34,7 @@ Loc::loadMessages(__FILE__);
             echo ( new CAdminMessage($deleted_price_priceva) )->Show();
         } ?>
         <div>
-            <input type="submit" name="" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
+            <input type="submit" name="" value="<?=Loc::getMessage("MOD_BACK");?>">
         </div>
     </form>
 

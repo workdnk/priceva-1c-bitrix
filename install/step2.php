@@ -12,10 +12,10 @@ if( !check_bitrix_sessid() ) return;
 
 ?>
 
-<form action="<? echo $APPLICATION->GetCurPage(); ?>">
+<form action="<?=$APPLICATION->GetCurPage();?>">
     <?=bitrix_sessid_post()?>
     <p><?=Loc::getMessage("PRICEVA_BC_INSTALL_STEP2_TEXT1")?></p>
     <div>
-        <input type="submit" name="inst" value="<? echo Loc::getMessage("MOD_BACK"); ?>">
+        <input type="submit" name="inst" value="<?=Loc::getMessage("MOD_BACK");?>">
     </div>
 </form>
