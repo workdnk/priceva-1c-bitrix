@@ -56,8 +56,9 @@ class CommonHelpers
 
     public function get_current_path( $notDocumentRoot = false )
     {
+        $app = $this->app;
         return ( $notDocumentRoot )
-            ? str_ireplace($this->app::getDocumentRoot(), '', dirname(__DIR__))
+            ? str_ireplace($app::getDocumentRoot(), '', dirname(__DIR__))
             : dirname(__DIR__);
     }
 

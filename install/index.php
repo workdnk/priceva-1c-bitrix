@@ -88,21 +88,23 @@ Class priceva_connector extends CModule
      */
     private function check_system( $uninstall = false )
     {
+        $common_helpers = $this->common_helpers;
+
         if( !$uninstall ){
-            if( !$this->common_helpers::check_php_ext() ){
+            if( !$common_helpers::check_php_ext() ){
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_EXT"));
             }
 
-            if( IsModuleInstalled($this->common_helpers::MODULE_ID) ){
+            if( IsModuleInstalled($common_helpers::MODULE_ID) ){
                 throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_INSTALL"));
             }
         }
-        if( !$this->common_helpers::check_php_ver() ){
-            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_VER"));
+        if( !$common_helpers::check_php_ver() ){
+            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_MODULE_PHP_VER"), 777);
         }
 
-        if( !$this->common_helpers::bitrix_d7() ){
-            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION") . $this->common_helpers::NEEDED_BITRIX_VER);
+        if( !$common_helpers::bitrix_d7() ){
+            throw new PricevaModuleException(Loc::getMessage("PRICEVA_BC_INSTALL_ERROR_VERSION") . $common_helpers::NEEDED_BITRIX_VER);
         }
 
         if( !Loader::includeModule('catalog') ){
@@ -137,17 +139,21 @@ Class priceva_connector extends CModule
         global $step;
 
         try{
+            $common_helpers = $this->common_helpers;
+
             $this->autoloader();
             $this->check_system();
 
             $step = IntVal($step);
 
-            $is_full_business = $this->common_helpers::bitrix_full_business();
+            $is_full_business = $common_helpers::bitrix_full_business();
 
             $this->install($step, $is_full_business);
 
-        }catch( Throwable $e ){
-            $this->common_helpers::write_to_log($e);
+        }catch( Exception $e ){
+            if( $e->getCode() !== 777 ){
+                $common_helpers::write_to_log($e);
+            }
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
 
             return false;
@@ -189,6 +195,8 @@ Class priceva_connector extends CModule
      */
     private function install_step_2( $full )
     {
+        $common_helpers = $this->common_helpers;
+
         $this->need_save_unroll = true;
 
         $this->InstallFiles();
@@ -198,13 +206,13 @@ Class priceva_connector extends CModule
         $id_type_price = $this->InstallDB();
 
         if( $full ){
-            COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA', $id_type_price);
+            COption::SetOptionString($common_helpers::MODULE_ID, 'ID_TYPE_PRICE_PRICEVA', $id_type_price);
         }else{
-            COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
+            COption::SetOptionString($common_helpers::MODULE_ID, 'ID_TYPE_PRICE', $id_type_price);
         }
 
         $id_agent = $this->InstallAgents();
-        COption::SetOptionString($this->common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
+        COption::SetOptionString($common_helpers::MODULE_ID, 'ID_AGENT', $id_agent);
 
         $this->need_save_unroll = false;
 
@@ -222,7 +230,7 @@ Class priceva_connector extends CModule
                 self::get_current_path() . "/install/errors.php"
             );
         }else{
-            ModuleManager::registerModule($this->common_helpers::MODULE_ID);
+            ModuleManager::registerModule($common_helpers::MODULE_ID);
 
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
@@ -251,12 +259,14 @@ Class priceva_connector extends CModule
      */
     private function uninstall_step_2( $full )
     {
-        $request = $this->common_helpers::getInstance()->app->getContext()->getRequest();
+        $common_helpers = $this->common_helpers;
 
-        $this->delete_options = $this->common_helpers::convert_to_bool($request->get('options'));
+        $request = $common_helpers::getInstance()->app->getContext()->getRequest();
+
+        $this->delete_options = $common_helpers::convert_to_bool($request->get('options'));
         if( $full ){
-            $this->delete_price_type         = $this->common_helpers::convert_to_bool($request->get('type_price'));
-            $this->delete_price_type_priceva = $this->common_helpers::convert_to_bool($request->get('price_type_priceva'));
+            $this->delete_price_type         = $common_helpers::convert_to_bool($request->get('type_price'));
+            $this->delete_price_type_priceva = $common_helpers::convert_to_bool($request->get('price_type_priceva'));
         }
 
         $this->need_save_unroll = true;
@@ -280,7 +290,7 @@ Class priceva_connector extends CModule
                 self::get_current_path() . "/install/errors.php"
             );
         }else{
-            $this->info[ 'module_id' ] = $this->common_helpers::MODULE_ID;
+            $this->info[ 'module_id' ] = $common_helpers::MODULE_ID;
             $this->common_helpers->APPLICATION->IncludeAdminFile(
                 Loc::getMessage("PRICEVA_BC_INSTALL_TITLE_1"),
                 self::get_current_path() . "/install/unstep2.php"
@@ -304,18 +314,20 @@ Class priceva_connector extends CModule
     {
         global $step;
 
+        $common_helpers = $this->common_helpers;
+
         try{
             $this->autoloader();
             $this->check_system(true);
 
             $step = IntVal($step);
 
-            $is_full_business = $this->common_helpers::bitrix_full_business();
+            $is_full_business = $common_helpers::bitrix_full_business();
 
             $this->uninstall($step, $is_full_business);
 
         }catch( Throwable $e ){
-            $this->common_helpers::write_to_log($e);
+            $common_helpers::write_to_log($e);
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
 
             return false;
@@ -331,13 +343,16 @@ Class priceva_connector extends CModule
     {
         parent::InstallDB();
 
-        $is_full_business = $this->common_helpers::bitrix_full_business();
+        $common_helpers  = $this->common_helpers;
+        $options_helpers = $this->options_helpers;
+
+        $is_full_business = $common_helpers::bitrix_full_business();
 
         if( !$is_full_business ){
-            return $this->options_helpers::get_base_price_type();
+            return $options_helpers::get_base_price_type();
         }
 
-        if( $price_type_priceva_id = $this->options_helpers::find_price_type_priceva_id() ){
+        if( $price_type_priceva_id = $options_helpers::find_price_type_priceva_id() ){
             return $price_type_priceva_id;
         }
 
@@ -352,10 +367,13 @@ Class priceva_connector extends CModule
     {
         parent::UnInstallDB();
 
+        $common_helpers = $this->common_helpers;
+        $options        = $this->options;
+
         $save_unroll = true;
 
         if( $this->delete_price_type ){
-            $type_price_ID = $this->options::type_price_ID();
+            $type_price_ID = $options::type_price_ID();
 
             $type_price = $this->delete_price_type($type_price_ID);
 
@@ -365,7 +383,7 @@ Class priceva_connector extends CModule
         }
 
         if( $this->delete_price_type_priceva ){
-            $type_price_priceva_ID = $this->options::type_price_priceva_ID();
+            $type_price_priceva_ID = $options::type_price_priceva_ID();
 
             $deleted_price_priceva = $this->delete_price_type($type_price_priceva_ID);
 
@@ -375,7 +393,7 @@ Class priceva_connector extends CModule
         }
 
         if( $this->delete_options ){
-            COption::RemoveOption($this->common_helpers::MODULE_ID);
+            COption::RemoveOption($common_helpers::MODULE_ID);
         }
 
         $this->save_unroll($save_unroll, "InstallDB");
@@ -416,8 +434,10 @@ Class priceva_connector extends CModule
     {
         parent::InstallFiles();
 
+        $common_helpers = $this->common_helpers;
+
         $bitrix_root         = $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix";
-        $module_root         = $bitrix_root . "/modules/" . $this->common_helpers::MODULE_ID;
+        $module_root         = $bitrix_root . "/modules/" . $common_helpers::MODULE_ID;
         $current_dir         = self::get_current_path();
         $current_install_dir = self::get_current_path() . "/install";
 
@@ -429,7 +449,7 @@ Class priceva_connector extends CModule
         $res = $res && $this->copy_dir_or_files($current_dir . "/prolog.php", $module_root . "/prolog.php");
         $res = $res && $this->copy_dir_or_files($current_dir . "/lang", $module_root . "/lang");
         $res = $res && $this->copy_dir_or_files($current_dir . "/admin", $module_root . "/admin");
-        $res = $res && $this->copy_dir_or_files($current_dir . "/assets/js/", $bitrix_root . "/js/" . $this->common_helpers::MODULE_ID);
+        $res = $res && $this->copy_dir_or_files($current_dir . "/assets/js/", $bitrix_root . "/js/" . $common_helpers::MODULE_ID);
 
         $this->save_unroll($res, "UnInstallFiles");
     }
@@ -447,7 +467,9 @@ Class priceva_connector extends CModule
     {
         parent::InstallEvents();
 
-        EventManager::getInstance()->registerEventHandler('main', 'OnBuildGlobalMenu', $this->common_helpers::MODULE_ID, 'Priceva\Connector\Bitrix\PricevaConnector', 'AddGlobalMenuItem');
+        $common_helpers = $this->common_helpers;
+
+        EventManager::getInstance()->registerEventHandler('main', 'OnBuildGlobalMenu', $common_helpers::MODULE_ID, 'Priceva\Connector\Bitrix\PricevaConnector', 'AddGlobalMenuItem');
 
         $this->save_unroll(true, "UnInstallEvents");
     }
@@ -470,7 +492,9 @@ Class priceva_connector extends CModule
     {
         parent::UnInstallEvents();
 
-        EventManager::getInstance()->unRegisterEventHandler('main', 'OnBuildGlobalMenu', $this->common_helpers::MODULE_ID, 'Priceva\Connector\Bitrix\PricevaConnector', 'AddGlobalMenuItem');
+        $common_helpers = $this->common_helpers;
+
+        EventManager::getInstance()->unRegisterEventHandler('main', 'OnBuildGlobalMenu', $common_helpers::MODULE_ID, 'Priceva\Connector\Bitrix\PricevaConnector', 'AddGlobalMenuItem');
 
         $this->save_unroll(true, "InstallEvents");
     }
@@ -519,7 +543,9 @@ Class priceva_connector extends CModule
     private function price_type_exist()
     {
         try{
-            $dbPriceType = CCatalogGroup::GetList([], [ "NAME" => $this->common_helpers::NAME_PRICE_TYPE ]);
+            $common_helpers = $this->common_helpers;
+
+            $dbPriceType = CCatalogGroup::GetList([], [ "NAME" => $common_helpers::NAME_PRICE_TYPE ]);
             while( $arPriceType = $dbPriceType->Fetch() ){
                 return $arPriceType[ 'ID' ];
             }
@@ -568,21 +594,23 @@ Class priceva_connector extends CModule
     private function add_price_type()
     {
         try{
+            $common_helpers = $this->common_helpers;
+
             Loader::includeModule('catalog');
 
             if( false !== $id = self::price_type_exist() ){
-                throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST") . $this->common_helpers::NAME_PRICE_TYPE . " (id=" . $id . ")");
+                throw new Exception(Loc::getMessage("PRICEVA_BC_INSTALL_PRICE_TYPE_EXIST") . $common_helpers::NAME_PRICE_TYPE . " (id=" . $id . ")");
             }
             $arFields = [
-                "NAME"           => $this->common_helpers::NAME_PRICE_TYPE,
+                "NAME"           => $common_helpers::NAME_PRICE_TYPE,
                 "BASE"           => "N",
                 "SORT"           => 100,
                 "USER_GROUP"     => [ 1 ],   // видят Администраторы
                 "USER_GROUP_BUY" => [ 1 ],  // покупают по этой цене Администраторы
                 // только члены группы 2
                 "USER_LANG"      => [
-                    "ru" => $this->common_helpers::NAME_PRICE_TYPE,
-                    "en" => $this->common_helpers::NAME_PRICE_TYPE,
+                    "ru" => $common_helpers::NAME_PRICE_TYPE,
+                    "en" => $common_helpers::NAME_PRICE_TYPE,
                 ],
             ];
 
