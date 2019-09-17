@@ -236,6 +236,8 @@ class OptionsPage
                 box-shadow: inset -1px -1px 1px 0 rgba(0, 0, 0, 0.25);
             }
         </style>
+        <span>Самое свежее описание настроек модуля и инструкцию к нему вы всегда можете найти <a target="_blank"
+                                                                                                  href="https://priceva.ru/knowledge/nastrojka-i-rabota-s-modulem-1c-bitrix/">по этой ссылке</a>.</span>
         <?php
         foreach( $aTab[ "OPTIONS" ] as $option_name => $option ){
             if( $bVarsFromForm ){
