@@ -526,11 +526,11 @@ class OptionsPage
                 'TRADE_OFFERS_ENABLE' => [ '0', false ],
             ],
             'TRADE_OFFERS_IBLOCK_MODE'    => [
-                'TRADE_OFFERS_IBLOCK_TYPE_ID' => [ '0' ],
+                'TRADE_OFFERS_IBLOCK_TYPE_ID' => [ '0', '' ],
                 'TRADE_OFFERS_ENABLE'         => [ '0', false ],
             ],
             'TRADE_OFFERS_IBLOCK_ID'      => [
-                'TRADE_OFFERS_IBLOCK_MODE' => [ '0', 'ALL' ],
+                'TRADE_OFFERS_IBLOCK_MODE' => [ '0', '', 'ALL' ],
                 'TRADE_OFFERS_ENABLE'      => [ '0', false, true ],
             ],
 
