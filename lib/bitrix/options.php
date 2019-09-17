@@ -65,7 +65,7 @@ class Options
         "ID_ARICUL_IBLOCK"            => [ 'type' => 'int', 'value' => "0" ],
     ];
 
-    private static $instance;
+    private static $instance = null;
 
     /**
      * @return Options
@@ -73,7 +73,7 @@ class Options
     public static function getInstance()
     {
         if( null === static::$instance ){
-            static::$instance = new static();
+            static::$instance = new Options();
         }
 
         return static::$instance;
