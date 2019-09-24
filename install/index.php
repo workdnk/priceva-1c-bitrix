@@ -139,9 +139,8 @@ Class priceva_connector extends CModule
         global $step;
 
         try{
-            $common_helpers = $this->common_helpers;
-
             $this->autoloader();
+            $common_helpers = $this->common_helpers;
             $this->check_system();
 
             $step = IntVal($step);
@@ -314,10 +313,9 @@ Class priceva_connector extends CModule
     {
         global $step;
 
-        $common_helpers = $this->common_helpers;
-
         try{
             $this->autoloader();
+            $common_helpers = $this->common_helpers;
             $this->check_system(true);
 
             $step = IntVal($step);
