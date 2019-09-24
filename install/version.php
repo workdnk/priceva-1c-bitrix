@@ -6,7 +6,7 @@
  * Time: 18:10
  */
 
-$arModuleVersion = array(
-    "VERSION"      => "2.0.0",
-    "VERSION_DATE" => "2019-09-11 11:00:00",
-);
+$arModuleVersion = [
+    "VERSION"      => "2.1.1",
+    "VERSION_DATE" => "2019-09-24 19:00:00",
+];

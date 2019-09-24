@@ -414,17 +414,21 @@ Class priceva_connector extends CModule
     {
         $result = false;
 
+        if( strpos($to . "/", $from . "/") === 0 || realpath($to) === realpath($from) ){
+            return true;
+        }
+
         if( is_dir($from) ){
             // если копируем папку
             if( false === $result = CopyDirFiles($from, $to, true, true) ){
                 // не получилось скопировать папку - сообщим об этом ошибкой
-                throw new PricevaModuleException("Cant copy directory: $to");
+                throw new PricevaModuleException("Cant copy directory from $from to $to");
             }
         }elseif( is_file($from) ){
             // если копируем файл
-            if( false === $result = CopyDirFiles($from, $to) ){
+            if( false === $result = CopyDirFiles($from, $to, true) ){
                 // не получилось создать файл - сообщим об этом ошибкой
-                throw new PricevaModuleException("Cant copy file: $to");
+                throw new PricevaModuleException("Cant copy file from $from to $to");
             }
         }
 
