@@ -150,7 +150,9 @@ Class priceva_connector extends CModule
             $this->install($step, $is_full_business);
 
         }catch( Exception $e ){
-            if( $e->getCode() !== 777 ){
+            $common_helpers = $this->common_helpers;
+            // 777 - php ver error, 778 - priceva autoloader error
+            if( in_array($e->getCode(), [ 777, 778 ]) ){
                 $common_helpers::write_to_log($e);
             }
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
@@ -325,7 +327,11 @@ Class priceva_connector extends CModule
             $this->uninstall($step, $is_full_business);
 
         }catch( Throwable $e ){
-            $common_helpers::write_to_log($e);
+            $common_helpers = $this->common_helpers;
+            // 777 - php ver error, 778 - priceva autoloader error
+            if( in_array($e->getCode(), [ 777, 778 ]) ){
+                $common_helpers::write_to_log($e);
+            }
             $this->common_helpers->APPLICATION->ThrowException($e->getMessage());
 
             return false;
@@ -666,24 +672,31 @@ Class priceva_connector extends CModule
         $this->errors[] = $error->getMessage();
     }
 
+    /**
+     * @throws Exception
+     */
     private function autoloader()
     {
-        if(
-            !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ||
-            !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ||
-            !class_exists('\Priceva\Connector\Bitrix\Options') ||
-            !class_exists('\Priceva\Connector\Bitrix\OptionsPage') ||
-            !class_exists('\Priceva\Connector\Bitrix\Ajax') ||
-            !class_exists('\Priceva\Connector\Bitrix\PricevaModuleException')
-        ){
-            CopyDirFiles(self::get_current_path() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
+        try{
+            if(
+                !class_exists('\Priceva\Connector\Bitrix\Helpers\CommonHelpers') ||
+                !class_exists('\Priceva\Connector\Bitrix\Helpers\OptionsHelpers') ||
+                !class_exists('\Priceva\Connector\Bitrix\Options') ||
+                !class_exists('\Priceva\Connector\Bitrix\OptionsPage') ||
+                !class_exists('\Priceva\Connector\Bitrix\Ajax') ||
+                !class_exists('\Priceva\Connector\Bitrix\PricevaModuleException')
+            ){
+                CopyDirFiles(self::get_current_path() . "/lib/bitrix/", $_SERVER[ "DOCUMENT_ROOT" ] . "/bitrix/modules/$this->MODULE_ID/lib/bitrix/", true, true);
 
-            /** @noinspection PhpIncludeInspection */
-            require_once( self::get_current_path() . "/include.php" );
+                /** @noinspection PhpIncludeInspection */
+                require_once( self::get_current_path() . "/include.php" );
+            }
+
+            $this->common_helpers  = CommonHelpers::getInstance();
+            $this->options_helpers = OptionsHelpers::getInstance();
+            $this->options         = Options::class;
+        }catch( Exception $e ){
+            throw new Exception('Priceva autoloader error.', 778);
         }
-
-        $this->common_helpers  = CommonHelpers::getInstance();
-        $this->options_helpers = OptionsHelpers::getInstance();
-        $this->options         = Options::class;
     }
 }
