@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# rm unnecessary files
+
+echo "Removing .git"
+rm -Rf .git
+echo "Removing docs"
+rm -Rf docs
+echo "Removing utils"
+rm -Rf utils
+echo "Removing .gitignore"
+rm -f .gitignore
+echo "Removing LICENSE"
+rm -f LICENSE
+echo "Removing README.md"
+rm -f README.md
+
 # Recursive file convertion windows-1251 --> utf-8
 # Place this file in the root of your site, add execute permission and run
 # Converts *.php, *.html, *.css, *.js files.
