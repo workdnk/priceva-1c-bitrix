@@ -27,11 +27,4 @@ if( IsModuleInstalled($module_id) ){
 
         $updater->CopyFiles("assets/js", "js/$module_id");
     }
-
-    $trade_offers = COption::GetOptionString($module_id, 'TRADE_OFFERS');
-
-    if( $trade_offers ){
-        COption::RemoveOption($module_id, 'TRADE_OFFERS');
-        COption::SetOptionString($module_id, 'TRADE_OFFERS_ENABLE', $trade_offers);
-    }
 }
