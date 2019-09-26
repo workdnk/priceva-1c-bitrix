@@ -8,4 +8,24 @@
 
 use Priceva\Connector\Bitrix\Options;
 
-$priceva_connector_default_option = Options::default_options();
+
+$MODULE_ID = 'priceva.connector';
+
+
+try{
+    if( IsModuleInstalled($MODULE_ID) ){
+        $result = CModule::IncludeModule($MODULE_ID);
+
+        if( $result ){
+            $priceva_connector_default_option = Options::default_options();
+        }else{
+            throw new Exception('priceva.connector: Cannt load default options, module not included.');
+        }
+    }else{
+        throw new Exception('priceva.connector: Cannt load default options, module not installed');
+    }
+}catch( Exception $e ){
+    global $APPLICATION;
+
+    $APPLICATION->ThrowException($e->getMessage());
+}
