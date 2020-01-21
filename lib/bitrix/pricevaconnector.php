@@ -654,7 +654,25 @@ class PricevaConnector
         if( $this->type_price_is_base($price_type_id) ){
             $result = CPrice::SetBasePrice($product_id, $price, $currency);
         }else{
-            $result = Price::update($product_id, $arFields);
+            # workdnk check if exists
+            $arExistsPrice = CPrice::GetList(
+                [],
+                [
+                    'PRODUCT_ID'       => $product_id,
+                    'CATALOG_GROUP_ID' => $price_type_id,
+                ],
+                false,
+                false,
+                [
+                    'ID',
+                ]
+            )->Fetch();
+            if ( $arExistsPrice ) {
+                // $result = Price::update($product_id, $arFields);
+                $result = CPrice::Update($arExistsPrice[ 'ID' ], $arFields);
+            } else {
+                $result = CPrice::Add($arFields);
+            }
         }
 
         if( $result ){
