@@ -12,6 +12,8 @@ use Priceva\Connector\Bitrix\OptionsPage;
 
 global $APPLICATION, $Update, $Apply;
 $MODULE_ID = "priceva.connector";
+
+// for correct working with file /bitrix/modules/main/admin/group_rights.php where used $module_id but not $MODULE_ID
 $module_id = "priceva.connector";
 
 try{
